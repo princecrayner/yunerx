@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Upload Video</title>
+
+<link rel="stylesheet" href="/css/videos.css">
+
+</head>
+<body>
+
+<div class="upload-container">
+
+<h1>Upload Video</h1>
+
+<form action="/uploadvideo" method="POST" enctype="multipart/form-data">
+
+<input type="text" name="title" placeholder="Video Title" required>
+
+<input type="file" name="video" accept="video/mp4" required>
+
+<button type="submit">Upload</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

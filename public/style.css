@@ -1,0 +1,517 @@
+body {
+    font-family: Arial;
+    background: #f4f4f4;
+    text-align: center;
+}
+
+/* Splash Screen */
+.splash-screen{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #0f172a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+
+    /* Screen fades away */
+    animation: fadeOut 1s ease forwards;
+    animation-delay: 3s;
+}
+
+/* Logo */
+.splash-screen img{
+    width: 100px;
+    margin-bottom: 15px;
+    opacity: 0;
+
+    /* Logo animation */
+    animation: logoDrop 1s ease forwards;
+}
+
+/* App Name */
+.splash-screen h1{
+    color: white;
+    font-size: 32px;
+    letter-spacing: 2px;
+    font-weight: 600;
+
+    opacity: 0;
+    transform: translateY(-20px);
+
+    /* Text animation */
+    animation: textDrop 0.8s ease forwards;
+    animation-delay: 0.8s;
+}
+
+/* Logo Drops Smoothly */
+@keyframes logoDrop{
+
+    0%{
+        opacity: 0;
+        transform: translateY(-80px) scale(0.8);
+    }
+
+    60%{
+        opacity: 1;
+        transform: translateY(10px) scale(1.05);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* App Name Appears */
+@keyframes textDrop{
+
+    0%{
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+
+    100%{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Splash Screen Disappears */
+@keyframes fadeOut{
+
+    to{
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+
+.topbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background:  white;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Logo image */
+.logo img{
+    height: 45px;
+    width: 45px;
+    object-fit: cover;
+    border-radius: 10px; /* optional soft look */
+    cursor: pointer;
+    transition: 0.3s ease;
+    left: 15px;
+    top: 8px;
+    position: fixed;
+}
+
+/* Hover effect */
+.logo img:hover{
+    transform: scale(1.05);
+}
+
+
+/* Profile Button */
+.profile-btn{
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #3b82f6;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    transition: 0.3s ease;
+    top: 14px;
+    right: 50px;
+    position: fixed;
+    font-size: 8px;
+}
+
+/* Image */
+.profile-btn img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Hover */
+.profile-btn:hover{
+    transform: scale(1.08);
+    box-shadow: 0 0 12px rgba(59,130,246,0.5);
+}
+
+
+.container {
+    width: 60%;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    margin-top: 70px;
+    border-radius: 10px;
+}
+
+.btn {
+    display: inline-block;
+    flex-direction: ;
+    padding: 10px 15px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.bart {
+  width: 60%;
+}
+
+.card {
+    background: #eee;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.subhead {
+  color: gray;
+  font-size: 11px;
+  margin: 2px 0 2px 2px;
+}
+
+/* Hamburger Icon */
+.menu-icon {
+  font-size: 33px;
+  cursor: pointer;
+  color: black;
+  position: fixed;
+  right: 11px;
+  top: 7px;
+}
+
+.menu-icon:hover {
+  border-radius: 50px;
+  color: #007bff;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px; /* hidden initially */
+  width: 300px;
+  height: 100%;
+  background: #333;
+  color: white;
+  padding-top: 60px;
+  transition: 0.3s;
+  z-index: 3;
+}
+
+/* sidebar links */
+.sidebar a {
+  display: block;
+  padding: 15px;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+}
+
+.sidebar a:hover {
+  background: #575757;
+}
+
+/* show sidebar */
+.sidebar.active {
+  left: 0;
+}
+
+/* overlay background */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  z-index: 2;
+}
+
+/* show overlay */
+.overlay.active {
+  display: block;
+}
+
+.copyrighttext {
+  color: white;
+  position: fixed;
+  bottom: 20px;
+  font-size: 15px;
+  font-style: italic;
+  margin-left: 75px;
+}
+
+
+.search-bar {
+    width: 80%;
+    padding: 12px;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+
+
+
+
+/* =========================
+   DESKTOP
+========================= */
+
+/* CONTAINER */
+.edu-slider{
+
+    width: 60%;
+    height: 220px;
+
+    position: fixed;
+    bottom: 70px;
+    left: 20%;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+
+    /* FADE EDGES */
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
+
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 10%,
+        black 90%,
+        transparent
+    );
+}
+
+/* ROW */
+.slide-row{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* IMAGES */
+.slide-img{
+
+    position: absolute;
+
+    width: 220px;
+    height: 140px;
+
+    object-fit: cover;
+
+    border-radius: 20px;
+
+    opacity: 0.6;
+
+    transform: scale(0.9);
+
+    transition: 0.4s ease;
+
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+
+    animation: infiniteSlide 20s linear infinite;
+}
+
+/* ACTIVE */
+.slide-img.active{
+
+    width: 260px;
+    height: 165px;
+
+    opacity: 1;
+
+    transform: scale(1);
+
+    border: 3px solid #3b82f6;
+
+    box-shadow: 0 0 25px rgba(59,130,246,0.5);
+}
+
+/* DIFFERENT START TIMES */
+.slide-img:nth-child(1){
+    animation-delay: 0s;
+}
+
+.slide-img:nth-child(2){
+    animation-delay: -4s;
+}
+
+.slide-img:nth-child(3){
+    animation-delay: -8s;
+}
+
+.slide-img:nth-child(4){
+    animation-delay: -12s;
+}
+
+.slide-img:nth-child(5){
+    animation-delay: -16s;
+}
+
+/* DESKTOP ANIMATION */
+@keyframes infiniteSlide{
+
+    from{
+        left: 100%;
+    }
+
+    to{
+        left: -300px;
+    }
+}
+
+
+/* =========================
+   MOBILE VERSION
+========================= */
+
+@media screen and (max-width: 768px){
+
+    .edu-slider{
+
+        width: 92%;
+        height: 160px;
+
+        left: 4%;
+        bottom: 35px;
+
+        mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 5%,
+            black 95%,
+            transparent
+        );
+
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 5%,
+            black 95%,
+            transparent
+        );
+    }
+
+    .slide-img{
+
+        width: 130px;
+        height: 85px;
+
+        border-radius: 14px;
+
+        animation: mobileInfiniteSlide 16s linear infinite;
+    }
+
+    .slide-img.active{
+
+        width: 160px;
+        height: 105px;
+
+        border: 2px solid #3b82f6;
+    }
+
+    /* MOBILE TIMINGS */
+    .slide-img:nth-child(1){
+        animation-delay: 0s;
+    }
+
+    .slide-img:nth-child(2){
+        animation-delay: -3s;
+    }
+
+    .slide-img:nth-child(3){
+        animation-delay: -6s;
+    }
+
+    .slide-img:nth-child(4){
+        animation-delay: -9s;
+    }
+
+    .slide-img:nth-child(5){
+        animation-delay: -12s;
+    }
+
+    /* MOBILE ANIMATION */
+    @keyframes mobileInfiniteSlide{
+
+        from{
+            left: 100%;
+        }
+
+        to{
+            left: -220px;
+        }
+    }
+}
+
+
+/* Footer */
+.footer{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: #111827;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    z-index: -1;
+}
+
+/* Icons */
+.footer-icon{
+    width: 50px;
+    height: 50px;
+    background: #1f2937;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+/* Icon Style */
+.footer-icon i{
+    font-size: 28px;
+    color: #fff;
+}
+
+/* Hover Effect */
+.footer-icon:hover{
+    transform: translateY(-5px);
+    background: #2563eb;
+}

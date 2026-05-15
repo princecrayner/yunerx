@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Group Chat</title>
+
+<link rel="stylesheet" href="/css/chats.css">
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+<body>
+
+<div class="chat-container">
+
+<h1><%= group.groupName %></h1>
+
+<div class="chat-box" id="chatBox">
+
+<% messages.forEach(msg => { %>
+
+<div class="message">
+
+<p>
+<strong><%= msg.sender %></strong>
+</p>
+
+<p><%= msg.message %></p>
+
+<small>
+<%= msg.date %> - <%= msg.time %>
+</small>
+
+</div>
+
+<% }) %>
+
+</div>
+
+<form id="groupForm">
+
+<input
+type="text"
+id="messageInput"
+placeholder="Type message..."
+required>
+
+<button type="submit">
+<i class='bx bx-send'></i>
+</button>
+
+</form>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+const form = document.getElementById("groupForm");
+
+const input = document.getElementById("messageInput");
+
+const chatBox = document.getElementById("chatBox");
+
+form.addEventListener("submit", (e) => {
+
+    e.preventDefault();
+
+    const now = new Date();
+
+    const data = {
+
+        groupId: "<%= group._id %>",
+
+        sender: "User",
+
+        message: input.value,
+
+        date: now.toLocaleDateString(),
+
+        time: now.toLocaleTimeString()
+
+    };
+
+    socket.emit("groupMessage", data);
+
+    input.value = "";
+
+});
+
+socket.on("receiveGroupMessage", (data) => {
+
+    if(data.groupId !== "<%= group._id %>"){
+        return;
+    }
+
+    const div = document.createElement("div");
+
+    div.classList.add("message");
+
+    div.innerHTML = `
+
+        <p><strong>${data.sender}</strong></p>
+
+        <p>${data.message}</p>
+
+        <small>${data.date} - ${data.time}</small>
+
+    `;
+
+    chatBox.appendChild(div);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+});
+
+</script>
+
+</body>
+</html>

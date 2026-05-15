@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Theory Questions</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="container">
+
+<h1>Past Questions & Answers</h1>
+
+<% questions.forEach((q, index) => { %>
+
+<div class="question-box">
+
+    <h3>
+        Question <%= index + 1 %>
+    </h3>
+
+    <p><strong><%= q.question %></strong></p>
+
+    <p>A. <%= q.optionA %></p>
+    <p>B. <%= q.optionB %></p>
+    <p>C. <%= q.optionC %></p>
+    <p>D. <%= q.optionD %></p>
+
+    <p style="color: green;">
+        <strong>Answer:</strong> <%= q.answer %>
+    </p>
+
+    <hr>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</body>
+</html>

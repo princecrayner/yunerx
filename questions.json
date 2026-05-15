@@ -1,0 +1,24 @@
+{
+  "objective": [
+    {
+      "question": "What is 2 + 2?",
+      "options": ["1", "2", "3", "4"],
+      "answer": "4"
+    },
+    {
+      "question": "Capital of Ghana?",
+      "options": ["Kumasi", "Accra", "Tamale", "Cape Coast"],
+      "answer": "Accra"
+    }
+  ],
+  "theory": [
+    {
+      "question": "Explain photosynthesis",
+      "answer": "Photosynthesis is the process by which green plants use sunlight to make food from carbon dioxide and water."
+    },
+    {
+      "question": "What is gravity?",
+      "answer": "Gravity is a force that attracts objects toward each other, especially toward Earth."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Groups</title>
+
+<link rel="stylesheet" href="/css/chats.css">
+
+</head>
+<body>
+
+<div class="chat-container">
+
+<h1>Groups</h1>
+
+<a href="/creategroup">
+<button>Create Group</button>
+</a>
+
+<% groups.forEach(group => { %>
+
+<div class="message">
+
+<h3><%= group.groupName %></h3>
+
+<a href="/group/<%= group._id %>">
+<button>Open Group</button>
+</a>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</body>
+</html>

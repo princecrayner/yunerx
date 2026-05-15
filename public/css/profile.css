@@ -1,0 +1,60 @@
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    margin:0;
+    padding:0;
+}
+
+.profile-header{
+    text-align:center;
+    padding:20px;
+}
+
+.profile-header img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.video-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.video-card{
+    background:#222;
+    padding:10px;
+    border-radius:10px;
+}
+
+video{
+    width:100%;
+    aspect-ratio:16/9;
+    border-radius:10px;
+}
+
+.profile-info{
+    text-align:center;
+    margin-top:10px;
+}
+
+.footer{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#000;
+    display:flex;
+    justify-content:space-around;
+    padding:15px 0;
+}
+
+.footer-icon{
+    color:white;
+    font-size:28px;
+    cursor:pointer;
+}

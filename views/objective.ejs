@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Objective Quiz</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Question <%= index + 1 %></h2>
+
+    <p><%= question.question %></p>
+
+    <form action="/objective/<%= index + 1 %>" method="GET">
+        <% question.options.forEach(opt => { %>
+            <label>
+                <input type="radio" name="answer" value="<%= opt %>" required>
+                <%= opt %>
+            </label><br>
+        <% }) %>
+
+        <br>
+        <button class="btn" type="submit">Next</button>
+    </form>
+
+</div>
+
+</body>
+</html>
