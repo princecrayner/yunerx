@@ -1,84 +1,115 @@
 <!DOCTYPE html>
 <html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SitApp</title>
+
     <link rel="stylesheet" href="/style.css">
+
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
+
 <body>
-
-
 
 <!-- Splash Screen -->
 <div class="splash-screen" id="splash">
 
-    <img src="logo.png" alt="Logo">
+    <img src="/logo.png" alt="Logo">
 
     <h1>SitApp</h1>
 
 </div>
 
 
+<!-- TOPBAR -->
 <div class="topbar">
 
-
-<button class="profile-btn">
-
-            <!-- User Image -->
-            <img 
-                src="profile.png" 
-                alt="Profile"
-                id="profileImage">
-
-        </button>
-
-
+    <!-- LOGO -->
     <div class="logo">
-        <img src="logo.png">
+        <img src="/logo.png" alt="Logo">
     </div>
-    
 
-    <div class="menu-icon" id="menuBtn">☰</div
+    <!-- PROFILE -->
+    <button class="profile-btn">
+
+        <img
+            src="/profile.png"
+            alt="Profile"
+            id="profileImage">
+
+    </button>
+
+    <!-- MENU -->
+    <div class="menu-icon" id="menuBtn">☰</div>
 
 </div>
 
 
-
-<!....Sidebar.....>
+<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-  <a href="page1.html">Settings</a>
-  <a href="page2.html">About</a>
-  <a href="page3.html">Contact</a>
-  <a href="page4.html">Logout</a>
 
-  <div class="copyrighttext">
-    <p>© 2026 Learning App</p>
-  </div>
+    <a href="#">Settings</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <a href="#">Logout</a>
+
+    <div class="copyrighttext">
+        <p>© 2026 Learning App</p>
+    </div>
 
 </div>
 
+
+<!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
 
+<!-- MAIN CONTENT -->
 <div class="container">
 
     <h1>📚 Learning App</h1>
-      <h6 class="subhead">Take objective quizes here</h6> 
-      
-     <a href="/objectivequizes" class="btn bart">Start Objective Questions</a>
 
-     <h6 class="subhead">Objective quetions from all areas</h6> 
+    <h6 class="subhead">Take objective quizzes here</h6>
 
-     <a href="/theorysubjects" class="btn bart">View Objective Questions</a>
+    <a href="/objectivequizes" class="btn bart">
+        Start Objective Questions
+    </a>
 
- </div>
+    <h6 class="subhead">
+        Objective questions from all areas
+    </h6>
+
+    <a href="/theorysubjects" class="btn bart">
+        View Objective Questions
+    </a>
+
+</div>
+
+
+<!-- LEVELS -->
+<div class="levels-section">
 
     <h3>Select Level</h3>
-    <h6 class="subhead">Select your level for theory past quetions</h6>
 
-    <a href="/levels/level100" class="btn">LEVEL 100</a>
-    <a href="/levels/level200" class="btn">LEVEL 200</a>
-    <a href="/levels/level300" class="btn">LEVEL 300</a>
+    <h6 class="subhead">
+        Select your level for theory past questions
+    </h6>
+
+    <a href="/levels/level100" class="btn">
+        LEVEL 100
+    </a>
+
+    <a href="/levels/level200" class="btn">
+        LEVEL 200
+    </a>
+
+    <a href="/levels/level300" class="btn">
+        LEVEL 300
+    </a>
 
 </div>
 
@@ -88,31 +119,31 @@
 
     <div class="slide-row">
 
-        <img src="image1.png" class="slide-img">
-        <img src="image2.png" class="slide-img">
-        <img src="image3.png" class="slide-img">
-        <img src="image4.png" class="slide-img">
-        <img src="image5.png" class="slide-img">
+        <img src="/image1.png" class="slide-img">
+        <img src="/image2.png" class="slide-img">
+        <img src="/image3.png" class="slide-img">
+        <img src="/image4.png" class="slide-img">
+        <img src="/image5.png" class="slide-img">
 
     </div>
 
 </div>
 
 
-
-
 <!-- Footer -->
 <div class="footer">
 
+    <!-- CHATS -->
     <div class="footer-icon chats">
         <i class='bx bx-message-rounded-dots'></i>
     </div>
-       
-    
+
+    <!-- UPLOAD -->
     <div class="footer-icon upload-btn">
         <i class='bx bx-upload'></i>
     </div>
 
+    <!-- VIDEOS -->
     <div class="footer-icon videos">
         <i class='bx bx-play-circle'></i>
     </div>
@@ -120,9 +151,8 @@
 </div>
 
 
-</body>
-
 <script src="/script.js"></script>
 <script src="/js/footer.js"></script>
 
+</body>
 </html>
