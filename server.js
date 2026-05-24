@@ -57,10 +57,26 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
+// SETTINGS PAGE
+app.get("/settings", (req, res) => {
+    res.render("settings");
+});
+
+// ABOUT PAGE
+app.get("/about", (req, res) => {
+    res.render("about");
+});
+
+// CONTACT PAGE
+app.get("/contact", (req, res) => {
+    res.render("contact");
+});
+
 // LOGOUT PAGE
 app.get("/logout", (req, res) => {
     res.render("logout");
 });
+
 
 // LEVEL PAGES
 app.get("/levels/level100", (req, res) => {

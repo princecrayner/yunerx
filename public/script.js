@@ -82,3 +82,20 @@ document.querySelector(".videos")
 .addEventListener("click",()=>{
     window.location.href="/videos";
 });
+
+
+
+
+5. // SPLASH SCREEN ONLY ON FIRST VISIT
+
+const splash = document.getElementById("splash");
+
+if(sessionStorage.getItem("splashShown")){
+
+    splash.style.display = "none";
+
+}else{
+
+    sessionStorage.setItem("splashShown", "true");
+
+}
