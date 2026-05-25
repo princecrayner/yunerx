@@ -3,7 +3,7 @@
 
 <head>
 
-    <title>Settings - SitApp</title>
+    <title>Settings - Yunerx</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
 
@@ -150,6 +150,25 @@
 
         }
 
+        .back-btn i{
+          position: relative;
+          display: flex;
+          flex-direction: flex-start;
+          font-size: 20px;
+          height: 50px;
+          width: 50px;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+     
+        }
+
+        .back-btn i:hover{
+          background: #f5f5f5;
+          border-radius: 50px;
+  
+        }
+
     </style>
 
 </head>
@@ -157,6 +176,11 @@
 <body>
 
 <div class="settings-container">
+
+   <div onclick="history.back()" class="back-btn">
+    <i class='bx bx-arrow-back'></i>
+   </div>
+
 
     <h1 class="settings-title">
         Settings
@@ -414,6 +438,6 @@
 
 </div>
 
-</body>
 
+</body>
 </html>
