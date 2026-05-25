@@ -52,19 +52,53 @@ button{
     color:gray;
 }
 
+
+/* FOOTER */
 .footer{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:#000;
-    display:flex;
-    justify-content:space-around;
-    padding:15px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 60px;
+
+    background: #111827;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+
+    z-index: 999;
 }
 
+
+/* FOOTER ICONS */
 .footer-icon{
-    color:white;
-    font-size:28px;
-    cursor:pointer;
+    width: 50px;
+    height: 50px;
+
+    background: #1f2937;
+
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+
+    transition: 0.3s ease;
 }
+
+.footer-icon i{
+    font-size: 28px;
+    color: #fff;
+}
+
+.footer-icon:hover{
+    transform: translateY(-5px);
+    background: #2563eb;
+}
+ 
