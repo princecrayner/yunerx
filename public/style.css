@@ -51,16 +51,18 @@ body{
 }
 
 .splash-screen p{
-    color: white;
-    font-size: 20px;
+
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-top: 8px;
     letter-spacing: 1px;
-    font-weight: 200;
 
     opacity: 0;
     transform: translateY(-20px);
 
     animation: textDrop 0.8s ease forwards;
-    animation-delay: 0.8s;
+    animation-delay: 1.2s;
+
 }
 
 
