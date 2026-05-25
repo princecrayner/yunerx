@@ -50,6 +50,20 @@ body{
     animation-delay: 0.8s;
 }
 
+.splash-screen p{
+    color: white;
+    font-size: 20px;
+    letter-spacing: 1px;
+    font-weight: 200;
+
+    opacity: 0;
+    transform: translateY(-20px);
+
+    animation: textDrop 0.8s ease forwards;
+    animation-delay: 0.8s;
+}
+
+
 @keyframes logoDrop{
 
     0%{
@@ -152,6 +166,13 @@ body{
 .profile-btn:hover{
     transform: scale(1.08);
     box-shadow: 0 0 12px rgba(59,130,246,0.5);
+}
+
+/* USER ICON */
+
+#userIcon{
+    color: white;
+    font-size: 18px;
 }
 
 

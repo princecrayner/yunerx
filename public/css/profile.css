@@ -11,6 +11,82 @@ body{
     padding:20px;
 }
 
+/* PROFILE IMAGE */
+
+.profile-image-container{
+
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    position: relative;
+
+}
+
+
+/* REAL IMAGE */
+
+.profile-image{
+
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2563eb;
+
+}
+
+
+/* DEFAULT USER ICON */
+
+.default-user-icon{
+
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #2563eb;
+    justify-content: center;
+    align-items: center;
+
+}
+
+
+/* ICON */
+
+.default-user-icon i{
+
+    color: white;
+    font-size: 45px;
+
+}
+
+
+/* UPLOAD FORM */
+
+.upload-profile-form{
+
+    padding: 20px;
+
+}
+
+
+.upload-profile-form input{
+
+    margin-bottom: 10px;
+
+}
+
+
+.upload-profile-form button{
+
+    padding: 10px 15px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+
 .profile-header img{
     width:120px;
     height:120px;

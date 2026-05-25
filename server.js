@@ -1,3 +1,6 @@
+const multer = require("multer");
+const path = require("path");
+
 const GroupMessage = require("./models/GroupMessage");
 const Message = require("./models/Message");
 
@@ -22,6 +25,25 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 3000;
+
+// PROFILE IMAGE STORAGE
+const storage = multer.diskStorage({
+
+    destination: (req, file, cb) => {
+
+        cb(null, "public/uploads/");
+    },
+
+    filename: (req, file, cb) => {
+
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+
+});
+
+const upload = multer({ storage });
+
+
 
 require("dotenv").config();
 
@@ -54,8 +76,15 @@ function loadQuestions() {
 
 // Home page
 app.get("/", (req, res) => {
-    res.render("index");
+
+    res.render("index", {
+
+        user: req.session.user
+
+    });
+
 });
+
 
 // SETTINGS PAGE
 app.get("/settings", (req, res) => {
@@ -70,6 +99,33 @@ app.get("/about", (req, res) => {
 // CONTACT PAGE
 app.get("/contact", (req, res) => {
     res.render("contact");
+});
+
+
+// PROFILE PAGE
+app.get("/profile", async (req, res) => {
+
+    res.render("profile", {
+
+        user: req.session.user,
+        videos: []
+
+    });
+
+});
+
+
+// UPLOAD PROFILE IMAGE
+app.post("/upload-profile",
+upload.single("profileImage"),
+
+async (req, res) => {
+
+    req.session.user.profileImage =
+        "/uploads/" + req.file.filename;
+
+    res.redirect("/profile");
+
 });
 
 // LOGOUT PAGE

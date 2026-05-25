@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SitApp</title>
+    <title>Yunerx</title>
 
     <link rel="stylesheet" href="/style.css">
 
@@ -20,7 +20,9 @@
 
     <img src="/logo.png" alt="Logo">
 
-    <h1>SitApp</h1>
+    <h1>YUNERX</h1>
+    <p>Connect • Learn • Share</p>
+    
 
 </div>
 
@@ -34,15 +36,26 @@
     </div>
 
 
-    <!-- PROFILE -->
-    <button class="profile-btn">
+<!-- PROFILE -->
+<button class="profile-btn">
 
-        <img
-            src="/profile.png"
-            alt="Profile"
-            id="profileImage">
+    <!-- PROFILE IMAGE -->
+    <img
+        src="<%= user && user.profilePic ? user.profilePic : '/profile.png' %>"
+        id="profileImage"
+        onerror="
+        this.style.display='none';
+        document.getElementById('userIcon').style.display='block';">
 
-    </button>
+
+    <!-- DEFAULT USER ICON -->
+    <i
+        class='bx bx-user'
+        id="userIcon"
+        style="<%= user && user.profilePic ? 'display:none;' : 'display:block;' %>"
+    ></i>
+
+</button>
 
     <!-- MENU -->
     <div class="menu-icon" id="menuBtn">☰</div>
@@ -60,7 +73,7 @@
 
     <div class="copyrighttext">
 
-        <p>© 2026 Learning App</p>
+        <p>© 2026 Yunerx</p>
 
     </div>
 
@@ -73,7 +86,7 @@
 <!-- MAIN CONTENT -->
 <div class="container">
 
-    <h1>📚 Learning App</h1>
+    <h1>📚 Yunerx Learning</h1>
 
     <h6 class="subhead">Take objective quizzes here</h6>
 
