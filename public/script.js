@@ -42,32 +42,8 @@ function searchSubjects() {
 }
 
 
-3. //-----SLIDER ACTIVE EFFECT-----//
 
-const slides = document.querySelectorAll(".slide-img");
-
-let current = 1;
-
-setInterval(() => {
-
-    slides.forEach(slide => {
-        slide.classList.remove("active");
-    });
-
-    current++;
-
-    if(current >= slides.length){
-        current = 0;
-    }
-
-    slides[current].classList.add("active");
-
-}, 3000);
-
-
-
-
-4. //CONNECTING// 
+3. //CONNECTING// 
 document.querySelector(".profile-btn")
 .addEventListener("click",()=>{
     window.location.href="/profile";
@@ -86,7 +62,7 @@ document.querySelector(".videos")
 
 
 
-5. // SPLASH SCREEN ONLY ON FIRST VISIT
+4. // SPLASH SCREEN ONLY ON FIRST VISIT
 
 const splash = document.getElementById("splash");
 
