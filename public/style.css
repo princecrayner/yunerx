@@ -190,17 +190,15 @@ body{
 }
 
 
-
 /* OBJECTIVE SECTION */
 .objective-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     width: 90%;
-    margin: auto;
+    margin: 90px auto 20px;
     background: blue;
     padding: 20px;
-    margin-top: 90px;
     border-radius: 15px;
     box-sizing: border-box;
 }
@@ -212,37 +210,40 @@ body{
 }
 
 .objective-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.objective-btn a {
+    display: block;
     color: black;
     padding: 12px;
     background: white;
     text-decoration: none;
-    margin: 12px auto;
     border-radius: 8px;
-    transition: 0.3s ease;
+    text-align: center;
 }
 
-.objective-btn:hover {
-    background: white;
+.objective-btn a:hover {
     transform: translateY(-2px);
 }
 
 .objective-section h6 {
     font-size: 15px;
-    font-weight: normal;
     color: white;
 }
 
 
 /* LEVEL SECTION */
 .level-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     width: 90%;
-    margin: auto;
+    margin: 20px auto;
     background: blue;
     padding: 20px;
-    margin-top: 90px;
     border-radius: 15px;
     box-sizing: border-box;
 }
