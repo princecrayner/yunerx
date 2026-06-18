@@ -493,3 +493,21 @@ body{
     transform: translateY(-5px);
     background: #2563eb;
 }
+
+
+.profile-section {
+    text-align: center;
+}
+
+.profile-picture img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+#changePhotoBtn {
+    margin-top: 10px;
+    cursor: pointer;
+}
