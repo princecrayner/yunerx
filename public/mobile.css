@@ -1,6 +1,6 @@
 body{
     min-height: 100vh;
-    background: url('/background.png') no-repeat;
+    background: url('/') no-repeat;
     background-size: cover;
     background-position: center;
     text-align: center;
