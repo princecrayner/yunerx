@@ -210,8 +210,9 @@ body{
     display: grid;
     grid-template-rows: 1fr;
     grid-gap: 2px;
+    color: black;
     padding: 12px;
-    background: blue;
+    background: white;
     text-decoration: none;
     margin: 12px auto;
     border-radius: 8px;
