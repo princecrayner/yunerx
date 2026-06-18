@@ -76,21 +76,3 @@ if(sessionStorage.getItem("splashShown")){
 
 }
 
-
-
-
-const input = document.getElementById('profileInput');
-const button = document.getElementById('changePhotoBtn');
-const preview = document.getElementById('profilePreview');
-
-button.addEventListener('click', () => {
-    input.click();
-});
-
-input.addEventListener('change', () => {
-    const file = input.files[0];
-
-    if (file) {
-        preview.src = URL.createObjectURL(file);
-    }
-});
