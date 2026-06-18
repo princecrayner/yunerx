@@ -94,6 +94,78 @@ body{
     object-fit:cover;
 }
 
+
+/* MENU */
+.menu-icon{
+    font-size: 32px;
+    cursor: pointer;
+    color: white;
+}
+
+.menu-icon:hover{
+    color: #007bff;
+}
+
+
+/* SIDEBAR */
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100%;
+    background: #333;
+    color: white;
+    padding-top: 60px;
+    transition: 0.3s;
+    z-index: 3000;
+}
+
+.sidebar a{
+    display: block;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.sidebar p{
+    color: white;
+    position: fixed;
+    bottom: 20px;
+    text-align: center;
+    font-size: 14px;
+    font-style: italic;
+    margin-left: 85px;
+}
+
+
+.sidebar a:hover{
+    background: #575757;
+}
+
+.sidebar.active{
+    left: 0;
+}
+
+
+/* OVERLAY */
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 2000;
+}
+
+.overlay.active{
+    display: block;
+}
+
+
 .video-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
