@@ -196,7 +196,7 @@ body{
 .objective-section {
   display: flex;
   width: 90%;
-  
+  position: fixed;
   background: blue;
   padding: 20px;
   margin-top: 90px;
@@ -240,7 +240,7 @@ body{
 .level-section {
   display: flex;
   width: 90%;
-
+  position: fixed;
   background: blue;
   padding: 20px;
   margin-top: 90px;
