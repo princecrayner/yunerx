@@ -194,9 +194,7 @@ body{
 
 /* OBJECTIVE SECTION */
 .objective-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex;
   width: 90%;
   
   background: blue;
@@ -213,6 +211,9 @@ body{
 }
 
 .objective-btn {
+  grid-template-columns: 1fr;
+  gap: 10px;
+  display: grid;
   color: black;
   padding: 12px;
   background: white;
@@ -237,9 +238,7 @@ body{
 
 /* LEVEL SECTION */
 .level-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex;
   width: 90%;
 
   background: blue;
@@ -269,7 +268,8 @@ body{
   border-radius: 20px;  
 
   min-height: 80px;  
-  display: flex;  
+  grid-template-columns: 1fr;
+  gap: 10px;
   justify-content: center;  
   align-items: center;  
 
