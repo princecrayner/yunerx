@@ -187,7 +187,7 @@ body{
 /* OBJECTIVE SECTION */
 .objective-section {
     width: 90%;
-    margin-top: 850px;
+    margin-top: 820px;
     position: absolute; /* changed from fixed */
     background: #fff2bd;
     padding: 25px;
@@ -241,7 +241,7 @@ body{
 /* LEVEL SECTION */
 .level-section {
     width: 90%;
-    margin-top: 1500px;
+    margin-top: 1470px;
     margin-bottom: 100px; /* space above footer */
     position: absolute; /* changed from fixed */
     background: #285ccc;
@@ -385,7 +385,7 @@ body{
 
 /* IMAGE CONTAINER */
 .imgContainer {
-    margin-top: 350px;
+    margin-top: 320px;
     position: absolute; /* changed from fixed */
     overflow: hidden;
     width: 90%;
