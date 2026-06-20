@@ -193,93 +193,100 @@ body{
  
 
 /* OBJECTIVE SECTION */
+
 .objective-section {
   display: flex;
   width: 90%;
   position: fixed;
-  background: blue;
+  background: #fff2bd;
   padding: 20px;
   margin-top: 90px;
-  border-radius: 15px;
+  border-radius: 20px;
   box-sizing: border-box;
 }
 
 .objective-section h1 {
-  color: white;
-  font-size: 15px;
-  font-weight: 10px;
+  color: blue;
+  font-size: 25px;
+  font-weight: bold;
 }
 
 .objective-btn {
-  grid-template-columns: 1fr;
-  gap: 10px;
   display: grid;
-  color: black;
-  padding: 12px;
-  background: white;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.objective-btn a {
+  color: blue;
+  padding: 30px;
   text-decoration: none;
-  margin: 12px auto;
-  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 15px;
+  border: 1px solid #285ccc;
   transition: 0.3s ease;
 }
 
-.objective-btn:hover {
-  background: white;
+.objective-btn a:hover {
+  background: blue;
   transform: translateY(-2px);
 }
 
-.objective-section h6 {
+.objective-hdr {
   display: grid;
-  grid-template: 1fr;
-  grid-gap: 2px;
-  font-size: 15px;
-  color: white;
+  grid-template: 1fr 1fr;
+  gap: 2px;
 }
 
+.objective-hdr h6 {
+  color: black;
+  font-size: 15px;
+}
+
+
+
 /* LEVEL SECTION */
+
 .level-section {
   display: flex;
   width: 90%;
   position: fixed;
-  background: blue;
+  background: #285ccc;
   padding: 20px;
-  margin-top: 90px;
-  border-radius: 15px;
+  margin-top: 50px;
+  border-radius: 20px;
   box-sizing: border-box;
 }
 
 .level-section h3 {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  color: white;
-}
-
-.levels-section h6 {
   font-size: 1rem;
-  font-weight: normal;
-  color: white;
+  color: #fff2bd;
 }
 
-.level-section a {
-  background: white;
-  color: #2563eb;
+.level-section h6 {
+  font-size: 1rem;
+  color: #fff2bd;
+}
 
-  text-decoration: none;  
-  border-radius: 20px;  
-
-  min-height: 80px;  
-  grid-template-columns: 1fr;
+.level-btn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.level-btn a {
+  color: white;
+  text-decoration: none; 
+  cursor: pointer;
+  border-radius: 20px;  
+  padding: 30px;
   justify-content: center;  
   align-items: center;  
-
-  margin-bottom: 10px;  
-
-  font-size: 1.2rem;  
+  font-size: 15px;  
   font-weight: bold;  
-
   transition: 0.3s;
-
+  border: 1px solid #fff2bd;
 }
 
 .level-section a:hover{
