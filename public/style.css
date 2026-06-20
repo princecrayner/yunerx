@@ -197,7 +197,7 @@ body{
 .objective-section {
   display: flex;
   width: 90%;
-  position: fixed;
+  position: relative;
   background: #fff2bd;
   padding: 20px;
   margin-top: 90px;
@@ -251,7 +251,7 @@ body{
 .level-section {
   display: flex;
   width: 90%;
-  position: fixed;
+  position: relative;
   background: #285ccc;
   padding: 20px;
   margin-top: 50px;
@@ -407,7 +407,6 @@ body{
 
 .wrapper {
 
-    width: ;
     height: 155px;
  
     display: grid;
