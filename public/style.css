@@ -1,4 +1,6 @@
 body{
+    margin-bottom: 100px;
+    display: flex;
     text-align: center;
     font-family: Arial, sans-serif;
 }
