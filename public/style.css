@@ -195,7 +195,7 @@ body{
 /* OBJECTIVE SECTION */
 .objective-section {
     width: 90%;
-    margin: 100px auto 30px auto;
+    margin-top: 90px;
     background: #fff2bd;
     padding: 25px;
     border-radius: 25px;
