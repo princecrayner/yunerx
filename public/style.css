@@ -195,7 +195,7 @@ body{
 /* OBJECTIVE SECTION */
 .objective-section {
     width: 90%;
-    margin-top: 500px;
+    margin-top: 400px;
     position: fixed;
     background: #fff2bd;
     padding: 25px;
@@ -395,7 +395,6 @@ body{
 .imgContainer {
     margin-bottom: 70px;
     position: fixed;
-    margin: 0 auto 70px auto;    
     overflow: hidden;
     width: 90%;
     border-radius: 8px;
