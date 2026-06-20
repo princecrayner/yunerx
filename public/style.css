@@ -193,105 +193,104 @@ body{
  
 
 /* OBJECTIVE SECTION */
-
 .objective-section {
-  display: flex;
-  width: 90%;
-  position: relative;
-  background: #fff2bd;
-  padding: 20px;
-  margin-top: 90px;
-  border-radius: 20px;
-  box-sizing: border-box;
+    width: 90%;
+    margin: 100px auto 30px auto;
+    background: #fff2bd;
+    padding: 25px;
+    border-radius: 25px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .objective-section h1 {
-  color: blue;
-  font-size: 25px;
-  font-weight: bold;
+    color: #285ccc;
+    font-size: 2rem;
+    margin: 0;
 }
 
 .objective-btn {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 
 .objective-btn a {
-  color: blue;
-  padding: 30px;
-  text-decoration: none;
-  cursor: pointer;
-  font-size: 15px;
-  border-radius: 15px;
-  border: 1px solid #285ccc;
-  transition: 0.3s ease;
+    text-decoration: none;
+    color: #285ccc;
+    border: 1px solid #285ccc;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    transition: 0.3s ease;
 }
 
 .objective-btn a:hover {
-  background: blue;
-  transform: translateY(-2px);
+    background: #285ccc;
+    color: white;
 }
 
 .objective-hdr {
-  display: grid;
-  grid-template: 1fr 1fr;
-  gap: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .objective-hdr h6 {
-  color: black;
-  font-size: 15px;
+    color: black;
+    margin: 0;
+    font-size: 15px;
 }
-
 
 
 /* LEVEL SECTION */
-
 .level-section {
-  display: flex;
-  width: 90%;
-  position: relative;
-  background: #285ccc;
-  padding: 20px;
-  margin-top: 50px;
-  border-radius: 20px;
-  box-sizing: border-box;
+    width: 90%;
+    margin: 0 auto 100px auto;
+    background: #285ccc;
+    padding: 25px;
+    border-radius: 25px;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .level-section h3 {
-  font-size: 1rem;
-  color: #fff2bd;
+    color: #fff2bd;
+    font-size: 2rem;
+    margin: 0;
 }
 
 .level-section h6 {
-  font-size: 1rem;
-  color: #fff2bd;
+    color: #fff2bd;
+    margin: 0;
 }
 
 .level-btn {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 
 .level-btn a {
-  color: white;
-  text-decoration: none; 
-  cursor: pointer;
-  border-radius: 20px;  
-  padding: 30px;
-  justify-content: center;  
-  align-items: center;  
-  font-size: 15px;  
-  font-weight: bold;  
-  transition: 0.3s;
-  border: 1px solid #fff2bd;
+    text-decoration: none;
+    color: white;
+    border: 1px solid #fff2bd;
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    transition: 0.3s ease;
 }
 
-.level-section a:hover{
-  transform: translateY(-5px);
-  background: #dbeafe;
+.level-btn a:hover {
+    background: #fff2bd;
+    color: #285ccc;
 }
 
 
