@@ -125,6 +125,8 @@ body{
 
 /* LOGO */
 .logo img{
+    position: fixed;
+    right: 11px;
     height: 45px;
     width: 45px;
     object-fit: cover;
@@ -150,7 +152,7 @@ body{
     padding: 0;
     transition: 0.3s ease;
     top: 13px;
-    right: 60px;
+    left: 60px;
     position: fixed;
 }
 
