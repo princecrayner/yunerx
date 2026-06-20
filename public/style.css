@@ -195,7 +195,7 @@ body{
 /* OBJECTIVE SECTION */
 .objective-section {
     width: 90%;
-    margin-top: 800px;
+    margin-top: 900px;
     position: fixed;
     background: #fff2bd;
     padding: 25px;
@@ -251,7 +251,7 @@ body{
 .level-section {
     width: 90%;
     margin-top: 1500px;
-    margin-bottom: 80px;
+    margin-bottom:200px;
     position: fixed;
     background: #285ccc;
     padding: 25px;
