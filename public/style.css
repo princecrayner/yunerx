@@ -184,14 +184,11 @@ body{
     color: #007bff;
 }
 
- 
- 
-
 /* OBJECTIVE SECTION */
 .objective-section {
     width: 90%;
     margin-top: 850px;
-    position: fixed;
+    position: absolute; /* changed from fixed */
     background: #fff2bd;
     padding: 25px;
     border-radius: 25px;
@@ -241,13 +238,12 @@ body{
     font-size: 15px;
 }
 
-
 /* LEVEL SECTION */
 .level-section {
     width: 90%;
     margin-top: 1500px;
-    margin-bottom:100px;
-    position: fixed;
+    margin-bottom: 100px; /* space above footer */
+    position: absolute; /* changed from fixed */
     background: #285ccc;
     padding: 25px;
     border-radius: 25px;
@@ -387,10 +383,10 @@ body{
     font-size: 16px;
 }
 
-
+/* IMAGE CONTAINER */
 .imgContainer {
     margin-top: 350px;
-    position: fixed;
+    position: absolute; /* changed from fixed */
     overflow: hidden;
     width: 90%;
     border-radius: 8px;
@@ -398,8 +394,8 @@ body{
     padding: 20px 0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
     align-items: center;
-
 }
+ 
 
 .wrapper {
 
