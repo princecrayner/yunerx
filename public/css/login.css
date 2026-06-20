@@ -8,13 +8,13 @@ body{
 }
 
 .container{
-
+    margin-top: 50px;
     width: 80%;
     justify-content: center;
     align-items: center;
     background: white;
     padding: 60px 40px;
-    height: 100px;
+    height: 50px;
     border-radius: 10px;
 
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
@@ -64,5 +64,5 @@ button:hover{
 }
 
 .auth-box a {
-  margin-top: 5px;
+  margin-top: 15px;
 }
