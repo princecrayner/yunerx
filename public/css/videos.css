@@ -7,8 +7,7 @@ body{
 }
 
 .upload-btn {
-  position: relative;
-  display: flex;
+  position: fixed;
   top: 20px;
   right: 20px;
   background: gray;
