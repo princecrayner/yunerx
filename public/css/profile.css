@@ -19,7 +19,8 @@ body{
     height: 50px;
     margin-right: ;
     position: relative;
-
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -97,18 +98,18 @@ body{
 /* NAV ITEMS */
 .nav-item {
   position: fixed;
-  top: 11px;
-  right: 11px;
+  top: 20px;
+  right: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 30px;
-  height: 10px;
+  width: 50px;
+  height: 20px;
 }
 
 .nav-item i {
   color: white;
-  font-size: 20px;
+  font-size: 30px;
 }
 
 
