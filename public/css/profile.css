@@ -15,8 +15,8 @@ body{
 
 .profile-image-container{
 
-    width: 100px;
-    height: 100px;
+    width: 45px;
+    height: 45px;
     margin-right: 20px;
     position: relative;
 
@@ -72,6 +72,7 @@ body{
 .upload-profile-form input{
 
     margin-bottom: 10px;
+    
 
 }
 
@@ -84,7 +85,7 @@ body{
     color: white;
     border-radius: 10px;
     cursor: pointer;
-
+    align-items: center;
 }
 
 .profile-header img{
