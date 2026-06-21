@@ -40,7 +40,7 @@ body{
 /* DEFAULT USER ICON */
 
 .default-user-icon{
-    position: fixed;
+    margin: 10px 0 0 5px;
     width: 100px;
     height: 100px;
     border-radius: 50%;
