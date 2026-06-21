@@ -18,7 +18,7 @@ body{
     width: 50px;
     height: 50px;
     margin-right: ;
-    position: fixed;
+    position: relative;
     justify-content: center;
     align-items: center;
 }
@@ -40,7 +40,7 @@ body{
 /* DEFAULT USER ICON */
 
 .default-user-icon{
-
+    position: fixed;
     width: 100px;
     height: 100px;
     border-radius: 50%;
