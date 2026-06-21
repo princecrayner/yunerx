@@ -40,7 +40,7 @@ body{
 /* DEFAULT USER ICON */
 
 .default-user-icon{
-    margin: 10px 0 0 140px;
+    margin: 10px 0 0 145px;
     width: 100px;
     height: 100px;
     border-radius: 50%;
@@ -113,9 +113,9 @@ body{
 }
 
 .upload-btn {
-  background: #f4f4f4;
-  height: 30px;
-  width: 30px;
+  background: gray;
+  height: 25px;
+  width: 25px;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
