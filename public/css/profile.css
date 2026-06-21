@@ -94,9 +94,23 @@ body{
     object-fit:cover;
 }
 
+/* NAV ITEMS */
+.nav-item {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-item i {
+  color: white;
+  font-size: 20px;
+}
 
 /* MENU */
-.menu-icon{
+.menu-icn{
     font-size: 32px;
     cursor: pointer;
     color: white;
