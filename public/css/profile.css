@@ -112,6 +112,13 @@ body{
   font-size: 30px;
 }
 
+.upload-btn {
+  background: #f4f4f4;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
+
 
 /* SIDEBAR */
 .sidebar{
