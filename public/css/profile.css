@@ -2,8 +2,6 @@ body{
     background:#111;
     color:white;
     font-family:Arial;
-    margin:0;
-    padding:0;
 }
 
 .profile-header{
@@ -102,25 +100,13 @@ body{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 10px;
+  height: 10px;
 }
 
 .nav-item i {
   color: white;
   font-size: 20px;
-}
-
-/* MENU */
-.menu-icn{
-    font-size: 32px;
-    cursor: pointer;
-    color: white;
-    position: fixed;
-    top: 11px;
-    right: 11px;
-}
-
-.menu-icon:hover{
-    color: #007bff;
 }
 
 
