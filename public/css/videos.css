@@ -6,6 +6,17 @@ body{
     padding-bottom:100px;
 }
 
+.upload-btn {
+  color: white;
+  background: gray;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .video-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
