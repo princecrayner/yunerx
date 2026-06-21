@@ -7,11 +7,9 @@ body{
 }
 
 .upload-btn {
-  font-size: 30px;
   position: fixed;
   top: 20px;
   right: 20px;
-  color: white;
   background: gray;
   height: 30px;
   width: 30px;
@@ -19,7 +17,10 @@ body{
   align-items: center;
   justify-content: center;
 }
-
+.upload-btn i {
+  color: white;
+  font-size: 30px;
+}
 
 .video-grid{
     display:grid;
