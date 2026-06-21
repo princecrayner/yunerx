@@ -95,8 +95,8 @@ body{
 /* NAV ITEMS */
 .nav-item {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 11px;
+  right: 11px;
   display: flex;
   justify-content: space-between;
   align-items: center;
