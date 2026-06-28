@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Upload</title>
 
     <link rel="stylesheet" href="/style.css">
-
 </head>
 <body>
 
@@ -21,13 +20,41 @@
     <p>Format: question, A, B, C, D, answer, category</p>
 </div>
 
+<hr>
 
-<form id="uploadForm">
-  <input type="text" name="name" placeholder="PDF Name"/>
-  <input type="file" name="pdf"/>
-  <button>Upload</button>
-</form>
+<div class="container">
+    <h2>📄 Upload PDF</h2>
 
+    <input
+        type="text"
+        id="pdfName"
+        placeholder="PDF Name"
+    >
+
+    <!-- Hidden file input -->
+    <input
+        type="file"
+        id="pdfInput"
+        accept=".pdf"
+        hidden
+    >
+
+    <br><br>
+
+    <!-- Opens the file explorer -->
+    <button
+        type="button"
+        id="uploadBtn"
+        class="btn"
+    >
+        Choose PDF
+    </button>
+
+    <p id="selectedFile">No PDF selected.</p>
+</div>
+
+<!-- Your existing JavaScript -->
+<script src="/js/script.js"></script>
 
 </body>
 </html>

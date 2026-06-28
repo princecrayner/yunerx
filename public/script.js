@@ -77,38 +77,61 @@ if(sessionStorage.getItem("splashShown")){
 }
 
 
-//  ADMIN PAGE UPLOAD PDF FILES TO DOCS
+// ===== ADMIN PAGE UPLOAD PDF FILES TO DOCS =====
 
 const form = document.getElementById("uploadForm");
 
-form.addEventListener("submit", async (e)=>{
+if (form) {
+    form.addEventListener("submit", async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    const formData = new FormData(form);
+        const formData = new FormData(form);
 
-    await fetch("/api/docs/upload",{
+        const response = await fetch("/api/docs/upload", {
+            method: "POST",
+            body: formData
+        });
 
-        method:"POST",
+        if (response.ok) {
+            alert("PDF uploaded successfully!");
+            form.reset();
+        } else {
+            alert("Upload failed.");
+        }
 
-        body:formData
+    });
+}
+
+
+// ===== DOCS PAGE =====
+
+const docsContainer = document.getElementById("docsContainer");
+
+if (docsContainer) {
+    loadDocuments();
+}
+
+async function loadDocuments() {
+
+    const response = await fetch("/api/docs");
+    const docs = await response.json();
+
+    docsContainer.innerHTML = "";
+
+    docs.forEach(doc => {
+
+        docsContainer.innerHTML += `
+            <div class="document">
+                <div>
+                    <h4>${doc.name}</h4>
+                    <p>${new Date(doc.uploadedAt).toLocaleDateString()}</p>
+                </div>
+
+                <button class="menu-btn">⋮</button>
+            </div>
+        `;
 
     });
 
-});
-
-
-// DOCS PAGE
-router.get("/", async (req,res)=>{
-
-    const docs = await Document.find()
-
-    .sort({
-
-        uploadedAt:-1
-
-    });
-
-    res.json(docs);
-
-});
+}
