@@ -76,3 +76,39 @@ if(sessionStorage.getItem("splashShown")){
 
 }
 
+
+//  ADMIN PAGE UPLOAD PDF FILES TO DOCS
+
+const form = document.getElementById("uploadForm");
+
+form.addEventListener("submit", async (e)=>{
+
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    await fetch("/api/docs/upload",{
+
+        method:"POST",
+
+        body:formData
+
+    });
+
+});
+
+
+// DOCS PAGE
+router.get("/", async (req,res)=>{
+
+    const docs = await Document.find()
+
+    .sort({
+
+        uploadedAt:-1
+
+    });
+
+    res.json(docs);
+
+});
