@@ -2,7 +2,7 @@ body{
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    box-sizing: border-box;
+    align-items: center;
 }
 
 
@@ -121,7 +121,7 @@ body{
 
 /* LOGO */
 .logo img{
-    position: ;
+    position: fixed;
     right: 15px;
     top: 20px;
     height: 45px;
@@ -139,7 +139,7 @@ body{
 
 /* PROFILE */
 .profile-btn{
-    position: ;
+    position: fixed;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -170,21 +170,6 @@ body{
     color: white;
     font-size: 18px;
 }
-
-
-/* MENU */
-.menu-icon{
-    font-size: 32px;
-    cursor: pointer;
-    color: black;
-}
-
-.menu-icon:hover{
-    color: #007bff;
-}
-
-
-
 
 
 
@@ -291,6 +276,7 @@ body{
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 }
  
 
