@@ -193,7 +193,7 @@ body{
     border-radius: 25px;
     box-sizing: border-box;
 
-    display: flex;
+    display: ;
 }
 
 .objective-section h1 {
@@ -238,9 +238,7 @@ body{
 /* LEVEL SECTION */
 .level-section {
     height: 350px;
-    width: 400px;
-    left: 0;
-    right: 0;
+    width: 90%;
     margin-top: 50px;
     position: fixed;
     background: #285ccc;
