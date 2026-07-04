@@ -238,9 +238,11 @@ body{
 /* LEVEL SECTION */
 .level-section {
     height: 350px;
-    width: 350px;
+    width: 400px;
+    left: 0;
+    right: 0;
     margin-top: 50px;
-    position: absolute;
+    position: fixed;
     background: #285ccc;
     padding: 25px;
     border-radius: 25px;
