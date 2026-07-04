@@ -184,6 +184,7 @@ body{
 
 /* OBJECTIVE SECTION */
 .objective-section {
+    height: 350px;
     width: 90%;
     margin-top: 50px;
     position: absolute;
@@ -236,8 +237,8 @@ body{
 
 /* LEVEL SECTION */
 .level-section {
-    height: 400px;
-    width: 90%;
+    height: 350px;
+    width: 350px;
     margin-top: 50px;
     position: absolute;
     background: #285ccc;
