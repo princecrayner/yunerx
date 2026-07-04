@@ -192,8 +192,6 @@ body{
     padding: 25px;
     border-radius: 25px;
     box-sizing: border-box;
-
-    display: ;
 }
 
 .objective-section h1 {
@@ -238,15 +236,13 @@ body{
 /* LEVEL SECTION */
 .level-section {
     height: 350px;
-    width: 90%;
+    max-width: 350px;
     margin-top: 50px;
     position: fixed;
     background: #285ccc;
     padding: 25px;
     border-radius: 25px;
     box-sizing: border-box;
-
-    display: ;
 }
 
 .level-section h3 {
