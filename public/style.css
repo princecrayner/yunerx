@@ -236,6 +236,7 @@ body{
 
 /* LEVEL SECTION */
 .level-section {
+    height: 400px;
     width: 90%;
     margin-top: 50px;
     position: absolute;
