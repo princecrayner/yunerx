@@ -2,6 +2,7 @@ body{
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+    box-sizing: border-box;
 }
 
 
@@ -120,6 +121,7 @@ body{
 
 /* LOGO */
 .logo img{
+    position: ;
     right: 15px;
     top: 20px;
     height: 45px;
@@ -137,6 +139,7 @@ body{
 
 /* PROFILE */
 .profile-btn{
+    position: ;
     width: 35px;
     height: 35px;
     border-radius: 50%;
