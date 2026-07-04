@@ -236,14 +236,15 @@ body{
 
 /* LEVEL SECTION */
 .level-section {
-    height: 350px;
+width: 85vw;
     max-width: 350px;
-    margin-top: 50px;
-    position: fixed;
-    background: #285ccc;
-    padding: 25px;
-    border-radius: 25px;
-    box-sizing: border-box;
+    aspect-ratio: 1 / 1;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center
 }
 
 .level-section h3 {
