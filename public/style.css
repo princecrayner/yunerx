@@ -1,7 +1,6 @@
 body{
     margin-bottom: 100px;
-    display: flex;
-    text-align: center;
+    align-content: center;
     font-family: Arial, sans-serif;
 }
 
@@ -111,11 +110,7 @@ body{
     background: white;
 
     display: flex;
-    align-items: center;
     justify-content: space-between;
-
-    padding: 0 15px;
-    box-sizing: border-box;
 
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 
@@ -190,16 +185,14 @@ body{
 /* OBJECTIVE SECTION */
 .objective-section {
     width: 90%;
-    margin-top: 800px;
-    position: absolute; /* changed from fixed */
+    margin-top: 50px;
+    position: absolute;
     background: #fff2bd;
     padding: 25px;
     border-radius: 25px;
     box-sizing: border-box;
 
     display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 .objective-section h1 {
@@ -244,17 +237,14 @@ body{
 /* LEVEL SECTION */
 .level-section {
     width: 90%;
-    margin-top: 1450px;
-    margin-bottom: 100px; /* space above footer */
-    position: absolute; /* changed from fixed */
+    margin-top: 50px;
+    position: absolute;
     background: #285ccc;
     padding: 25px;
     border-radius: 25px;
     box-sizing: border-box;
 
     display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 .level-section h3 {
@@ -388,8 +378,8 @@ body{
 
 /* IMAGE CONTAINER */
 .imgContainer {
-    margin-top: 320px;
-    position: absolute; /* changed from fixed */
+    margin-top: 100px;
+    position: absolute;
     overflow: hidden;
     width: 90%;
     border-radius: 8px;
@@ -397,6 +387,7 @@ body{
     padding: 20px 0;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
     align-items: center;
+    justify-content: center;
 }
  
 
