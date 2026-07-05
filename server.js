@@ -89,6 +89,11 @@ app.get("/", (req, res) => {
 });
 
 
+// DOCS PAGE 
+app.get("/docs", (req, res) => {
+    res.render("docs");
+});
+
 // SETTINGS PAGE
 app.get("/settings", (req, res) => {
     res.render("settings");
