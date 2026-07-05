@@ -1,5 +1,5 @@
 body{
-    margin-bottom: 100px;
+    margin-bottom: 150px;
     padding: 0;
     font-family: Arial, sans-serif;
 }
@@ -176,10 +176,10 @@ body{
 .objective-section {
   display: ;
   width: 90%;
-  height: 400px;
+  height: 350px;
   background: #fff2bd;
   padding: 25px;
-  margin-top: 50px;
+  margin-top: 40px;
   border-radius: 25px;
   box-sizing: border-box;
 }
@@ -226,10 +226,10 @@ body{
 .level-section {
   display: ;
   width: 90%;
-  height: 400px;
+  height: 350px;
   background: #285ccc;
   padding: 20px;
-  margin-top: 50px;
+  margin-top: 40px;
   border-radius: 20px;
   box-sizing: border-box;
 }
