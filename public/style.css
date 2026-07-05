@@ -175,7 +175,6 @@ body{
 
 .objective-section {
   text-align: center;
-  width: ;
   height: 350px;
   background: #fff2bd;
   padding: 25px;
@@ -201,7 +200,7 @@ body{
   text-decoration: none;
   cursor: pointer;
   font-size: 15px;
-  padding: 30px;
+  padding: 25px;
   border-radius: 15px;
   border: 1px solid #285ccc;
 }
@@ -226,7 +225,6 @@ body{
 
 .level-section {
   text-align: center;
-  width: ;
   height: 350px;
   background: #285ccc;
   padding: 20px;
