@@ -174,7 +174,7 @@ body{
 /* OBJETIVE SECTION */
 
 .objective-section {
-  display: ;
+  text-align: center;
   width: ;
   height: 350px;
   background: #fff2bd;
@@ -225,7 +225,7 @@ body{
 /* LEVEL SECTION */
 
 .level-section {
-  display: ;
+  text-align: center;
   width: ;
   height: 350px;
   background: #285ccc;
