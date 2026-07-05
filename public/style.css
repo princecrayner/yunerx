@@ -2,8 +2,6 @@ body{
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    justify-content: center;
-    align-items: center;
 }
 
 
@@ -170,6 +168,98 @@ body{
 #userIcon{
     color: white;
     font-size: 18px;
+}
+
+
+/* OBJETIVE SECTION */
+
+.objective-section {
+  display: flex;
+  width: 90%;
+  position: fixed;
+  background: #fff2bd;
+  padding: 25px;
+  margin-top: 50px;
+  border-radius: 25px;
+  box-sizing: border-box;
+}
+
+.objective-section h1 {
+  color: blue;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.objective-btn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.objective-btn a {
+  color: blue;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #285ccc;
+}
+
+.objective-btn a:hover {
+  background: #285ccc;
+  color: white;
+}
+
+.objective-hdr {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.objective-hdr h6 {
+  color: black;
+  font-size: 15px;
+}
+
+
+/* LEVEL SECTION */
+
+.level-section {
+  display: flex;
+  width: 90%;
+  position: fixed;
+  background: #285ccc;
+  padding: 20px;
+  margin-top: 50px;
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+.level-section h3 {
+  color: #fff2bd;
+}
+
+.level-section h6 {
+  color: #fff2bd;
+}
+
+.level-btn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.level-btn a {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #fff2bd;
+}
+
+.level-btn a:hover {
+  background: white;
+  color: #285ccc;
 }
 
 
