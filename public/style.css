@@ -175,7 +175,7 @@ body{
 
 .objective-section {
   display: ;
-  width: 90%;
+  width: ;
   height: 350px;
   background: #fff2bd;
   padding: 25px;
@@ -193,6 +193,7 @@ body{
 .objective-btn {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .objective-btn a {
@@ -225,7 +226,7 @@ body{
 
 .level-section {
   display: ;
-  width: 90%;
+  width: ;
   height: 350px;
   background: #285ccc;
   padding: 20px;
@@ -245,6 +246,7 @@ body{
 .level-btn {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .level-btn a {
@@ -360,7 +362,7 @@ body{
 .imgContainer {
     margin-top: 100px;
     overflow: hidden;
-    width: 90%;
+    width: ;
     border-radius: 8px;
     background: #f4f4f4;
     padding: 20px 0;
