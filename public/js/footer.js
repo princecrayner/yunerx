@@ -33,3 +33,10 @@ document.querySelector(".groups")
     window.location.href = "/groups";
 
 });
+
+document.querySelector(".docs")
+.addEventListener("click", () => {
+
+    window.location.href = "/docs";
+
+});
