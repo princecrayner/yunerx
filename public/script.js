@@ -59,10 +59,6 @@ document.querySelector(".videos")
     window.location.href="/videos";
 });
 
-document.querySelector(".docs")
-.addEventListener("click",()=>{
-    window.location.href="/docs";
-});
 
 
 
