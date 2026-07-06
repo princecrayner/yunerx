@@ -33,7 +33,7 @@ const upload = multer({ storage });
 // ADMIN PAGE
 router.get("/admin/upload-pdf", (req, res) => {
 
-    res.render("uploadpdf");
+    res.render("/admin");
 
 });
 
