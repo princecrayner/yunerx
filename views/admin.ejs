@@ -118,6 +118,38 @@
 
 </div>
 
+
+<div class="container">
+    <h2>📄 Upload PDF</h2>
+
+    <input
+        type="text"
+        id="pdfName"
+        placeholder="PDF Name"
+    >
+
+    <!-- Hidden file input -->
+    <input
+        type="file"
+        id="pdfInput"
+        accept=".pdf"
+        hidden
+    >
+
+    <br><br>
+
+    <!-- Opens the file explorer -->
+    <button
+        type="button"
+        id="uploadBtn"
+        class="btn"
+    >
+        Choose PDF
+    </button>
+
+    <p id="selectedFile">No PDF selected.</p>
+</div>
+
 <script src="/js/script.js"></script>
 
 </body>
