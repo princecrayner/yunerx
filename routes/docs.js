@@ -16,9 +16,9 @@ router.post(
             cloudinaryId: req.file.filename
         });
 
-        await newDoc.save();
+         await newDoc.save();
 
-        res.json(newDoc);
+         res.redirect("/docs");
     }
 );
 
