@@ -10,15 +10,31 @@ router.post(
     upload.single("pdf"),
     async (req, res) => {
 
-        const newDoc = new Document({
-            name: req.body.name,
-            pdfUrl: req.file.path,
-            cloudinaryId: req.file.filename
-        });
+        try {
 
-         await newDoc.save();
+            console.log(req.body);
+            console.log(req.file);
 
-         res.redirect("/docs");
+            const newDoc = new Document({
+
+                name: req.body.name,
+                pdfUrl: req.file.path,
+                cloudinaryId: req.file.filename
+
+            });
+
+            await newDoc.save();
+
+            res.redirect("/docs");
+
+        } catch (err) {
+
+            console.error(err);
+
+            res.status(500).send(err.message);
+
+        }
+
     }
 );
 
