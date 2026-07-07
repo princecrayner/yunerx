@@ -148,35 +148,43 @@
 
 <hr>
 
+
 <div class="container">
+
     <h2>📄 Upload PDF</h2>
 
-    <input
-        type="text"
-        id="pdfName"
-        placeholder="PDF Name"
+    <form
+        action="/docs/upload"
+        method="POST"
+        enctype="multipart/form-data"
     >
 
-    <!-- Hidden file input -->
-    <input
-        type="file"
-        id="pdfInput"
-        accept=".pdf"
-        hidden
-    >
+        <input
+            type="text"
+            name="name"
+            placeholder="PDF Name"
+            required
+        >
 
-    <br><br>
+        <br><br>
 
-    <!-- Opens the file explorer -->
-    <button
-        type="button"
-        id="uploadBtn"
-        class="btn"
-    >
-        Choose PDF
-    </button>
+        <input
+            type="file"
+            name="pdf"
+            accept=".pdf"
+            required
+        >
 
-    <p id="selectedFile">No PDF selected.</p>
+        <br><br>
+
+        <button class="btn">
+
+            Upload PDF
+
+        </button>
+
+    </form>
+
 </div>
 
 

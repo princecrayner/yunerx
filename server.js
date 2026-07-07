@@ -1,3 +1,5 @@
+const docsRoutes = require("./routes/docs");
+
 const pdfRoutes = require("./routes/pdfs");
 
 const multer = require("multer");
@@ -60,7 +62,7 @@ app.use(session({
     saveUninitialized: false
 }));
 app.use("/admin", adminRoutes);
-
+app.use("/docs", docsRoutes);
 app.use("/", pdfRoutes);
 app.use("/", authRoutes);
 app.use("/", videoRoutes);

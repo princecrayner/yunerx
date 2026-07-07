@@ -29,7 +29,10 @@ router.get("/", async (req, res) => {
         uploadedAt: -1
     });
 
-    res.json(docs);
+    res.render("docs", {
+        docs
+    });
+
 });
 
 module.exports = router;
