@@ -7,9 +7,21 @@ const Question = require("../models/Question");
 const upload = multer({ dest: "uploads/" });
 
 // Admin page
-router.get("/", (req, res) => {
-    res.render("admin");
+
+const PDF = require("../models/PDF");
+
+router.get("/", async (req, res) => {
+
+    const pdfs = await PDF.find().sort({
+        uploadedAt: -1
+    });
+
+    res.render("admin", {
+        pdfs
+    });
+
 });
+
 
 // Upload CSV
 router.post("/upload", upload.single("file"), async (req, res) => {
