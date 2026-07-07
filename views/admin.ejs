@@ -151,7 +151,13 @@
 
 <div class="container">
 
-    <h2>📄 Upload PDF</h2>
+    <h2>📚 Upload Docs Library</h2>
+
+    <p>
+
+        Upload general learning materials for students.
+
+    </p>
 
     <form
         action="/docs/upload"
@@ -162,7 +168,7 @@
         <input
             type="text"
             name="name"
-            placeholder="PDF Name"
+            placeholder="Document Title"
             required
         >
 
@@ -179,7 +185,7 @@
 
         <button class="btn">
 
-            Upload PDF
+            Upload Document
 
         </button>
 
@@ -188,31 +194,58 @@
 </div>
 
 
+
+
 <hr>
 
 <div class="container">
 
-    <h2>📚 Uploaded PDFs</h2>
+    <h2>📂 Docs Library</h2>
 
-    <% if(pdfs.length === 0){ %>
+    <% if(docs.length === 0){ %>
 
-        <p>No PDFs uploaded.</p>
+        <p>No documents uploaded yet.</p>
 
     <% } %>
 
-    <% pdfs.forEach(pdf => { %>
+    <% docs.forEach(doc => { %>
 
         <div class="pdf-card">
 
-            <h3><%= pdf.title %></h3>
+            <h3>
 
-            <p><strong>Subject:</strong> <%= pdf.subject %></p>
+                <%= doc.name %>
 
-            <p><strong>Level:</strong> <%= pdf.level %></p>
+            </h3>
 
-            <p><strong>Semester:</strong> <%= pdf.semester %></p>
+            <p>
 
-            <p><strong>Category:</strong> <%= pdf.category %></p>
+                Uploaded:
+                <%= new Date(doc.uploadedAt).toLocaleDateString() %>
+
+            </p>
+
+            <a
+                href="<%= doc.pdfUrl %>"
+                target="_blank"
+                class="btn"
+            >
+                👁 Preview
+            </a>
+
+            <a
+                href="/docs/edit/<%= doc._id %>"
+                class="btn"
+            >
+                ✏ Edit
+            </a>
+
+            <a
+                href="/docs/delete/<%= doc._id %>"
+                class="btn"
+            >
+                🗑 Delete
+            </a>
 
         </div>
 

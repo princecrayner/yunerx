@@ -5,6 +5,7 @@ const csv = require("csvtojson");
 const Question = require("../models/Question");
 
 const upload = multer({ dest: "uploads/" });
+const Document = require("../models/Document");
 
 // Admin page
 
@@ -12,13 +13,30 @@ const PDF = require("../models/PDF");
 
 router.get("/", async (req, res) => {
 
-    const pdfs = await PDF.find().sort({
-        uploadedAt: -1
-    });
+    try {
 
-    res.render("admin", {
-        pdfs
-    });
+        const pdfs = await PDF.find().sort({
+            uploadedAt: -1
+        });
+
+        const docs = await Document.find().sort({
+            uploadedAt: -1
+        });
+
+        res.render("admin", {
+
+            pdfs,
+            docs
+
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.send("Error loading admin dashboard.");
+
+    }
 
 });
 
