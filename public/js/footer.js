@@ -19,12 +19,6 @@ document.querySelector(".videos")
 
 });
 
-document.querySelector(".upload-btn")
-.addEventListener("click", () => {
-
-    window.location.href = "/uploadvideo";
-
-});
 
 
 document.querySelector(".groups")
