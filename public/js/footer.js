@@ -34,3 +34,17 @@ document.querySelector(".docs")
     window.location.href = "/docs";
 
 });
+
+// ===== UPLOAD BUTTON =====
+
+const uploadBtn = document.querySelector(".upload-btn");
+
+if (uploadBtn) {
+
+    uploadBtn.addEventListener("click", () => {
+
+        window.location.href = "/uploadvideo";
+
+    });
+
+}
