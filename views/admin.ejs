@@ -82,6 +82,71 @@
 
 <hr>
 
+
+<!-- ================= OBJECTIVE PAST QUESTIONS ================= -->
+
+<div class="container">
+
+    <h2>📝 Upload Objective Past Questions (PDF)</h2>
+
+    <p>
+        Upload objective past question papers in PDF format.
+    </p>
+
+    <form
+        action="/admin/upload-objective-pdf"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <input
+            type="text"
+            name="title"
+            placeholder="Past Question Title"
+            required
+        >
+
+        <input
+            type="text"
+            name="subject"
+            placeholder="Subject"
+            required
+        >
+
+        <input
+            type="text"
+            name="level"
+            placeholder="Level"
+            required
+        >
+
+        <input
+            type="text"
+            name="semester"
+            placeholder="Semester"
+            required
+        >
+
+        <input
+            type="file"
+            name="pdf"
+            accept=".pdf"
+            required
+        >
+
+        <br><br>
+
+        <button class="btn">
+            Upload Objective PDF
+        </button>
+
+    </form>
+
+</div>
+
+<hr>
+
+
 <!-- ================= PDF ================= -->
 
 <div class="container">
