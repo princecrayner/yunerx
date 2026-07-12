@@ -77,7 +77,7 @@ router.post("/uploadvideo", upload.single("video"), async (req, res) => {
 
     await video.save();
 
-    res.redirect("/video");
+    res.redirect("/profile");
 
 });
 
