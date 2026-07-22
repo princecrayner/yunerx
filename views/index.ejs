@@ -30,28 +30,6 @@
 <div class="topbar">
 
 
-<!-- PROFILE -->
-<button class="profile-btn">
-
-    <!-- PROFILE IMAGE -->
-    <img
-        src="<%= user && user.profilePic ? user.profilePic : '/profile.png' %>"
-        id="profileImage"
-        onerror="
-        this.style.display='none';
-        document.getElementById('userIcon').style.display='block';">
-
-
-    <!-- DEFAULT USER ICON -->
-    <i
-        class='bx bx-user'
-        id="userIcon"
-        style="<%= user && user.profilePic ? 'display:none;' : 'display:block;' %>"
-    ></i>
-
-</button>
-
-
     <!-- LOGO -->
     <div class="logo">
         <img src="/logo.png" alt="Logo">
