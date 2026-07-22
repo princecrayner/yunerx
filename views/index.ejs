@@ -10,6 +10,24 @@
 
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+  <style>
+.profile-pic-top{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:2px solid royalblue;
+
+    cursor:pointer;
+
+}
+  </style>
 </head>
 
 <body>
@@ -29,17 +47,31 @@
 <!-- TOPBAR -->
 <div class="topbar">
 
-        <!-- DEFAULT ICON -->
-        <div
-            class="default-user-icon"
-            id="userIcon"
-            style="<%= user.profilePic ? 'display:none;' : 'display:flex;' %>"
-        >
+<% if(user.profilePic){ %>
 
-            <i class='bx bx-user'></i>
+<a href="/profile">
 
-        </div>
+    <img
+        src="<%= user.profilePic %>"
+        class="profile-pic-top"
+        alt="Profile"
+    >
 
+</a>
+
+<% } else { %>
+
+<a href="/profile">
+
+    <div class="default-user-icon">
+
+        <i class='bx bx-user'></i>
+
+    </div>
+
+</a>
+
+<% } %>
 
     <!-- LOGO -->
     <div class="logo">
