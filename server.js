@@ -118,17 +118,7 @@ app.get("/contact", (req, res) => {
 });
 
 
-// PROFILE PAGE
-app.get("/profile", async (req, res) => {
 
-    res.render("profile", {
-
-        user: req.session.user,
-        videos: []
-
-    });
-
-});
 
 
 // UPLOAD PROFILE IMAGE

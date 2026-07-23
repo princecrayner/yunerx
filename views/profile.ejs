@@ -11,6 +11,17 @@
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
+<style>
+.profile-image{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid royalblue;
+}
+</style>
+
+
 </head>
 
 <body>
@@ -54,17 +65,26 @@
 
 
         <!-- DEFAULT ICON -->
-        <div
-            class="default-user-icon"
-            id="userIcon"
-            style="<%= user.profileImage ? 'display:none;' : 'display:flex;' %>"
+<div class="profile-header">
+
+    <% if(user && user.profileImage){ %>
+
+        <img
+            src="<%= user.profileImage %>"
+            class="profile-image"
         >
+
+    <% } else { %>
+
+        <div class="default-user-icon">
 
             <i class='bx bx-user'></i>
 
         </div>
 
-    </div>
+    <% } %>
+
+</div>
 
 
     <!-- USER INFO -->
