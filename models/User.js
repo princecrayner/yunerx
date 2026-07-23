@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
 profileImage: {
     type: String,
     default: "/profile.png"
-}
+},
 
     videos: [
         {
