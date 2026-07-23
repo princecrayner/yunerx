@@ -72,9 +72,9 @@ const user = await User.findById(req.session.user._id);
 res.render("profile", {
 
     user,
-    videos: []
-
+    videos
+  });
 });
-
+ 
 
 module.exports = router;
