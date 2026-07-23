@@ -30,24 +30,47 @@
 <!-- TOPBAR -->
 <div class="topbar">
 
-<% if (user && user.profilePic) { %>
+<div class="profile-area">
 
-<a href="/profile">
-    <img
-        src="<%= user.profilePic %>"
-        class="profile-pic-top"
-        alt="Profile">
-</a>
+    <% if (user && user.profilePic) { %>
 
-<% } else { %>
+        <a href="/profile">
 
-<a href="/profile">
-    <div class="default-user-icon">
-        <i class='bx bx-user'></i>
+            <img
+                src="<%= user.profilePic %>"
+                class="profile-pic-top"
+                alt="Profile"
+            >
+
+        </a>
+
+    <% } else { %>
+
+        <a href="/profile">
+
+            <div class="default-user-icon">
+
+                <i class='bx bx-user'></i>
+
+            </div>
+
+        </a>
+
+    <% } %>
+
+    <div class="welcome-text">
+
+        <span>Welcome home,</span>
+
+        <h3>
+
+            <%= user ? user.username : "Guest" %>
+
+        </h3>
+
     </div>
-</a>
 
-<% } %>
+</div>
 
 
     <!-- LOGO -->
