@@ -66,11 +66,15 @@ router.get("/profile", async (req, res) => {
         userId: req.session.user._id
     });
 
-    res.render("profile", {
-        user: req.session.user,
-        videos
-    });
+
+const user = await User.findById(req.session.user._id);
+
+res.render("profile", {
+
+    user,
+    videos: []
 
 });
+
 
 module.exports = router;

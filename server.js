@@ -1,5 +1,5 @@
 const docsRoutes = require("./routes/docs");
-
+const User = require("./models/User");
 const pdfRoutes = require("./routes/pdfs");
 
 const multer = require("multer");
@@ -136,8 +136,16 @@ app.post("/upload-profile-picture",
     upload.single("profilePic"),
     async (req, res) => {
 
-        req.session.user.profilePic =
-            "/uploads/" + req.file.filename;
+        const imagePath = "/uploads/" + req.file.filename;
+
+        await User.findByIdAndUpdate(
+            req.session.user._id,
+            {
+                profileImage: imagePath
+            }
+        );
+
+        req.session.user.profileImage = imagePath;
 
         res.redirect("/settings");
 

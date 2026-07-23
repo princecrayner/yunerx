@@ -10,10 +10,10 @@ const UserSchema = new mongoose.Schema({
 
     password: String,
 
-    profileImage: {
-        type: String,
-        default: "profile.png"
-    },
+profileImage: {
+    type: String,
+    default: "/profile.png"
+}
 
     videos: [
         {
