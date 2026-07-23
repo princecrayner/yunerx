@@ -79,8 +79,11 @@ function loadQuestions() {
     return JSON.parse(fs.readFileSync("questions.json"));
 }
 
-// Home page
+
+// home page
 app.get("/", (req, res) => {
+
+    console.log(req.session.user);
 
     res.render("index", {
 

@@ -47,31 +47,25 @@
 <!-- TOPBAR -->
 <div class="topbar">
 
-<% if(user.profilePic){ %>
+<% if (user && user.profilePic) { %>
 
 <a href="/profile">
-
     <img
         src="<%= user.profilePic %>"
         class="profile-pic-top"
-        alt="Profile"
-    >
-
+        alt="Profile">
 </a>
 
 <% } else { %>
 
 <a href="/profile">
-
     <div class="default-user-icon">
-
         <i class='bx bx-user'></i>
-
     </div>
-
 </a>
 
 <% } %>
+
 
     <!-- LOGO -->
     <div class="logo">
