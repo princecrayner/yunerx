@@ -98,7 +98,13 @@ app.get("/", (req, res) => {
 
 // SETTINGS PAGE
 app.get("/settings", (req, res) => {
-    res.render("settings");
+
+    res.render("settings", {
+
+        user: req.session.user
+
+    });
+
 });
 
 // ABOUT PAGE

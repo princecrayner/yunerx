@@ -170,6 +170,38 @@
           border-radius: 50px;
   
         }
+        
+.profile-upload-form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    margin-top:-10px;
+
+    margin-bottom:25px;
+
+}
+
+.profile-upload-form input{
+
+    background:#f3f4f6;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+}
+ 
+.profile-upload-form button{
+
+    width:100%;
+
+}
 
     </style>
 
@@ -214,27 +246,80 @@
 
     <!-- PROFILE PHOTO -->
 
-    <div class="setting-card">
+<div class="setting-card">
 
-        <div class="setting-left">
+    <div class="setting-left">
 
-            <i class='bx bx-image'></i>
+        <i class='bx bx-image'></i>
 
-            <div class="setting-text">
+        <div class="setting-text">
 
-                <h3>Profile Picture</h3>
+            <h3>Profile Picture</h3>
 
-                <p>Change your account profile image</p>
-
-            </div>
+            <p>Upload or change your profile picture</p>
 
         </div>
 
-        <button class="setting-btn">
-            Upload
-        </button>
-
     </div>
+
+</div>
+
+<div style="text-align:center;margin-bottom:20px;">
+
+    <% if(user && user.profilePic){ %>
+
+        <img
+            src="<%= user.profilePic %>"
+            style="
+                width:100px;
+                height:100px;
+                border-radius:50%;
+                object-fit:cover;
+                border:3px solid royalblue;
+            "
+        >
+
+    <% } else { %>
+
+        <i
+            class='bx bx-user-circle'
+            style="
+                font-size:100px;
+                color:#2563eb;
+            "
+        ></i>
+
+    <% } %>
+
+</div>
+
+
+<form
+    action="/upload-profile-picture"
+    method="POST"
+    enctype="multipart/form-data"
+    class="profile-upload-form"
+>
+
+<label>Select a profile picture</label>
+
+<input
+    type="file"
+    name="profilePic"
+    accept="image/*"
+    required
+>
+
+    <button
+        type="submit"
+        class="setting-btn"
+    >
+
+        Upload Picture
+
+    </button>
+
+</form>
 
     <!-- DARK MODE -->
 
@@ -434,7 +519,7 @@
 
     <div class="version">
 
-        SitApp Version 1.0.0
+        Yunerx Version 1.0.0
 
     </div>
 
