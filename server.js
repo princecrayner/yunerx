@@ -132,15 +132,14 @@ app.get("/profile", async (req, res) => {
 
 
 // UPLOAD PROFILE IMAGE
-app.post("/upload-profile",
-upload.single("profileImage"),
+app.post("/upload-profile-picture",
+    upload.single("profilePic"),
+    async (req, res) => {
 
-async (req, res) => {
+        req.session.user.profilePic =
+            "/uploads/" + req.file.filename;
 
-    req.session.user.profileImage =
-        "/uploads/" + req.file.filename;
-
-    res.redirect("/profile");
+        res.redirect("/settings");
 
 });
 
