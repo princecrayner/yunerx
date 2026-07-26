@@ -14,7 +14,7 @@
 .profile-area{
 
     display:flex;
-  text-decoration: none;
+  
     align-items:center;
 
     gap:15px;
@@ -63,7 +63,7 @@
 
     border-radius:50%;
     
-    text-decoration: none;
+    
     
     display:flex;
 
@@ -81,7 +81,7 @@
 
     font-size:28px;
 
-    text-decoration: none;
+    
 
     color:royalblue;
 
@@ -90,7 +90,7 @@
 .profile-pic-top{
 
     width:50px;
-  text-decoration: none;
+  
     height:50px;
 
     border-radius:50%;
@@ -101,6 +101,15 @@
 
     display:block;
 
+}
+
+.profile-link{
+    text-decoration: none;
+    display: inline-block;
+}
+
+.profile-link:hover{
+    text-decoration: none;
 }
 
     </style>
@@ -127,7 +136,7 @@
 
     <% if (user && user.profileImage) { %>
 
-        <a href="/profile">
+        <a href="/profile" class="profile-link">
 
             <img
                 src="<%= user.profileImage %>"
@@ -139,7 +148,7 @@
 
     <% } else { %>
 
-        <a href="/profile">
+        <a href="/profile" class="profile-link">
 
             <div class="default-user-icon">
 
