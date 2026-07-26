@@ -437,7 +437,7 @@ body{
 .footer-icon{
     width: 70px;
     height: 35px;
-    margin-top: -10;
+    margin-top: 1;
     background: #1f2937;
 
     border-radius: 50px;
