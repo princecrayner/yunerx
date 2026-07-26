@@ -436,16 +436,21 @@ body{
 /* FOOTER ICONS */
 .footer-icon{
     width: 70px;
-    height: 43px;
+    height: 60px;
 
     background: #1f2937;
-    margin-bottom: 20px;
 
-    border-radius: 50px;
+    border-radius: 15px;
+
     text-decoration: none;
+
     display: flex;
+    flex-direction: column;
+
     justify-content: center;
     align-items: center;
+
+    gap: 4px;
 
     cursor: pointer;
 
@@ -453,8 +458,14 @@ body{
 }
 
 .footer-icon i{
-    font-size: 25px;
-    color: #fff;
+    font-size: 24px;
+    color: white;
+}
+
+.footer-icon span{
+    font-size: 12px;
+    color: white;
+    font-weight: 500;
 }
 
 .footer-icon:hover{
