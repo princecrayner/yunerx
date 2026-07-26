@@ -204,6 +204,7 @@ body{
   padding: 20px;
   border-radius: 15px;
   border: 1px solid #285ccc;
+ transition: 0.3s ease;
 }
 
 .objective-btn a:hover {
