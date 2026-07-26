@@ -436,8 +436,8 @@ body{
 /* FOOTER ICONS */
 .footer-icon{
     width: 70px;
-    height: 30px;
-
+    height: 35px;
+    margin-top: -10;
     background: #1f2937;
 
     border-radius: 50px;
