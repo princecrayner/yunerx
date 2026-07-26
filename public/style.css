@@ -256,6 +256,7 @@ body{
   padding: 30px;
   border-radius: 15px;
   border: 1px solid #fff2bd;
+ transition: 0.3s ease;
 }
 
 .level-btn a:hover {
@@ -437,7 +438,7 @@ body{
 .footer-icon{
     width: 70px;
     height: 35px;
-    margin-top: 1;
+    
     background: #1f2937;
 
     border-radius: 50px;
