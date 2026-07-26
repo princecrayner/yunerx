@@ -134,31 +134,34 @@
 
 <div class="profile-area">
 
-    <% if (user && user.profileImage) { %>
+<% if (user && user.profileImage) { %>
 
-        <a href="/profile" class="profile-link">
+    <a href="/profile" class="profile-link">
 
-            <img
-                src="<%= user.profileImage %>"
-                class="profile-pic-top"
-                alt="Profile"
-            >
+        <img
+            src="<%= user.profileImage %>"
+            class="profile-pic-top"
+            alt=""
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        >
 
-        </a>
+        <div class="default-user-icon" style="display:none;">
+            <i class='bx bx-user'></i>
+        </div>
 
-    <% } else { %>
+    </a>
 
-        <a href="/profile" class="profile-link">
+<% } else { %>
 
-            <div class="default-user-icon">
+    <a href="/profile" class="profile-link">
 
-                <i class='bx bx-user'></i>
+        <div class="default-user-icon">
+            <i class='bx bx-user'></i>
+        </div>
 
-            </div>
+    </a>
 
-        </a>
-
-    <% } %>
+<% } %>
 
     <div class="welcome-text">
 
