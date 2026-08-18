@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Semesters</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📅 Semesters</h1>
+
+    <p>
+        Level: <strong><%= level %></strong>
+    </p>
+
+    <p>
+        Category: <strong><%= category %></strong>
+    </p>
+
+</div>
+
+
+<div class="container">
+
+    <% if (semesters.length === 0) { %>
+
+        <p>
+            No semesters available.
+        </p>
+
+    <% } %>
+
+
+    <% semesters.forEach(semester => { %>
+
+        <a
+            href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/category/<%= encodeURIComponent(category) %>/semester/<%= encodeURIComponent(semester) %>"
+            class="btn"
+        >
+
+            <%= semester %>
+
+        </a>
+
+    <% }) %>
+
+</div>
+
+
+</body>
+</html>

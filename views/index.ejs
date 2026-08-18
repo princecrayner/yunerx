@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yunerx</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+.profile-area{
+
+    display:flex;
+  
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.welcome-text{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+}
+
+.welcome-text span{
+
+    font-size:15px;
+
+    color:#777;
+
+    font-weight:500;
+
+}
+
+.welcome-text h3{
+
+    margin:0;
+
+    font-size:24px;
+
+    color:#111;
+
+    font-weight:700;
+
+}
+  
+.default-user-icon{
+
+    width:40px;
+
+    height:40px;
+
+    border:3px solid royalblue;
+
+    border-radius:50%;
+    
+    
+    
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#fff;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+    
+    margin-left: 10px;
+
+}
+
+.default-user-icon i{
+
+    font-size:28px;
+
+    
+
+    color:royalblue;
+
+}
+
+.profile-pic-top{
+
+    width:40px;
+  
+    height:40px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid royalblue;
+
+    display:block;
+    
+    margin-left: 10px;
+
+}
+
+.profile-link{
+    text-decoration: none;
+    display: inline-block;
+}
+
+.profile-link:hover{
+    text-decoration: none;
+}
+
+    </style>
+ </head>
+
+<body>
+
+<!-- Splash Screen -->
+<div class="splash-screen" id="splash">
+
+    <img src="/logo.png" alt="Logo">
+
+    <h1>YUNERX</h1>
+    <p>Connect • Learn • Share</p>
+    
+
+</div>
+
+
+<!-- TOPBAR -->
+<div class="topbar">
+
+<div class="profile-area">
+
+<% if (user && user.profileImage) { %>
+
+    <a href="/profile" class="profile-link">
+
+        <img
+            src="<%= user.profileImage %>"
+            class="profile-pic-top"
+            alt=""
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        >
+
+        <div class="default-user-icon" style="display:none;">
+            <i class='bx bx-user'></i>
+        </div>
+
+    </a>
+
+<% } else { %>
+
+    <a href="/profile" class="profile-link">
+
+        <div class="default-user-icon">
+            <i class='bx bx-user'></i>
+        </div>
+
+    </a>
+
+<% } %>
+
+    <div class="welcome-text">
+
+        <span>Welcome home,</span>
+
+        <h3>
+
+            <%= user ? user.username : "Guest" %>
+
+        </h3>
+
+    </div>
+
+</div>
+
+
+    <!-- LOGO -->
+    <div class="logo">
+        <img src="/logo.png" alt="Logo">
+    </div>
+
+
+</div>
+
+
+<!-- SLIDER -->
+<div class="imgContainer">
+
+    <div class="wrapper">
+
+        <img src="image1.png" alt="image">
+        <img src="image2.png" alt="image">
+        <img src="image3.png" alt="image">
+        <img src="image4.png" alt="image">
+        <img src="image5.png" alt="image">
+
+
+
+        <img src="image1.png" aria-hidden="true">
+        <img src="image2.png" aria-hidden="true">
+        <img src="image3.png" aria-hidden="true">
+        <img src="image4.png" aria-hidden="true">
+        <img src="image5.png" aria-hidden="true">
+
+    </div>
+
+</div>
+
+  
+
+<!-- MAIN CONTENT -->
+<div class="objective-section">
+
+    <h1>📚 Yunerx Learning</h1>
+
+<div class="objective-btn">
+  
+    <a href="/objectivequizes">
+        Start Objective Quize
+    </a>
+
+    <a href="/objective-pdfs">
+        View Objective Questions
+    </a>
+    
+</div>    
+    
+<div class="objective-hdr">
+    <h6>Take objective quizzes here</h6>
+    
+    <h6>Objective questions from all arears</h6>
+</div>
+</div>
+
+
+<!-- LEVELS -->
+
+<div class="level-section">
+
+        <h3>Select Level</h3>
+
+        <h6>
+    Select your level for past theory questions
+</h6>
+
+<div class="level-btn">
+
+    <a
+        href="/theory-pdfs/level/100"
+        class="levelBtn"
+    >
+        LEVEL 100
+    </a>
+
+    <a
+        href="/theory-pdfs/level/200"
+        class="levelBtn"
+    >
+        LEVEL 200
+    </a>
+
+    <a
+        href="/theory-pdfs/level/300"
+        class="levelBtn"
+    >
+        LEVEL 300
+    </a>
+
+</div>
+
+
+</div>
+
+
+
+
+<!-- Footer -->
+<div class="footer">
+
+    <div class="footer-item">
+        <a href="/" class="footer-icon">
+            <i class='bx bx-home-alt'></i>
+        </a>
+        <span class="footer-text">Home</span>
+    </div>
+
+    <div class="footer-item">
+        <a href="/chats" class="footer-icon">
+            <i class='bx bx-message-rounded-dots'></i>
+        </a>
+        <span class="footer-text">Chats</span>
+    </div>
+
+    <div class="footer-item">
+        <a href="/videos" class="footer-icon">
+            <i class='bx bx-play-circle'></i>
+        </a>
+        <span class="footer-text">Videos</span>
+    </div>
+
+    <div class="footer-item">
+        <a href="/docs" class="footer-icon">
+            <i class='bx bx-file'></i>
+        </a>
+        <span class="footer-text">Docs</span>
+    </div>
+
+</div>
+
+
+
+<script src="/script.js"></script>
+<script src="/js/footer.js"></script>
+
+</body>
+</html>

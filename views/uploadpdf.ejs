@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload PDF</title>
+</head>
+<body>
+
+<h1>Upload Theory PDF</h1>
+
+<form
+    action="/admin/upload-pdf"
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    <input
+        type="text"
+        name="title"
+        placeholder="PDF Title"
+        required
+    >
+
+    <input
+        type="text"
+        name="subject"
+        placeholder="Subject"
+        required
+    >
+
+    <input
+        type="text"
+        name="level"
+        placeholder="Level"
+        required
+    >
+
+    <input
+        type="text"
+        name="semester"
+        placeholder="Semester"
+        required
+    >
+
+    <input
+        type="text"
+        name="category"
+        placeholder="Category"
+        required
+    >
+
+    <input
+        type="file"
+        name="pdf"
+        accept=".pdf"
+        required
+    >
+
+    <button type="submit">
+        Upload PDF
+    </button>
+
+</form>
+
+</body>
+</html>

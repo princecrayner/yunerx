@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Goodbye</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/mobile.css" media="(max-width: 767px)">
+    <link rel="stylesheet" href="/desktop.css" media="(min-width: 1024px)">
+
+    <style>
+
+        .goodbye-box{
+
+            width: 75%;
+            max-width: 400px;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            margin: auto;
+            margin-top: 120px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="goodbye-box">
+
+        <h1>Logged Out Successfully 👋</h1>
+
+        <p>Redirecting to homepage...</p>
+
+    </div>
+
+    <script>
+
+        setTimeout(() => {
+
+            window.location.href = "/";
+
+        }, 3000);
+
+    </script>
+
+</body>
+
+</html>

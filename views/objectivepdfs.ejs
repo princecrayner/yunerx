@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Objective Past Questions</title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📝 Objective Past Questions</h1>
+
+    <p>
+        Select a semester.
+    </p>
+
+</div>
+
+
+<div class="container">
+
+    <% if (semesters.length === 0) { %>
+
+        <p>
+            No objective past questions available yet.
+        </p>
+
+    <% } %>
+
+
+    <% semesters.forEach(semester => { %>
+
+        <a
+            href="/objective-pdfs/semester/<%= encodeURIComponent(semester) %>"
+            class="btn"
+        >
+
+            📅 <%= semester %>
+
+        </a>
+
+    <% }) %>
+
+</div>
+
+
+</body>
+
+</html>

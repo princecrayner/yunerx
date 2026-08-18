@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/mobile.css" media="(max-width: 767px)">
+    <link rel="stylesheet" href="/desktop.css" media="(min-width: 1024px)">
+    
+     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+
+        .logout-profile{
+
+         width: 90px;
+         height: 90px;
+
+         border-radius: 50%;
+
+         object-fit: cover;
+
+         border: 4px solid #2563eb;
+
+         margin-bottom: 15px;
+
+         box-shadow: 0 0 20px rgba(37,99,235,0.4);
+
+         }
+
+        .logout-container{
+
+            width: 80%;
+            max-width: 400px;
+            background: #111827;
+            padding: 30px;
+            border-radius: 15px;
+
+            margin: auto;
+            margin-top: 120px;
+
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+
+        }
+
+        .logout-title{
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .logout-text{
+            color: #cbd5e1;
+            margin-bottom: 25px;
+        }
+
+        .logout-buttons{
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .yes-btn{
+
+            background: red;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .no-btn{
+
+            background: #2563eb;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+         .logout-container{
+
+          animation: popup 0.4s ease;
+
+         }
+
+
+         @keyframes popup{
+
+         0%{
+           transform: scale(0.7);
+           opacity: 0;
+         }
+
+           100%{
+           transform: scale(1);
+           opacity: 1;
+       }
+
+    }
+
+
+        .back-btn i{
+          position: fixed;
+          display: flex;
+          flex-direction: flex-start;
+          font-size: 20px;
+          height: 50px;
+          width: 50px;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          margin-top: 20px;
+          margin-left: 20px;
+          color: white;
+
+        }
+
+        .back-btn i:hover{
+          background: #2563eb;
+          border-radius: 50px;
+          z-index: 2000;
+
+        }
+
+
+    </style>
+
+</head>
+
+<body>
+
+   <div onclick="history.back()" class="back-btn">
+     <i class='bx bx-arrow-back'></i>
+   </div>
+
+
+<h1 class="logout-title">
+<img src="/profile.png" class="logout-profile">
+
+<div class="logout-container">
+
+    <h1 class="logout-title">Logout</h1>
+
+    <p class="logout-text">
+        Are you sure you want to logout from your account?<br>
+        See you again 👋
+    </p>
+
+    <div class="logout-buttons">
+
+        <a href="/confirmlogout" class="yes-btn">
+            Yes Logout
+        </a>
+
+        <a href="/" class="no-btn">
+            Cancel
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

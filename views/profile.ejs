@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Profile</title>
+
+<link rel="stylesheet" href="/css/profile.css">
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+.profile-image{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid royalblue;
+}
+</style>
+
+
+</head>
+
+<body>
+  
+<div class="nav-item">
+     
+    <!-- HOME -->
+    <a href="/" class="footer-icon home">
+        <i class='bx bx-home-alt'></i>
+    </a>
+
+    <!-- MENU -->
+    <div class="menu-icon" id="menuBtn"> 
+       <i class='bx bx-menu'></i>
+    </div>
+</div>
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+
+    <a href="/settings">Settings</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/logout">Logout</a>
+
+    <div class="copyrighttext">
+
+        <p>© 2026 Yunerx</p>
+
+    </div>
+
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+
+
+<div class="profile-header">
+
+
+        <!-- DEFAULT ICON -->
+<div class="profile-header">
+
+    <% if(user && user.profileImage){ %>
+
+        <img
+            src="<%= user.profileImage %>"
+            class="profile-image"
+        >
+
+    <% } else { %>
+
+        <div class="default-user-icon">
+
+            <i class='bx bx-user'></i>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+
+    <!-- USER INFO -->
+    <div class="profile-info">
+
+        <h1><%= user.username %></h1>
+
+        <p><%= user.email %></p>
+
+        <p><%= user.phone %></p>
+
+    </div>
+
+</div>
+
+
+
+
+<h2 style="padding-left:20px;">Your Videos</h2>
+
+
+<div class="video-grid">
+
+<% videos.forEach(video => { %>
+
+<div class="video-card">
+
+<video controls>
+
+<source src="<%= video.videoUrl %>">
+
+</video>
+
+<p><%= video.title %></p>
+
+</div>
+
+<% }) %>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+    <div class="footer-icon chats">
+        <i class='bx bx-message-rounded-dots'></i>
+    </div>
+
+
+    <div class="footer-icon videos">
+        <i class='bx bx-play-circle'></i>
+    </div>
+
+</div>
+
+<script src="/js/footer.js"></script>
+<script src="/script.js"></script>
+
+</body>
+</html>

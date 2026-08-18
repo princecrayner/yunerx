@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= semester %> - Past Theory Questions
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>
+        📖 Past Theory Questions
+    </h1>
+
+
+    <h2>
+        <%= semester %>
+    </h2>
+
+
+    <p>
+        Select a subject to view available past questions.
+    </p>
+
+</div>
+
+
+
+<div class="container">
+
+    <% if (subjects.length === 0) { %>
+
+        <p>
+            No theory past questions available
+            for this semester.
+        </p>
+
+    <% } %>
+
+
+
+    <% subjects.forEach(subject => { %>
+
+        <a href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/category/<%= encodeURIComponent(category) %>/semester/<%= encodeURIComponent(semester) %>/subject/<%= encodeURIComponent(subject) %>">
+
+            📚 <%= subject %>
+
+        </a>
+
+    <% }) %>
+
+</div>
+
+
+</body>
+
+</html>

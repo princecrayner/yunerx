@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= subject %> - Past Theory Questions
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
+    <style>
+
+        .pdf-card {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            margin: 15px 0;
+
+            box-shadow:
+                0 2px 10px rgba(0,0,0,0.12);
+
+        }
+
+
+        .pdf-card h3 {
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .pdf-card p {
+
+            color: #555;
+
+            margin: 6px 0;
+
+        }
+
+
+        .pdf-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            margin-top: 15px;
+
+        }
+
+
+        .pdf-actions a {
+
+            flex: 1;
+
+            min-width: 120px;
+
+            text-align: center;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            background: #2563eb;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+        }
+
+
+        .pdf-actions a:hover {
+
+            background: #1d4ed8;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================== -->
+
+<div class="container">
+
+    <h1>
+        📖 <%= subject %>
+    </h1>
+
+
+    <p>
+
+        Semester:
+
+        <strong>
+            <%= semester %>
+        </strong>
+
+    </p>
+
+
+    <p>
+        Past Theory Questions
+    </p>
+
+</div>
+
+
+
+<!-- =========================
+     PDF LIST
+========================== -->
+
+<div class="container">
+
+
+    <% if (pdfs.length === 0) { %>
+
+        <p>
+            No past theory questions available
+            for this subject.
+        </p>
+
+    <% } %>
+
+
+
+    <% pdfs.forEach(pdf => { %>
+
+        <div class="pdf-card">
+
+
+            <h3>
+
+                📄 <%= pdf.title %>
+
+            </h3>
+
+
+            <p>
+
+                <strong>
+                    Subject:
+                </strong>
+
+                <%= pdf.subject %>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Level:
+                </strong>
+
+                <%= pdf.level %>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Semester:
+                </strong>
+
+                <%= pdf.semester %>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Category:
+                </strong>
+
+                <%= pdf.category %>
+
+            </p>
+
+
+            <p>
+
+                Uploaded:
+
+                <%= new Date(
+                    pdf.uploadedAt
+                ).toLocaleDateString() %>
+
+            </p>
+
+
+
+            <!-- =========================
+                 ACTIONS
+            ========================== -->
+
+            <div class="pdf-actions">
+
+
+                <a
+                    href="<%= pdf.pdfUrl %>"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+
+                    👁 View PDF
+
+                </a>
+
+
+
+                <a
+                    href="<%= pdf.pdfUrl %>"
+                    target="_blank"
+                    download
+                >
+
+                    ⬇ Download
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    <% }) %>
+
+
+</div>
+
+
+</body>
+
+</html>

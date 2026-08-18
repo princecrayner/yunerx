@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        <%= subject %> - Objective Past Questions
+    </title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #666;
+        }
+
+        .pdf-card {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            margin: 15px 0;
+
+            box-shadow:
+                0 2px 10px rgba(0,0,0,0.12);
+
+        }
+
+        .pdf-card h3 {
+
+            margin: 0 0 10px 0;
+
+        }
+
+        .pdf-card p {
+
+            color: #666;
+
+            margin: 6px 0;
+
+        }
+
+        .pdf-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            margin-top: 15px;
+
+        }
+
+        .pdf-actions a {
+
+            flex: 1;
+
+            min-width: 120px;
+
+            text-align: center;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            background: #2563eb;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+        }
+
+        .pdf-actions a:hover {
+
+            background: #1d4ed8;
+
+        }
+
+        .back-btn {
+
+            display: inline-block;
+
+            margin-bottom: 15px;
+
+            text-decoration: none;
+
+            color: #2563eb;
+
+            font-weight: bold;
+
+        }
+
+        .empty-message {
+
+            text-align: center;
+
+            padding: 30px;
+
+            color: #666;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <a
+        href="/objective-pdfs/semester/<%= encodeURIComponent(semester) %>"
+        class="back-btn"
+    >
+        ← Back to Subjects
+    </a>
+
+
+    <div class="page-header">
+
+        <h1>
+            📝 <%= subject %>
+        </h1>
+
+        <p>
+            Semester:
+            <strong><%= semester %></strong>
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <% if (pdfs.length === 0) { %>
+
+        <div class="empty-message">
+
+            <h3>
+                No past questions available
+            </h3>
+
+            <p>
+                There are currently no objective past questions
+                uploaded for this subject.
+            </p>
+
+        </div>
+
+    <% } else { %>
+
+
+        <h2>
+            Past Questions
+        </h2>
+
+
+        <% pdfs.forEach((pdf, index) => { %>
+
+            <div class="pdf-card">
+
+                <h3>
+                    📄 <%= pdf.title %>
+                </h3>
+
+
+                <p>
+                    <strong>Subject:</strong>
+                    <%= pdf.subject %>
+                </p>
+
+
+                <p>
+                    <strong>Semester:</strong>
+                    <%= pdf.semester %>
+                </p>
+
+
+                <p>
+                    <strong>Uploaded:</strong>
+
+                    <%= new Date(
+                        pdf.uploadedAt
+                    ).toLocaleDateString() %>
+
+                </p>
+
+
+                <p>
+                    <strong>Downloads:</strong>
+                    <%= pdf.downloads || 0 %>
+                </p>
+
+
+                <div class="pdf-actions">
+
+
+                    <a
+                        href="<%= pdf.pdfUrl %>"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        👁 View PDF
+                    </a>
+
+
+                    <a
+    href="/objective-pdfs/download/<%= pdf._id %>"
+>
+    ⬇ Download
+</a>
+
+
+                </div>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+</div>
+
+
+</body>
+
+</html>

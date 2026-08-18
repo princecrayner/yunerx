@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Videos</title>
+
+<link rel="stylesheet" href="/css/videos.css">
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+</head>
+<body>
+  
+    <!-- UPLOAD -->
+    <a href="/uploadvideo" class="upload-btn">
+      <i class='bx bx-plus'></i>
+    </a>
+
+<h1 style="padding-left:20px;">All Videos</h1>
+
+<div class="video-grid">
+
+<% videos.forEach(video => { %>
+
+<div class="video-card">
+
+<video controls>
+<source src="<%= video.videoUrl %>">
+</video>
+
+<p><%= video.title %></p>
+
+</div>
+
+<% }) %>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+    <div class="footer-icon chats">
+        <i class='bx bx-message-rounded-dots'></i>
+    </div>
+
+
+
+    <div class="footer-icon videos">
+        <i class='bx bx-play-circle'></i>
+    </div>
+
+</div>
+
+
+<script src="/script.js"></script>
+</body>
+</html>

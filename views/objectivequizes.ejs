@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Objective Quizzes - Yunerx</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        .quiz-container {
+
+            max-width: 900px;
+
+            margin: 30px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .quiz-container h1 {
+
+            text-align: center;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .quiz-description {
+
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .level-card {
+
+            background: #fff;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,.1);
+
+        }
+
+
+        .level-card h2 {
+
+            margin-top: 0;
+
+            color: royalblue;
+
+        }
+
+
+        .subject-card {
+
+            border: 1px solid #eee;
+
+            border-radius: 10px;
+
+            padding: 15px;
+
+            margin-top: 15px;
+
+        }
+
+
+        .subject-card h3 {
+
+            margin-top: 0;
+
+        }
+
+
+        .category-list {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+        }
+
+
+        .category-btn {
+
+            display: inline-block;
+
+            padding: 10px 14px;
+
+            background: royalblue;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+        }
+
+
+        .category-btn:hover {
+
+            opacity: .85;
+
+        }
+
+
+        .back-btn {
+
+            display: inline-block;
+
+            margin-bottom: 20px;
+
+            text-decoration: none;
+
+            color: royalblue;
+
+        }
+
+
+        .empty {
+
+            text-align: center;
+
+            color: #777;
+
+            padding: 30px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="quiz-container">
+
+
+    <a
+        href="/"
+        class="back-btn"
+    >
+
+        <i class="bx bx-arrow-back"></i>
+
+        Back Home
+
+    </a>
+
+
+    <h1>
+        📚 Objective Quizzes
+    </h1>
+
+
+    <p class="quiz-description">
+
+        Select your level, subject and category
+        to start answering questions.
+
+    </p>
+
+
+
+    <% if (!levels || Object.keys(levels).length === 0) { %>
+
+        <div class="empty">
+
+            No objective questions have been uploaded yet.
+
+        </div>
+
+    <% } else { %>
+
+
+        <% Object.values(levels).forEach(level => { %>
+
+
+            <div class="level-card">
+
+
+                <h2>
+
+                    LEVEL <%= level.level %>
+                    <%= level.section %>
+
+                </h2>
+
+
+
+                <% Object.values(level.subjects)
+                    .forEach(subject => { %>
+
+
+                    <div class="subject-card">
+
+
+                        <h3>
+
+                            📖 <%= subject.name %>
+
+                        </h3>
+
+
+                        <div class="category-list">
+
+
+                            <% subject.categories
+                                .forEach(category => { %>
+
+
+                                <a
+                                    href="/objectivequizes/<%= level.level %>/<%= encodeURIComponent(level.section) %>/<%= encodeURIComponent(subject.name) %>/<%= encodeURIComponent(category) %>"
+                                    class="category-btn"
+                                >
+
+                                    <%= category %>
+
+                                </a>
+
+
+                            <% }) %>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                <% }) %>
+
+
+            </div>
+
+
+        <% }) %>
+
+
+    <% } %>
+
+
+</div>
+
+
+</body>
+
+</html>

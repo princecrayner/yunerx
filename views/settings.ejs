@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Settings - Yunerx</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/mobile.css" media="(max-width: 767px)">
+    <link rel="stylesheet" href="/desktop.css" media="(min-width: 1024px)">
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+
+        .settings-container{
+
+            width: 85%;
+            max-width: 800px;
+
+            margin: auto;
+            margin-top: 90px;
+            margin-bottom: 100px;
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 20px;
+
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+
+        }
+
+        .settings-title{
+
+            text-align: center;
+
+            color: #2563eb;
+
+            margin-bottom: 30px;
+
+            font-size: 35px;
+
+        }
+
+        .setting-card{
+
+            background: #f3f4f6;
+
+            padding: 18px;
+
+            border-radius: 15px;
+
+            margin-bottom: 18px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            transition: 0.3s ease;
+
+        }
+
+        .setting-card:hover{
+
+            transform: translateY(-3px);
+
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+
+        }
+
+        .setting-left{
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+        }
+
+        .setting-left i{
+
+            font-size: 28px;
+
+            color: #2563eb;
+
+        }
+
+        .setting-text h3{
+
+            margin-bottom: 3px;
+
+        }
+
+        .setting-text p{
+
+            color: gray;
+
+            font-size: 14px;
+
+        }
+
+        .setting-btn{
+
+            background: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            transition: 0.3s ease;
+
+        }
+
+        .setting-btn:hover{
+
+            background: #1d4ed8;
+
+        }
+
+        .danger{
+
+            background: #dc2626;
+
+        }
+
+        .danger:hover{
+
+            background: #b91c1c;
+
+        }
+
+        .version{
+
+            text-align: center;
+
+            margin-top: 30px;
+
+            color: gray;
+
+            font-size: 14px;
+
+        }
+
+        .back-btn i{
+          position: relative;
+          display: flex;
+          flex-direction: flex-start;
+          font-size: 20px;
+          height: 50px;
+          width: 50px;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+     
+        }
+
+        .back-btn i:hover{
+          background: #f5f5f5;
+          border-radius: 50px;
+  
+        }
+        
+.profile-upload-form{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+    margin-top:-10px;
+
+    margin-bottom:25px;
+
+}
+
+.profile-upload-form input{
+
+    background:#f3f4f6;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+}
+ 
+.profile-upload-form button{
+
+    width:100%;
+
+}
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="settings-container">
+
+   <div onclick="history.back()" class="back-btn">
+    <i class='bx bx-arrow-back'></i>
+   </div>
+
+
+    <h1 class="settings-title">
+        Settings
+    </h1>
+
+    <!-- PROFILE -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-user'></i>
+
+            <div class="setting-text">
+
+                <h3>Profile Settings</h3>
+
+                <p>Edit your username and profile details</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Edit
+        </button>
+
+    </div>
+
+    <!-- PROFILE PHOTO -->
+
+<div class="setting-card">
+
+    <div class="setting-left">
+
+        <i class='bx bx-image'></i>
+
+        <div class="setting-text">
+
+            <h3>Profile Picture</h3>
+
+            <p>Upload or change your profile picture</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div style="text-align:center;margin-bottom:20px;">
+
+    <% if(user && user.profileImage){ %>
+
+        <img
+            src="<%= user.profileImage %>"
+            style="
+                width:100px;
+                height:100px;
+                border-radius:50%;
+                object-fit:cover;
+                border:3px solid royalblue;
+            "
+        >
+
+    <% } else { %>
+
+        <i
+            class='bx bx-user-circle'
+            style="
+                font-size:100px;
+                color:#2563eb;
+            "
+        ></i>
+
+    <% } %>
+
+</div>
+
+
+<form
+    action="/upload-profile-picture"
+    method="POST"
+    enctype="multipart/form-data"
+    class="profile-upload-form"
+>
+
+<label>Select a profile picture</label>
+
+<input
+    type="file"
+    name="profilePic"
+    accept="image/*"
+    required
+>
+
+    <button
+        type="submit"
+        class="setting-btn"
+    >
+
+        Upload Picture
+
+    </button>
+
+</form>
+
+    <!-- DARK MODE -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-moon'></i>
+
+            <div class="setting-text">
+
+                <h3>Dark Mode</h3>
+
+                <p>Switch between light and dark theme</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Enable
+        </button>
+
+    </div>
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-bell'></i>
+
+            <div class="setting-text">
+
+                <h3>Notifications</h3>
+
+                <p>Manage app alerts and notifications</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Manage
+        </button>
+
+    </div>
+
+    <!-- PRIVACY -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-lock-alt'></i>
+
+            <div class="setting-text">
+
+                <h3>Privacy & Security</h3>
+
+                <p>Control account privacy and security</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Open
+        </button>
+
+    </div>
+
+    <!-- CHAT -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-message-rounded'></i>
+
+            <div class="setting-text">
+
+                <h3>Chat Settings</h3>
+
+                <p>Manage chats, seen status, and messages</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Open
+        </button>
+
+    </div>
+
+    <!-- VIDEO -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-video'></i>
+
+            <div class="setting-text">
+
+                <h3>Video Settings</h3>
+
+                <p>Manage uploads and video preferences</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Open
+        </button>
+
+    </div>
+
+    <!-- ACCOUNT -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-shield'></i>
+
+            <div class="setting-text">
+
+                <h3>Account Security</h3>
+
+                <p>Password and login protection</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn">
+            Secure
+        </button>
+
+    </div>
+
+    <!-- LOGOUT -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-log-out'></i>
+
+            <div class="setting-text">
+
+                <h3>Logout</h3>
+
+                <p>Sign out from your account</p>
+
+            </div>
+
+        </div>
+
+        <a href="/logout">
+
+            <button class="setting-btn danger">
+                Logout
+            </button>
+
+        </a>
+
+    </div>
+
+    <!-- DELETE -->
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-trash'></i>
+
+            <div class="setting-text">
+
+                <h3>Delete Account</h3>
+
+                <p>Permanently remove your account</p>
+
+            </div>
+
+        </div>
+
+        <button class="setting-btn danger">
+            Delete
+        </button>
+
+    </div>
+
+    <div class="version">
+
+        Yunerx Version 1.0.0
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

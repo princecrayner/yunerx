@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Dashboard</title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
+    <style>
+
+        .pdf-card {
+
+            background: #fff;
+
+            border-radius: 10px;
+
+            padding: 15px;
+
+            margin: 15px 0;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,.1);
+
+        }
+
+        .pdf-card h3 {
+
+            margin-bottom: 10px;
+
+        }
+
+        .pdf-card p {
+
+            margin: 5px 0;
+
+        }
+
+        .admin-search {
+
+            width: 100%;
+
+            padding: 12px;
+
+            margin: 10px 0 20px;
+
+            box-sizing: border-box;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+        }
+
+        .admin-search:focus {
+
+            outline: none;
+
+            border-color: #2563eb;
+
+        }
+
+        .admin-section-title {
+
+            margin-bottom: 8px;
+
+        }
+
+        .library-empty {
+
+            color: #777;
+
+            text-align: center;
+
+            padding: 20px;
+
+        }
+
+        .section-divider {
+
+            margin: 30px 0;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     ADMIN HEADER
+===================================================== -->
+
+<div class="container">
+
+    <h1>
+        🛠 Admin Dashboard
+    </h1>
+
+</div>
+
+
+
+<!-- =====================================================
+     1. OBJECTIVE QUIZ CSV
+===================================================== -->
+
+<div class="container">
+
+    <h2 class="admin-section-title">
+        📤 Upload Objective Quiz
+    </h2>
+
+    <p>
+        Select where this quiz belongs, then upload the CSV questions.
+    </p>
+
+
+<form
+    action="/admin/upload-csv"
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+        <!-- LEVEL -->
+
+        <label>
+            <strong>Level</strong>
+        </label>
+
+        <br>
+
+        <select
+            name="level"
+            required
+        >
+
+            <option value="">
+                -- Select Level --
+            </option>
+
+            <option value="100 Primary">
+                100 Primary
+            </option>
+
+            <option value="200 Primary">
+                200 Primary
+            </option>
+
+            <option value="300 Primary">
+                300 Primary
+            </option>
+
+            <option value="100 JHS">
+                100 JHS
+            </option>
+
+            <option value="200 JHS">
+                200 JHS
+            </option>
+
+            <option value="300 JHS">
+                300 JHS
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <!-- CATEGORY -->
+
+        <label>
+            <strong>Category</strong>
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            name="category"
+            placeholder="e.g. Mathematics"
+            required
+        >
+
+        <br><br>
+
+
+        <!-- SEMESTER -->
+
+        <label>
+            <strong>Semester</strong>
+        </label>
+
+        <br>
+
+        <select
+            name="semester"
+            required
+        >
+
+            <option value="">
+                -- Select Semester --
+            </option>
+
+            <option value="First Semester">
+                First Semester
+            </option>
+
+            <option value="Second Semester">
+                Second Semester
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <!-- SUBJECT -->
+
+        <label>
+            <strong>Subject</strong>
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            name="subject"
+            placeholder="e.g. Elementary Algebra"
+            required
+        >
+
+        <br><br>
+
+
+        <!-- QUIZ -->
+
+        <label>
+            <strong>Quiz</strong>
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            name="quiz"
+            placeholder="e.g. Quiz 1"
+            required
+        >
+
+        <br><br>
+
+
+        <!-- CSV FILE -->
+
+        <label>
+            <strong>CSV Questions File</strong>
+        </label>
+
+        <br>
+
+        <input
+    type="file"
+    name="csvFile"
+    accept=".csv,text/csv"
+    required
+>
+
+        <br><br>
+
+
+        <button
+            class="btn"
+            type="submit"
+        >
+            📤 Upload Quiz
+        </button>
+
+    </form>
+
+
+    <br>
+
+
+    <p>
+        <strong>CSV format:</strong>
+    </p>
+
+    <p>
+        question, A, B, C, D, answer
+    </p>
+
+</div>
+
+
+<hr class="section-divider">
+
+
+
+<!-- =====================================================
+     2. OBJECTIVE PAST QUESTIONS
+===================================================== -->
+
+<div class="container">
+
+    <h2 class="admin-section-title">
+        📝 Objective Past Questions
+    </h2>
+
+    <p>
+        Upload objective past question papers.
+    </p>
+
+
+    <!-- UPLOAD OBJECTIVE PDF -->
+
+    <form
+        action="/admin/upload-objective-pdf"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <input
+            type="text"
+            name="title"
+            placeholder="Past Question Title"
+            required
+        >
+
+        <br><br>
+
+
+        <input
+            type="text"
+            name="subject"
+            placeholder="Subject"
+            required
+        >
+
+        <br><br>
+
+
+        <input
+            type="text"
+            name="semester"
+            placeholder="Semester"
+            required
+        >
+
+        <br><br>
+
+
+        <input
+            type="file"
+            name="pdf"
+            accept=".pdf"
+            required
+        >
+
+        <br><br>
+
+
+        <button
+            class="btn"
+            type="submit"
+        >
+
+            Upload Objective PDF
+
+        </button>
+
+    </form>
+
+</div>
+
+
+
+<!-- OBJECTIVE LIBRARY -->
+
+<div class="container">
+
+    <h2>
+        📚 Objective Past Questions Library
+    </h2>
+
+
+    <input
+        type="text"
+        id="objectiveSearch"
+        class="admin-search"
+        placeholder="🔎 Search title, subject or semester..."
+    >
+
+
+    <% if (!objectivePDFs || objectivePDFs.length === 0) { %>
+
+        <p class="library-empty">
+            No objective past questions uploaded yet.
+        </p>
+
+    <% } else { %>
+
+
+        <div id="objectivePDFList">
+
+            <% objectivePDFs.forEach(pdf => { %>
+
+                <div
+                    class="pdf-card objective-pdf-card"
+                    data-search="<%= (
+                        pdf.title + ' ' +
+                        pdf.subject + ' ' +
+                        pdf.semester
+                    ).toLowerCase() %>"
+                >
+
+                    <h3>
+                        📄 <%= pdf.title %>
+                    </h3>
+
+
+                    <p>
+                        <strong>Subject:</strong>
+                        <%= pdf.subject %>
+                    </p>
+
+
+                    <p>
+                        <strong>Semester:</strong>
+                        <%= pdf.semester %>
+                    </p>
+
+
+                    <p>
+                        <strong>Uploaded:</strong>
+
+                        <%= new Date(
+                            pdf.uploadedAt
+                        ).toLocaleDateString() %>
+
+                    </p>
+
+
+                    <p>
+                        <strong>Downloads:</strong>
+
+                        <%= pdf.downloads || 0 %>
+
+                    </p>
+
+
+                    <br>
+
+
+                    <a
+                        href="<%= pdf.pdfUrl %>"
+                        target="_blank"
+                        class="btn"
+                    >
+                        👁 View
+                    </a>
+
+
+                    <a
+                        href="/admin/edit-objective-pdf/<%= pdf._id %>"
+                        class="btn"
+                    >
+                        ✏ Edit
+                    </a>
+
+
+                    <a
+                        href="/admin/delete-objective-pdf/<%= pdf._id %>"
+                        class="btn"
+                        onclick="return confirm('Delete this objective past question?');"
+                    >
+                        🗑 Delete
+                    </a>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+
+    <% } %>
+
+</div>
+
+
+
+<hr class="section-divider">
+
+
+
+<!-- =====================================================
+     3. PAST THEORY QUESTIONS
+===================================================== -->
+
+<div class="container">
+
+    <h2 class="admin-section-title">
+        📖 Past Theory Questions
+    </h2>
+
+    <p>
+        Upload theory past question papers.
+    </p>
+
+<form
+    action="/admin/upload-pdf"
+    method="POST"
+    enctype="multipart/form-data"
+>
+
+    <input
+        type="text"
+        name="title"
+        placeholder="PDF Title"
+        required
+    >
+
+    <input
+        type="text"
+        name="subject"
+        placeholder="Subject"
+        required
+    >
+
+    <input
+        type="text"
+        name="level"
+        placeholder="Level"
+        required
+    >
+
+    <input
+        type="text"
+        name="category"
+        placeholder="Category"
+        required
+    >
+
+    <input
+        type="text"
+        name="semester"
+        placeholder="Semester"
+        required
+    >
+
+    <input
+        type="file"
+        name="pdf"
+        accept=".pdf,application/pdf"
+        required
+    >
+
+    <button type="submit">
+        Upload Theory PDF
+    </button>
+
+</form>
+    
+</div>
+
+
+
+<hr class="section-divider">
+
+<!-- =====================================================
+     PAST THEORY QUESTIONS LIBRARY
+===================================================== -->
+
+<div class="container">
+
+    <h2>
+        📚 Past Theory Questions Library
+    </h2>
+
+    <input
+        type="text"
+        id="theorySearch"
+        class="admin-search"
+        placeholder="🔎 Search title, subject, level, semester or category..."
+    >
+
+
+    <% if (!pdfs || pdfs.length === 0) { %>
+
+        <p class="library-empty">
+            No theory past questions uploaded yet.
+        </p>
+
+    <% } else { %>
+
+
+        <div id="theoryPDFList">
+
+            <% pdfs.forEach(pdf => { %>
+
+                <div
+                    class="pdf-card theory-pdf-card"
+                    data-search="<%= (
+                        (pdf.title || '') + ' ' +
+                        (pdf.subject || '') + ' ' +
+                        (pdf.level || '') + ' ' +
+                        (pdf.semester || '') + ' ' +
+                        (pdf.category || '')
+                    ).toLowerCase() %>"
+                >
+
+                    <h3>
+                        📄 <%= pdf.title %>
+                    </h3>
+
+
+                    <p>
+                        <strong>Subject:</strong>
+                        <%= pdf.subject %>
+                    </p>
+
+
+                    <p>
+                        <strong>Level:</strong>
+                        <%= pdf.level %>
+                    </p>
+
+
+                    <p>
+                        <strong>Semester:</strong>
+                        <%= pdf.semester %>
+                    </p>
+
+
+                    <p>
+                        <strong>Category:</strong>
+                        <%= pdf.category %>
+                    </p>
+
+
+                    <p>
+                        <strong>Uploaded:</strong>
+
+                        <%= new Date(
+                            pdf.uploadedAt
+                        ).toLocaleDateString() %>
+
+                    </p>
+
+
+                    <br>
+
+
+                    <a
+                        href="<%= pdf.pdfUrl %>"
+                        target="_blank"
+                        class="btn"
+                    >
+                        👁 View
+                    </a>
+
+
+                    <a
+                        href="/admin/edit-pdf/<%= pdf._id %>"
+                        class="btn"
+                    >
+                        ✏ Edit
+                    </a>
+
+
+                    <a
+                        href="/admin/delete-pdf/<%= pdf._id %>"
+                        class="btn"
+                        onclick="
+                            return confirm(
+                                'Delete this theory past question?'
+                            );
+                        "
+                    >
+                        🗑 Delete
+                    </a>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+
+    <% } %>
+
+</div>
+
+
+
+<!-- =====================================================
+     4. STUDY MATERIALS
+===================================================== -->
+
+<div class="container">
+
+    <h2 class="admin-section-title">
+        📚 Study Materials
+    </h2>
+
+    <p>
+        Upload study materials that will appear
+        in the Study Materials section.
+    </p>
+
+
+    <form
+        action="/docs/upload"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <input
+            type="text"
+            name="name"
+            placeholder="Study Material Name"
+            required
+        >
+
+        <br><br>
+
+
+        <input
+            type="file"
+            name="pdf"
+            accept=".pdf"
+            required
+        >
+
+        <br><br>
+
+
+        <button
+            class="btn"
+            type="submit"
+        >
+
+            Upload Study Material
+
+        </button>
+
+    </form>
+
+</div>
+
+
+
+<hr class="section-divider">
+
+
+
+<!-- =====================================================
+     STUDY MATERIALS LIBRARY
+===================================================== -->
+
+<div class="container">
+
+    <h2>
+        📂 Study Materials Library
+    </h2>
+
+
+    <input
+        type="text"
+        id="studySearch"
+        class="admin-search"
+        placeholder="🔎 Search study materials..."
+    >
+
+
+    <% if (!docs || docs.length === 0) { %>
+
+        <p class="library-empty">
+            No study materials uploaded yet.
+        </p>
+
+    <% } else { %>
+
+
+        <div id="studyMaterialsList">
+
+            <% docs.forEach(doc => { %>
+
+                <div
+                    class="pdf-card study-material-card"
+                    data-search="<%= (
+                        doc.name
+                    ).toLowerCase() %>"
+                >
+
+                    <h3>
+                        📄 <%= doc.name %>
+                    </h3>
+
+
+                    <p>
+
+                        <strong>Uploaded:</strong>
+
+                        <%= new Date(
+                            doc.uploadedAt
+                        ).toLocaleDateString() %>
+
+                    </p>
+
+
+                    <br>
+
+
+                    <a
+                        href="<%= doc.pdfUrl %>"
+                        target="_blank"
+                        class="btn"
+                    >
+                        👁 Preview
+                    </a>
+
+
+                    <a
+                        href="/docs/edit/<%= doc._id %>"
+                        class="btn"
+                    >
+                        ✏ Edit
+                    </a>
+
+
+                    <button
+                        class="btn delete-study"
+                        data-id="<%= doc._id %>"
+                        type="button"
+                    >
+                        🗑 Delete
+                    </button>
+
+                </div>
+
+            <% }) %>
+
+        </div>
+
+
+    <% } %>
+
+</div>
+
+
+
+<!-- =====================================================
+     SEARCH JAVASCRIPT
+===================================================== -->
+
+<script>
+
+    // ============================
+    // OBJECTIVE SEARCH
+    // ============================
+
+    const objectiveSearch =
+        document.getElementById(
+            "objectiveSearch"
+        );
+
+
+    if (objectiveSearch) {
+
+        const objectiveCards =
+            document.querySelectorAll(
+                ".objective-pdf-card"
+            );
+
+
+        objectiveSearch.addEventListener(
+            "input",
+            function () {
+
+                const search =
+                    this.value
+                        .toLowerCase()
+                        .trim();
+
+
+                objectiveCards.forEach(
+                    card => {
+
+                        const text =
+                            card.dataset.search;
+
+
+                        card.style.display =
+                            text.includes(search)
+                                ? ""
+                                : "none";
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+
+    // ============================
+    // STUDY MATERIAL SEARCH
+    // ============================
+
+    const studySearch =
+        document.getElementById(
+            "studySearch"
+        );
+
+
+    if (studySearch) {
+
+        const studyCards =
+            document.querySelectorAll(
+                ".study-material-card"
+            );
+
+
+        studySearch.addEventListener(
+            "input",
+            function () {
+
+                const search =
+                    this.value
+                        .toLowerCase()
+                        .trim();
+
+
+                studyCards.forEach(
+                    card => {
+
+                        const text =
+                            card.dataset.search;
+
+
+                        card.style.display =
+                            text.includes(search)
+                                ? ""
+                                : "none";
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    // ============================
+// THEORY PAST QUESTIONS SEARCH
+// ============================
+
+const theorySearch =
+    document.getElementById(
+        "theorySearch"
+    );
+
+
+if (theorySearch) {
+
+    const theoryCards =
+        document.querySelectorAll(
+            ".theory-pdf-card"
+        );
+
+
+    theorySearch.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value
+                    .toLowerCase()
+                    .trim();
+
+
+            theoryCards.forEach(
+                card => {
+
+                    const text =
+                        card.dataset.search;
+
+
+                    card.style.display =
+                        text.includes(search)
+                            ? ""
+                            : "none";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// DELETE STUDY MATERIAL
+// =====================================================
+
+const deleteStudyButtons =
+    document.querySelectorAll(
+        ".delete-study"
+    );
+
+
+deleteStudyButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            async function () {
+
+                const id =
+                    this.dataset.id;
+
+
+                const confirmed =
+                    confirm(
+                        "Delete this study material?"
+                    );
+
+
+                if (!confirmed) {
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/docs/${id}`,
+                            {
+                                method: "DELETE"
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        alert(
+                            result.message ||
+                            "Unable to delete study material."
+                        );
+
+                        return;
+
+                    }
+
+
+                    // Remove card from page
+                    this
+                        .closest(".study-material-card")
+                        .remove();
+
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "An error occurred while deleting the study material."
+                    );
+
+                }
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+
+<script src="/js/script.js"></script>
+
+
+</body>
+
+</html>

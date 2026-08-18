@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= subject %> - Yunerx
+    </title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+
+        .questions-container {
+
+            max-width: 900px;
+
+            margin: 30px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .quiz-header {
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .quiz-header h1 {
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .quiz-info {
+
+            color: #777;
+
+        }
+
+
+        .question-card {
+
+            background: white;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,.1);
+
+        }
+
+
+        .question-number {
+
+            color: royalblue;
+
+            font-weight: bold;
+
+        }
+
+
+        .question-text {
+
+            font-size: 18px;
+
+            font-weight: 600;
+
+            margin: 15px 0;
+
+        }
+
+
+        .option {
+
+            display: block;
+
+            padding: 12px;
+
+            margin: 8px 0;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+        }
+
+
+        .option:hover {
+
+            background: #f5f7ff;
+
+        }
+
+
+        .option input {
+
+            margin-right: 10px;
+
+        }
+
+
+        .submit-btn {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: royalblue;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+        }
+
+
+        .submit-btn:hover {
+
+            opacity: .9;
+
+        }
+
+
+        .back-btn {
+
+            display: inline-block;
+
+            margin-bottom: 20px;
+
+            color: royalblue;
+
+            text-decoration: none;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="questions-container">
+
+
+    <a
+        href="/objectivequizes"
+        class="back-btn"
+    >
+
+        ← Back to Objective Quizzes
+
+    </a>
+
+
+
+    <div class="quiz-header">
+
+        <h1>
+            <%= subject %>
+        </h1>
+
+        <div class="quiz-info">
+
+            Level <%= level %>
+            |
+            <%= section %>
+            |
+            <%= category %>
+
+        </div>
+
+    </div>
+
+
+
+    <form
+        action="#"
+        method="POST"
+        id="quizForm"
+    >
+
+
+        <% questions.forEach((question, index) => { %>
+
+
+            <div class="question-card">
+
+
+                <div class="question-number">
+
+                    Question <%= index + 1 %>
+
+                </div>
+
+
+                <div class="question-text">
+
+                    <%= question.question %>
+
+                </div>
+
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="question_<%= index %>"
+                        value="A"
+                    >
+
+                    <strong>A.</strong>
+
+                    <%= question.options.A %>
+
+                </label>
+
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="question_<%= index %>"
+                        value="B"
+                    >
+
+                    <strong>B.</strong>
+
+                    <%= question.options.B %>
+
+                </label>
+
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="question_<%= index %>"
+                        value="C"
+                    >
+
+                    <strong>C.</strong>
+
+                    <%= question.options.C %>
+
+                </label>
+
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="question_<%= index %>"
+                        value="D"
+                    >
+
+                    <strong>D.</strong>
+
+                    <%= question.options.D %>
+
+                </label>
+
+
+            </div>
+
+
+        <% }) %>
+
+
+
+        <button
+            type="button"
+            class="submit-btn"
+            onclick="submitQuiz()"
+        >
+
+            Submit Quiz
+
+        </button>
+
+
+    </form>
+
+</div>
+
+
+
+<script>
+
+function submitQuiz() {
+
+    const questions =
+        <%- JSON.stringify(
+            questions.map(q => ({
+                answer: q.answer,
+                explanation: q.explanation
+            }))
+        ) %>;
+
+
+    let score = 0;
+
+    let unanswered = 0;
+
+
+    questions.forEach(
+        (question, index) => {
+
+            const selected =
+                document.querySelector(
+                    `input[name="question_${index}"]:checked`
+                );
+
+
+            if (!selected) {
+
+                unanswered++;
+
+                return;
+
+            }
+
+
+            if (
+                selected.value === question.answer
+            ) {
+
+                score++;
+
+            }
+
+        }
+    );
+
+
+    let message =
+        `You scored ${score} out of ${questions.length}.`;
+
+
+    if (unanswered > 0) {
+
+        message +=
+            `\\n\\nUnanswered questions: ${unanswered}`;
+
+    }
+
+
+    alert(message);
+
+}
+
+</script>
+
+
+</body>
+
+</html>

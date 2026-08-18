@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Categories</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📂 Categories</h1>
+
+    <p>
+        Level: <strong><%= level %></strong>
+    </p>
+
+</div>
+
+
+<div class="container">
+
+    <% if (categories.length === 0) { %>
+
+        <p>
+            No categories available.
+        </p>
+
+    <% } %>
+
+
+    <% categories.forEach(category => { %>
+
+        <a
+            href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/category/<%= encodeURIComponent(category) %>"
+            class="btn"
+        >
+
+            <%= category %>
+
+        </a>
+
+    <% }) %>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Study Material</title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>
+        ✏️ Edit Study Material
+    </h1>
+
+
+    <form
+        action="/docs/edit/<%= doc._id %>"
+        method="POST"
+    >
+
+        <label>
+            Study Material Name
+        </label>
+
+        <br><br>
+
+        <input
+            type="text"
+            name="name"
+            value="<%= doc.name %>"
+            required
+        >
+
+        <br><br>
+
+
+        <p>
+
+            Current PDF:
+
+            <a
+                href="<%= doc.pdfUrl %>"
+                target="_blank"
+            >
+                👁 View PDF
+            </a>
+
+        </p>
+
+
+        <br>
+
+
+        <button
+            class="btn"
+            type="submit"
+        >
+            💾 Save Changes
+        </button>
+
+
+        <a
+            href="/admin"
+            class="btn"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+
+</body>
+
+</html>
