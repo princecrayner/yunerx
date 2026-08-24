@@ -4,7 +4,13 @@ const documentSchema = new mongoose.Schema({
 
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
+    },
+
+    originalName: {
+        type: String,
+        default: ""
     },
 
     pdfUrl: {

@@ -3,9 +3,14 @@ const objectiveRoutes = require("./routes/objective");
 const docsRoutes = require("./routes/docs");
 const User = require("./models/User");
 const pdfRoutes = require("./routes/pdfs");
+const cloudinary = require("./config/cloudinary");
 
 const multer = require("multer");
 const path = require("path");
+
+const profileUpload = multer({
+      storage: multer.memoryStorage()
+      });
 
 const GroupMessage = require("./models/GroupMessage");
 const Message = require("./models/Message");
@@ -122,28 +127,92 @@ app.get("/contact", (req, res) => {
 });
 
 
-
-
-
+// =========================
 // UPLOAD PROFILE IMAGE
-app.post("/upload-profile-picture",
-    upload.single("profilePic"),
+// =========================
+
+app.post(
+    "/upload-profile-picture",
+    profileUpload.single("profilePic"),
     async (req, res) => {
 
-        const imagePath = "/uploads/" + req.file.filename;
+        try {
 
-        await User.findByIdAndUpdate(
-            req.session.user._id,
-            {
-                profileImage: imagePath
+            if (!req.file) {
+
+                return res.status(400).send(
+                    "Please select a profile picture."
+                );
+
             }
-        );
 
-        req.session.user.profileImage = imagePath;
 
-        res.redirect("/settings");
+            // Upload image to Cloudinary
+            const result =
+                await new Promise((resolve, reject) => {
 
-});
+                    const stream =
+                        cloudinary.uploader.upload_stream(
+                            {
+                                folder: "yunerx/profile-pictures",
+                                resource_type: "image"
+                            },
+                            (error, result) => {
+
+                                if (error) {
+
+                                    reject(error);
+
+                                } else {
+
+                                    resolve(result);
+
+                                }
+
+                            }
+                        );
+
+
+                    stream.end(req.file.buffer);
+
+                });
+
+
+            // Save Cloudinary URL in MongoDB
+            await User.findByIdAndUpdate(
+                req.session.user._id,
+                {
+                    profileImage: result.secure_url
+                }
+            );
+
+
+            // Update current session
+            req.session.user.profileImage =
+                result.secure_url;
+
+
+            res.redirect("/settings");
+
+
+        } catch (error) {
+
+            console.error(
+                "Profile picture upload error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to upload profile picture."
+            );
+
+        }
+
+    }
+);
+
+
+
 
 // LOGOUT PAGE
 app.get("/logout", (req, res) => {

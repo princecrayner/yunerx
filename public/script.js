@@ -302,28 +302,13 @@ async function loadDocuments() {
 
 function displayDocuments(docs) {
 
-    if (!docsContainer) {
-
-        return;
-
-    }
-
-
     docsContainer.innerHTML = "";
 
 
     if (docs.length === 0) {
 
         docsContainer.innerHTML = `
-
-            <div class="no-documents">
-
-                <p>
-                    📂 No documents found.
-                </p>
-
-            </div>
-
+            <p>No documents found.</p>
         `;
 
         return;
@@ -337,19 +322,12 @@ function displayDocuments(docs) {
 
         <div class="document">
 
-            <div class="document-info">
+            <div>
 
-                <h3>
-                    📄 ${doc.name}
-                </h3>
+                <h3>📄 ${doc.name}</h3>
 
                 <p>
-
-                    Uploaded:
-                    ${new Date(
-                        doc.uploadedAt
-                    ).toLocaleDateString()}
-
+                    ${new Date(doc.uploadedAt).toLocaleDateString()}
                 </p>
 
             </div>
@@ -357,10 +335,7 @@ function displayDocuments(docs) {
 
             <div class="menu">
 
-                <button
-                    class="menuBtn"
-                    type="button"
-                >
+                <button class="menuBtn">
                     ⋮
                 </button>
 
@@ -368,27 +343,25 @@ function displayDocuments(docs) {
                 <div class="dropdown">
 
                     <a
-                        href="${doc.pdfUrl}"
+                        href="/docs/${doc._id}/view"
                         target="_blank"
                     >
-                        👁 Open
+                        Open
                     </a>
 
 
                     <a
-                        href="${doc.pdfUrl}"
-                        download
+                        href="/docs/${doc._id}/download"
                     >
-                        ⬇ Download
+                        Download
                     </a>
 
 
                     <button
                         class="deleteBtn"
                         data-id="${doc._id}"
-                        type="button"
                     >
-                        🗑 Delete
+                        Delete
                     </button>
 
                 </div>
@@ -402,7 +375,6 @@ function displayDocuments(docs) {
     });
 
 }
-
 
 
 // =========================
@@ -549,3 +521,62 @@ document.addEventListener(
 
 
 
+// =========================
+// DOCS THREE-DOT MENU
+// =========================
+
+document.addEventListener("click", function (e) {
+
+    const menuButton = e.target.closest(".menuBtn");
+
+    // If a menu button was clicked
+    if (menuButton) {
+
+        e.stopPropagation();
+
+        const menu = menuButton.closest(".menu");
+
+        if (!menu) {
+            return;
+        }
+
+        const dropdown = menu.querySelector(".dropdown");
+
+        if (!dropdown) {
+            return;
+        }
+
+        // Close other open dropdowns
+        document
+            .querySelectorAll(".dropdown.active")
+            .forEach(function (openDropdown) {
+
+                if (openDropdown !== dropdown) {
+
+                    openDropdown.classList.remove("active");
+
+                }
+
+            });
+
+        // Toggle this dropdown
+        dropdown.classList.toggle("active");
+
+        return;
+    }
+
+
+    // Click outside menu → close all dropdowns
+    if (!e.target.closest(".menu")) {
+
+        document
+            .querySelectorAll(".dropdown.active")
+            .forEach(function (dropdown) {
+
+                dropdown.classList.remove("active");
+
+            });
+
+    }
+
+});

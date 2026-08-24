@@ -18,14 +18,19 @@ router.post(
 
         try {
 
+            console.log("UPLOAD REQUEST RECEIVED");
+
+            console.log("FILE:", req.file);
+
+            console.log("BODY:", req.body);
+
             if (!req.file) {
 
-                return res.status(400).send(
-                    "Please select a PDF file."
-                );
+                return res.status(400).json({
+                    message: "Please select a PDF file."
+                });
 
             }
-
 
             const newDoc = new Document({
 
@@ -33,34 +38,38 @@ router.post(
 
                 pdfUrl: req.file.path,
 
-                cloudinaryId: req.file.filename
+                cloudinaryId: req.file.filename,
+
+                originalName: req.file.originalname
 
             });
 
-
             await newDoc.save();
 
+            console.log("DOCUMENT SAVED");
 
-            // Return to admin dashboard
-            res.redirect("/admin");
+            res.status(201).json({
+                message: "PDF uploaded successfully",
+                document: newDoc
+            });
 
         } catch (error) {
 
             console.error(
-                "Study material upload error:",
+                "UPLOAD ERROR:",
                 error
             );
 
-            res.status(500).send(
-                "Unable to upload study material: " +
-                error.message
-            );
+            res.status(500).json({
+                message:
+                    "Unable to upload study material: " +
+                    error.message
+            });
 
         }
 
     }
 );
-
 
 
 // =====================================================
@@ -332,6 +341,213 @@ router.delete(
 
     }
 );
+
+
+// =====================================================
+// DOWNLOAD PDF
+// =====================================================
+
+router.get("/:id/download", async (req, res) => {
+
+    try {
+
+        const document =
+            await Document.findById(req.params.id);
+
+
+        if (!document) {
+
+            return res.status(404).send(
+                "Document not found."
+            );
+
+        }
+
+
+        // Get the Cloudinary URL
+        const pdfUrl =
+            cloudinary.url(
+                document.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    secure: true
+                }
+            );
+
+
+        console.log("Downloading PDF:");
+        console.log(pdfUrl);
+
+
+        // Fetch PDF from Cloudinary
+        const response =
+            await fetch(pdfUrl);
+
+
+        if (!response.ok) {
+
+            console.error(
+                "Cloudinary response:",
+                response.status,
+                response.statusText
+            );
+
+
+            return res.status(500).send(
+                "Unable to retrieve PDF from storage."
+            );
+
+        }
+
+
+        // Remove characters that could cause
+        // problems in a filename
+
+        let filename =
+            document.name
+                .replace(/[<>:"/\\|?*]/g, "")
+                .trim();
+
+
+        // Make sure it ends with .pdf
+
+        if (!filename.toLowerCase().endsWith(".pdf")) {
+
+            filename += ".pdf";
+
+        }
+
+
+        // Tell browser/phone this is a PDF
+
+        res.setHeader(
+            "Content-Type",
+            "application/pdf"
+        );
+
+
+        // Tell browser to download it
+        // using the ORIGINAL uploaded name
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${filename}"`
+        );
+
+
+        // Send file
+
+        const { Readable } =
+            require("stream");
+
+
+        Readable
+            .fromWeb(response.body)
+            .pipe(res);
+
+
+    } catch (error) {
+
+        console.error(
+            "PDF download error:",
+            error
+        );
+
+
+        res.status(500).send(
+            "Unable to download PDF."
+        );
+
+    }
+
+});
+
+
+
+// =====================================================
+// OPEN PDF
+// =====================================================
+
+router.get("/:id/view", async (req, res) => {
+
+    try {
+
+        const document =
+            await Document.findById(req.params.id);
+
+
+        if (!document) {
+
+            return res.status(404).send(
+                "Document not found."
+            );
+
+        }
+
+
+        const pdfUrl =
+            cloudinary.url(
+                document.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    secure: true
+                }
+            );
+
+
+        const response =
+            await fetch(pdfUrl);
+
+
+        if (!response.ok) {
+
+            return res.status(500).send(
+                "Unable to retrieve PDF."
+            );
+
+        }
+
+
+        res.setHeader(
+            "Content-Type",
+            "application/pdf"
+        );
+
+
+        // Inline means OPEN instead of download
+
+        res.setHeader(
+            "Content-Disposition",
+            "inline"
+        );
+
+
+        const { Readable } =
+            require("stream");
+
+
+        Readable
+            .fromWeb(response.body)
+            .pipe(res);
+
+
+    } catch (error) {
+
+        console.error(
+            "PDF view error:",
+            error
+        );
+
+
+        res.status(500).send(
+            "Unable to open PDF."
+        );
+
+    }
+
+});
+
+
 
 
 module.exports = router;

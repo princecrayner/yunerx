@@ -536,60 +536,6 @@
 
 <script>
 
-    /*
-     * Three-dot menus
-     */
-
-    document.addEventListener("click", function(e) {
-
-        const menuButton =
-            e.target.closest(".menuBtn");
-
-
-        if (menuButton) {
-
-            const dropdown =
-                menuButton.nextElementSibling;
-
-
-            document
-                .querySelectorAll(".dropdown.active")
-                .forEach(menu => {
-
-                    if (menu !== dropdown) {
-
-                        menu.classList.remove("active");
-
-                    }
-
-                });
-
-
-            dropdown.classList.toggle("active");
-
-            return;
-
-        }
-
-
-        /*
-         * Close menus when clicking outside
-         */
-
-        if (!e.target.closest(".menu")) {
-
-            document
-                .querySelectorAll(".dropdown.active")
-                .forEach(menu => {
-
-                    menu.classList.remove("active");
-
-                });
-
-        }
-
-    });
-
 
         /* =========================
        SEARCH STUDY MATERIALS
