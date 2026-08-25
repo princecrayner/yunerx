@@ -345,15 +345,15 @@ router.delete(
 
 // =====================================================
 // DOWNLOAD PDF
+// GET /docs/download/:id
 // =====================================================
 
-router.get("/:id/download", async (req, res) => {
+router.get("/download/:id", async (req, res) => {
 
     try {
 
         const document =
             await Document.findById(req.params.id);
-
 
         if (!document) {
 
@@ -363,8 +363,6 @@ router.get("/:id/download", async (req, res) => {
 
         }
 
-
-        // Get the Cloudinary URL
         const pdfUrl =
             cloudinary.url(
                 document.cloudinaryId,
@@ -374,15 +372,11 @@ router.get("/:id/download", async (req, res) => {
                 }
             );
 
-
         console.log("Downloading PDF:");
         console.log(pdfUrl);
 
-
-        // Fetch PDF from Cloudinary
         const response =
             await fetch(pdfUrl);
-
 
         if (!response.ok) {
 
@@ -392,59 +386,49 @@ router.get("/:id/download", async (req, res) => {
                 response.statusText
             );
 
-
             return res.status(500).send(
                 "Unable to retrieve PDF from storage."
             );
 
         }
 
-
-        // Remove characters that could cause
-        // problems in a filename
-
         let filename =
-            document.name
-                .replace(/[<>:"/\\|?*]/g, "")
-                .trim();
+            document.originalName ||
+            document.name ||
+            "document.pdf";
 
+        filename =
+            filename.replace(
+                /[<>:"/\\|?*]/g,
+                ""
+            ).trim();
 
-        // Make sure it ends with .pdf
-
-        if (!filename.toLowerCase().endsWith(".pdf")) {
+        if (
+            !filename
+                .toLowerCase()
+                .endsWith(".pdf")
+        ) {
 
             filename += ".pdf";
 
         }
-
-
-        // Tell browser/phone this is a PDF
 
         res.setHeader(
             "Content-Type",
             "application/pdf"
         );
 
-
-        // Tell browser to download it
-        // using the ORIGINAL uploaded name
-
         res.setHeader(
             "Content-Disposition",
             `attachment; filename="${filename}"`
         );
 
-
-        // Send file
-
         const { Readable } =
             require("stream");
-
 
         Readable
             .fromWeb(response.body)
             .pipe(res);
-
 
     } catch (error) {
 
@@ -452,7 +436,6 @@ router.get("/:id/download", async (req, res) => {
             "PDF download error:",
             error
         );
-
 
         res.status(500).send(
             "Unable to download PDF."
@@ -462,19 +445,17 @@ router.get("/:id/download", async (req, res) => {
 
 });
 
-
-
 // =====================================================
 // OPEN PDF
+// GET /docs/open/:id
 // =====================================================
 
-router.get("/:id/view", async (req, res) => {
+router.get("/open/:id", async (req, res) => {
 
     try {
 
         const document =
             await Document.findById(req.params.id);
-
 
         if (!document) {
 
@@ -483,7 +464,6 @@ router.get("/:id/view", async (req, res) => {
             );
 
         }
-
 
         const pdfUrl =
             cloudinary.url(
@@ -494,12 +474,19 @@ router.get("/:id/view", async (req, res) => {
                 }
             );
 
+        console.log("Opening PDF:");
+        console.log(pdfUrl);
 
         const response =
             await fetch(pdfUrl);
 
-
         if (!response.ok) {
+
+            console.error(
+                "Cloudinary response:",
+                response.status,
+                response.statusText
+            );
 
             return res.status(500).send(
                 "Unable to retrieve PDF."
@@ -507,29 +494,22 @@ router.get("/:id/view", async (req, res) => {
 
         }
 
-
         res.setHeader(
             "Content-Type",
             "application/pdf"
         );
-
-
-        // Inline means OPEN instead of download
 
         res.setHeader(
             "Content-Disposition",
             "inline"
         );
 
-
         const { Readable } =
             require("stream");
-
 
         Readable
             .fromWeb(response.body)
             .pipe(res);
-
 
     } catch (error) {
 
@@ -538,7 +518,6 @@ router.get("/:id/view", async (req, res) => {
             error
         );
 
-
         res.status(500).send(
             "Unable to open PDF."
         );
@@ -546,7 +525,6 @@ router.get("/:id/view", async (req, res) => {
     }
 
 });
-
 
 
 

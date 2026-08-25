@@ -34,25 +34,71 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
 
-    const { email, password } = req.body;
+    try {
 
-    const user = await User.findOne({ email });
+        const { email, password } = req.body;
 
-    if (!user) {
-        return res.send("User not found");
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.send("User not found");
+        }
+
+        const validPassword =
+            await bcrypt.compare(
+                password,
+                user.password
+            );
+
+        if (!validPassword) {
+            return res.send("Wrong Password");
+        }
+
+        // Store only the important user information
+        // in the session
+        req.session.user = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            profileImage: user.profileImage
+        };
+
+        req.session.save((err) => {
+
+            if (err) {
+
+                console.error(
+                    "Session save error:",
+                    err
+                );
+
+                return res.send(
+                    "Unable to create session."
+                );
+
+            }
+
+            res.redirect("/profile");
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+        res.status(500).send(
+            "Unable to login."
+        );
+
     }
-
-    const validPassword = await bcrypt.compare(password, user.password);
-
-    if (!validPassword) {
-        return res.send("Wrong Password");
-    }
-
-    req.session.user = user;
-
-    res.redirect("/profile");
 
 });
+
+
 
 router.get("/profile", async (req, res) => {
 
