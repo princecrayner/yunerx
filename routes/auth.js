@@ -115,6 +115,8 @@ router.get("/profile", async (req, res) => {
 
 const user = await User.findById(req.session.user._id);
 
+console.log("PROFILE USER:", user);
+
 res.render("profile", {
 
     user,
