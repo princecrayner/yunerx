@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const csvRoutes = require('./routes/csv');
 const objectiveRoutes = require("./routes/objective");
 const docsRoutes = require("./routes/docs");
@@ -56,7 +58,6 @@ const upload = multer({ storage });
 
 
 
-require("dotenv").config();
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -185,6 +186,8 @@ app.post(
                     profileImage: result.secure_url
                 }
             );
+            
+            console.log("PROFILE IMAGE SAVED:", result.secure_url);
 
 
             // Update current session
