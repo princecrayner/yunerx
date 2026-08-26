@@ -7,7 +7,7 @@ const User = require("./models/User");
 const pdfRoutes = require("./routes/pdfs");
 
 const multer = require("multer");
-const path = require("path");
+const cloudinary = require("./config/cloudinary");
 
 const profileUpload = multer({
       storage: multer.memoryStorage()
@@ -37,23 +37,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 4000;
-
-// PROFILE IMAGE STORAGE
-const storage = multer.diskStorage({
-
-    destination: (req, file, cb) => {
-
-        cb(null, "public/uploads/");
-    },
-
-    filename: (req, file, cb) => {
-
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-
-});
-
-const upload = multer({ storage });
 
 
 
