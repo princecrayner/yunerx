@@ -5,7 +5,6 @@ const objectiveRoutes = require("./routes/objective");
 const docsRoutes = require("./routes/docs");
 const User = require("./models/User");
 const pdfRoutes = require("./routes/pdfs");
-const cloudinary = require("./config/cloudinary");
 
 const multer = require("multer");
 const path = require("path");
@@ -82,7 +81,6 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB connected"))
 .catch(err => console.log(err));
 
-app.use("/admin", adminRoutes);
 
 // Load questions
 function loadQuestions() {
@@ -102,6 +100,7 @@ app.get("/", (req, res) => {
     });
 
 });
+
 
 
 

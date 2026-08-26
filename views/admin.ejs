@@ -726,14 +726,15 @@
     </p>
 
 
-    <form
-        action="/docs/upload"
-        method="POST"
-        enctype="multipart/form-data"
-    >
+    <form id="uploadForm">
+
+        <label for="pdfName">
+            PDF Name
+        </label>    
 
         <input
             type="text"
+            id="pdfName"
             name="name"
             placeholder="Study Material Name"
             required
@@ -741,11 +742,16 @@
 
         <br><br>
 
+<!-- PDF file --->
+        <label for="pdfFile">
+            select PDF
+        </label>    
 
         <input
             type="file"
+            id="pdfFile"
             name="pdf"
-            accept=".pdf"
+            accept=".pdf,application/pdf"
             required
         >
 

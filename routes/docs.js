@@ -18,11 +18,6 @@ router.post(
 
         try {
 
-            console.log("UPLOAD REQUEST RECEIVED");
-
-            console.log("FILE:", req.file);
-
-            console.log("BODY:", req.body);
 
             if (!req.file) {
 
@@ -40,13 +35,9 @@ router.post(
 
                 cloudinaryId: req.file.filename,
 
-                originalName: req.file.originalname
-
             });
 
             await newDoc.save();
-
-            console.log("DOCUMENT SAVED");
 
             res.status(201).json({
                 message: "PDF uploaded successfully",
@@ -56,7 +47,7 @@ router.post(
         } catch (error) {
 
             console.error(
-                "UPLOAD ERROR:",
+                "PDF upload error:",
                 error
             );
 
@@ -114,45 +105,37 @@ router.get(
 );
 
 
-
 // =====================================================
-// GET STUDY MATERIALS AS JSON
+// API - GET STUDY MATERIALS
 // GET /docs/api
 // =====================================================
 
-router.get(
-    "/api",
-    async (req, res) => {
+router.get("/api", async (req, res) => {
 
-        try {
+    try {
 
-            const docs =
-                await Document.find()
-                    .sort({
-                        uploadedAt: -1
-                    });
+        const docs =
+            await Document.find()
+                .sort({
+                    uploadedAt: -1
+                });
 
+        res.json(docs);
 
-            res.json(docs);
+    } catch (error) {
 
-        } catch (error) {
+        console.error(
+            "Error loading documents:",
+            error
+        );
 
-            console.error(
-                "Error loading study materials:",
-                error
-            );
-
-            res.status(500).json({
-
-                message: error.message
-
-            });
-
-        }
+        res.status(500).json({
+            message: "Unable to load documents."
+        });
 
     }
-);
 
+});
 
 
 // =====================================================
@@ -348,7 +331,7 @@ router.delete(
 // GET /docs/download/:id
 // =====================================================
 
-router.get("/download/:id", async (req, res) => {
+router.get("/:id/download", async (req, res) => {
 
     try {
 
@@ -363,6 +346,8 @@ router.get("/download/:id", async (req, res) => {
 
         }
 
+
+//get the cludinary URL
         const pdfUrl =
             cloudinary.url(
                 document.cloudinaryId,
@@ -375,6 +360,8 @@ router.get("/download/:id", async (req, res) => {
         console.log("Downloading PDF:");
         console.log(pdfUrl);
 
+
+// fetch PDF from cloudinay
         const response =
             await fetch(pdfUrl);
 
@@ -392,17 +379,16 @@ router.get("/download/:id", async (req, res) => {
 
         }
 
+
+
+// remove characters that could cause problems in filename
         let filename =
-            document.originalName ||
-            document.name ||
-            "document.pdf";
+            document.name
+              .replace(/[<>:"/\\|?*]/g,"")
+              .trim();
+        
 
-        filename =
-            filename.replace(
-                /[<>:"/\\|?*]/g,
-                ""
-            ).trim();
-
+// make sure it ends with .pdf
         if (
             !filename
                 .toLowerCase()
@@ -413,16 +399,21 @@ router.get("/download/:id", async (req, res) => {
 
         }
 
+
+// tell browser/phone this a PDF
         res.setHeader(
             "Content-Type",
             "application/pdf"
         );
 
+
+// Tell browser to download it using the original uploaded name
         res.setHeader(
             "Content-Disposition",
             `attachment; filename="${filename}"`
         );
 
+// send file
         const { Readable } =
             require("stream");
 
@@ -450,7 +441,7 @@ router.get("/download/:id", async (req, res) => {
 // GET /docs/open/:id
 // =====================================================
 
-router.get("/open/:id", async (req, res) => {
+router.get("/:id/view", async (req, res) => {
 
     try {
 
@@ -474,8 +465,6 @@ router.get("/open/:id", async (req, res) => {
                 }
             );
 
-        console.log("Opening PDF:");
-        console.log(pdfUrl);
 
         const response =
             await fetch(pdfUrl);
@@ -499,6 +488,7 @@ router.get("/open/:id", async (req, res) => {
             "application/pdf"
         );
 
+// inline means open instead of download
         res.setHeader(
             "Content-Disposition",
             "inline"

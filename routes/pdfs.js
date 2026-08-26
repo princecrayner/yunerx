@@ -633,10 +633,6 @@ router.post(
 
 
 
-// =====================================================
-// DOWNLOAD OBJECTIVE PDF
-// =====================================================
-
 router.get(
     "/objective-pdfs/download/:id",
     async (req, res) => {
@@ -661,13 +657,33 @@ router.get(
 
             await pdf.save();
 
-            res.redirect(
-                pdf.pdfUrl
+
+            const signedUrl =
+                cloudinary.url(
+                    pdf.cloudinaryId,
+                    {
+                        resource_type: "raw",
+                        type: "upload",
+                        secure: true,
+                        sign_url: true
+                    }
+                );
+
+
+            console.log(
+                "SIGNED PDF URL:",
+                signedUrl
             );
+
+
+            res.redirect(signedUrl);
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Objective PDF download error:",
+                error
+            );
 
             res.status(500).send(
                 "Unable to download PDF"
@@ -677,6 +693,5 @@ router.get(
 
     }
 );
-
 
 module.exports = router;

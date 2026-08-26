@@ -10,6 +10,9 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
+       if (req.query.redirect) {
+           req.session.redirectTo = req.query.redirect;
+           }
     res.render("login");
 });
 
@@ -79,7 +82,10 @@ router.post("/login", async (req, res) => {
 
             }
 
-            res.redirect("/profile");
+            const redirectTo = req.session.redirectTo || "/profile";
+            delete req.session.redirectTo;
+            
+            res.redirect(redirectTo);
 
         });
 

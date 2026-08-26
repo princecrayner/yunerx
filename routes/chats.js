@@ -13,7 +13,7 @@ const User = require("../models/User");
 router.get("/chats", async (req, res) => {
 
     if (!req.session.user) {
-        return res.redirect("/login");
+        return res.redirect("/login?redirect=/chats");
     }
 
     const messages = await Message.find();

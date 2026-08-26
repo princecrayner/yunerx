@@ -62,52 +62,6 @@ function searchSubjects() {
 }
 
 
-
-//CONNECTING//
-
-const profileButton =
-    document.querySelector(".profile-btn");
-
-if (profileButton) {
-
-    profileButton.addEventListener("click", () => {
-
-        window.location.href = "/profile";
-
-    });
-
-}
-
-
-const chatsButton =
-    document.querySelector(".chats");
-
-if (chatsButton) {
-
-    chatsButton.addEventListener("click", () => {
-
-        window.location.href = "/chats";
-
-    });
-
-}
-
-
-const videosButton =
-    document.querySelector(".videos");
-
-if (videosButton) {
-
-    videosButton.addEventListener("click", () => {
-
-        window.location.href = "/videos";
-
-    });
-
-}
-
-
-
 // SPLASH SCREEN ONLY ON FIRST VISIT
 
 const splash =
@@ -148,13 +102,13 @@ if (form) {
 
 
         try {
-
+        
             const formData =
                 new FormData(form);
 
 
             const response =
-                await fetch("/docs/upload", {
+                await fetch("/api/docs/upload", {
 
                     method: "POST",
 
@@ -220,6 +174,8 @@ if (docsContainer) {
 
 async function loadDocuments() {
 
+// get loading spinner
+
     const loading =
         document.getElementById("docsLoading");
 
@@ -250,9 +206,10 @@ async function loadDocuments() {
             await response.json();
 
 
+//save all documents for searching
         allDocuments = docs;
 
-
+// display documents
         displayDocuments(docs);
 
 
@@ -264,8 +221,8 @@ async function loadDocuments() {
         );
 
 
-        if (docsContainer) {
-
+       if(docsContainer) {
+       
             docsContainer.innerHTML = `
 
                 <div class="no-documents">
@@ -357,13 +314,7 @@ function displayDocuments(docs) {
                     </a>
 
 
-                    <button
-                        class="deleteBtn"
-                        data-id="${doc._id}"
-                    >
-                        Delete
-                    </button>
-
+                  
                 </div>
 
             </div>

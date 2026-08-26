@@ -38,7 +38,7 @@ const upload = multer({
 router.get("/videos", async (req, res) => {
 
     if(!req.session.user){
-        return res.redirect("/login");
+        return res.redirect("/login?redirect=/videos");
     }
 
     const videos = await Video.find();
