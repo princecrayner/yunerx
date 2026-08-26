@@ -108,7 +108,7 @@ if (form) {
 
 
             const response =
-                await fetch("/api/docs/upload", {
+                await fetch("/docs/upload", {
 
                     method: "POST",
 

@@ -64,45 +64,13 @@ router.post(
 
 
 // =====================================================
-// SHOW STUDY MATERIALS PAGE
 // GET /docs
 // =====================================================
 
-router.get(
-    "/",
-    async (req, res) => {
+router.get("/", (req, res) => {
 
-        try {
-
-            const docs =
-                await Document.find()
-                    .sort({
-                        uploadedAt: -1
-                    });
-
-
-            res.render(
-                "docs",
-                {
-                    docs
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Error loading study materials:",
-                error
-            );
-
-            res.status(500).send(
-                "Unable to load study materials."
-            );
-
-        }
-
-    }
-);
+     res.render("docs");
+});    
 
 
 // =====================================================
