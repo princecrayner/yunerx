@@ -99,17 +99,6 @@ app.get("/settings", (req, res) => {
 
 });
 
-// ABOUT PAGE
-app.get("/about", (req, res) => {
-    res.render("about");
-});
-
-// CONTACT PAGE
-app.get("/contact", (req, res) => {
-    res.render("contact");
-});
-
-
 // =========================
 // UPLOAD PROFILE IMAGE
 // =========================
@@ -121,10 +110,26 @@ app.post(
 
         try {
 
+            console.log("===== PROFILE UPLOAD START =====");
+
+            console.log("Session user:", req.session.user);
+
+            console.log("File:", req.file);
+
+
             if (!req.file) {
 
                 return res.status(400).send(
                     "Please select a profile picture."
+                );
+
+            }
+
+
+            if (!req.session.user) {
+
+                return res.status(401).send(
+                    "You must be logged in to upload a profile picture."
                 );
 
             }
@@ -161,6 +166,12 @@ app.post(
                 });
 
 
+            console.log(
+                "Cloudinary upload successful:",
+                result.secure_url
+            );
+
+
             // Save Cloudinary URL in MongoDB
             await User.findByIdAndUpdate(
                 req.session.user._id,
@@ -168,13 +179,19 @@ app.post(
                     profileImage: result.secure_url
                 }
             );
-            
-            console.log("PROFILE IMAGE SAVED:", result.secure_url);
 
 
             // Update current session
             req.session.user.profileImage =
                 result.secure_url;
+
+
+            console.log(
+                "PROFILE IMAGE SAVED:",
+                result.secure_url
+            );
+
+            console.log("===== PROFILE UPLOAD SUCCESS =====");
 
 
             res.redirect("/settings");
@@ -183,12 +200,29 @@ app.post(
         } catch (error) {
 
             console.error(
-                "Profile picture upload error:",
-                error
+                "===== PROFILE UPLOAD ERROR ====="
             );
 
+            console.error(error);
+
+            console.error(
+                "Error message:",
+                error.message
+            );
+
+            console.error(
+                "Error stack:",
+                error.stack
+            );
+
+            console.error(
+                "================================="
+            );
+
+
             res.status(500).send(
-                "Unable to upload profile picture."
+                "Profile picture upload failed: " +
+                error.message
             );
 
         }
@@ -197,6 +231,15 @@ app.post(
 );
 
 
+// ABOUT PAGE
+app.get("/about", (req, res) => {
+    res.render("about");
+});
+
+// CONTACT PAGE
+app.get("/contact", (req, res) => {
+    res.render("contact");
+});
 
 
 // LOGOUT PAGE
