@@ -750,16 +750,10 @@ router.get(
                     "Theory PDF not found"
                 );
             }
+            
+            
+          const pdfUrl = pdf.pdfUrl;            
 
-            const pdfUrl = cloudinary.url(
-                pdf.cloudinaryId,
-                {
-                    resource_type: "raw",
-                    type: "upload",
-                    secure: true,
-                    sign_url: true
-                }
-            );
 
             console.log("THEORY VIEW URL:", pdfUrl);
 
@@ -810,8 +804,7 @@ router.get(
                 {
                     resource_type: "raw",
                     type: "upload",
-                    secure: true,
-                    sign_url: true
+                    secure: true
                 }
             );
 
