@@ -632,6 +632,57 @@ router.post(
 );
 
 
+// =====================================================
+// VIEW OBJECTIVE PDF
+// =====================================================
+
+router.get(
+    "/objective-pdfs/view/:id",
+    async (req, res) => {
+
+        try {
+
+            const pdf = await ObjectivePDF.findById(
+                req.params.id
+            );
+
+            if (!pdf) {
+                return res.status(404).send(
+                    "Objective PDF not found"
+                );
+            }
+
+            const pdfUrl = cloudinary.url(
+                pdf.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    secure: true
+                }
+            );
+
+            res.redirect(pdfUrl);
+
+        } catch (error) {
+
+            console.error(
+                "Objective PDF view error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to view PDF"
+            );
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// DOWNLOAD OBJECTIVE PDF
+// =====================================================
 
 router.get(
     "/objective-pdfs/download/:id",
@@ -639,17 +690,14 @@ router.get(
 
         try {
 
-            const pdf =
-                await ObjectivePDF.findById(
-                    req.params.id
-                );
+            const pdf = await ObjectivePDF.findById(
+                req.params.id
+            );
 
             if (!pdf) {
-
                 return res.status(404).send(
                     "Objective PDF not found"
                 );
-
             }
 
             pdf.downloads =
@@ -657,31 +705,124 @@ router.get(
 
             await pdf.save();
 
-
-            const signedUrl =
-                cloudinary.url(
-                    pdf.cloudinaryId,
-                    {
-                        resource_type: "raw",
-                        type: "upload",
-                        secure: true,
-                        sign_url: true
-                    }
-                );
-
-
-            console.log(
-                "SIGNED PDF URL:",
-                signedUrl
+            const pdfUrl = cloudinary.url(
+                pdf.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    secure: true
+                }
             );
 
-
-            res.redirect(signedUrl);
+            res.redirect(pdfUrl);
 
         } catch (error) {
 
             console.error(
                 "Objective PDF download error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to download PDF"
+            );
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// VIEW THEORY PDF
+// =====================================================
+
+router.get(
+    "/theory-pdfs/view/:id",
+    async (req, res) => {
+
+        try {
+
+            const pdf = await PDF.findById(req.params.id);
+
+            if (!pdf) {
+                return res.status(404).send(
+                    "Theory PDF not found"
+                );
+            }
+
+            const pdfUrl = cloudinary.url(
+                pdf.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    secure: true,
+                    sign_url: true
+                }
+            );
+
+            console.log("THEORY VIEW URL:", pdfUrl);
+
+            res.redirect(pdfUrl);
+
+        } catch (error) {
+
+            console.error(
+                "Theory PDF view error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to view PDF"
+            );
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// DOWNLOAD THEORY PDF
+// =====================================================
+
+router.get(
+    "/theory-pdfs/download/:id",
+    async (req, res) => {
+
+        try {
+
+            const pdf = await PDF.findById(req.params.id);
+
+            if (!pdf) {
+                return res.status(404).send(
+                    "Theory PDF not found"
+                );
+            }
+
+            pdf.downloads =
+                (pdf.downloads || 0) + 1;
+
+            await pdf.save();
+
+            const pdfUrl = cloudinary.url(
+                pdf.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    secure: true,
+                    sign_url: true
+                }
+            );
+
+            console.log("THEORY DOWNLOAD URL:", pdfUrl);
+
+            res.redirect(pdfUrl);
+
+        } catch (error) {
+
+            console.error(
+                "Theory PDF download error:",
                 error
             );
 

@@ -220,16 +220,15 @@
                 <div class="pdf-actions">
 
 
-                    <a
-                        href="<%= pdf.pdfUrl %>"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        👁 View PDF
-                    </a>
+                   <a
+    href="/objective-pdfs/view/<%= pdf._id %>"
+    target="_blank"
+    rel="noopener noreferrer"
+>
+    👁 View PDF
+</a>
 
-
-                    <a
+<a
     href="/objective-pdfs/download/<%= pdf._id %>"
 >
     ⬇ Download
