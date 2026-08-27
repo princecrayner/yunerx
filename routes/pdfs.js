@@ -721,6 +721,7 @@ router.get(
 
 // =====================================================
 // DOWNLOAD OBJECTIVE PDF
+// GET /objective-pdfs/download/:id
 // =====================================================
 
 router.get(
@@ -734,26 +735,77 @@ router.get(
             );
 
             if (!pdf) {
+
                 return res.status(404).send(
                     "Objective PDF not found"
                 );
+
             }
 
+            // Increase download count
             pdf.downloads =
                 (pdf.downloads || 0) + 1;
 
             await pdf.save();
 
-            const pdfUrl = cloudinary.url(
-                pdf.cloudinaryId,
-                {
-                    resource_type: "raw",
-                    type: "upload",
-                    secure: true
-                }
+            // Use the exact Cloudinary URL saved during upload
+            const pdfUrl = pdf.pdfUrl;
+
+            console.log(
+                "OBJECTIVE PDF DOWNLOAD:",
+                pdfUrl
             );
 
-            res.redirect(pdfUrl);
+            const response = await fetch(pdfUrl);
+
+            if (!response.ok) {
+
+                console.error(
+                    "Cloudinary response:",
+                    response.status,
+                    response.statusText
+                );
+
+                return res.status(500).send(
+                    "Unable to retrieve PDF from storage."
+                );
+
+            }
+
+            // Clean filename
+            let filename = (pdf.title || "objective-question")
+                .replace(/[<>:"/\\|?*]/g, "")
+                .trim();
+
+            // Make sure filename ends with .pdf
+            if (
+                !filename
+                    .toLowerCase()
+                    .endsWith(".pdf")
+            ) {
+
+                filename += ".pdf";
+
+            }
+
+            // Tell browser this is a PDF
+            res.setHeader(
+                "Content-Type",
+                "application/pdf"
+            );
+
+            // Force download
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="${filename}"`
+            );
+
+            // Send actual PDF
+            const { Readable } = require("stream");
+
+            Readable
+                .fromWeb(response.body)
+                .pipe(res);
 
         } catch (error) {
 
@@ -763,13 +815,15 @@ router.get(
             );
 
             res.status(500).send(
-                "Unable to download PDF"
+                "Unable to download Objective PDF."
             );
 
         }
 
     }
 );
+
+
 
 
 // =====================================================
