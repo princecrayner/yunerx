@@ -652,16 +652,11 @@ router.get(
                 );
             }
 
-            const pdfUrl = cloudinary.url(
-                pdf.cloudinaryId,
-                {
-                    resource_type: "raw",
-                    type: "upload",
-                    secure: true
-                }
-            );
 
-            res.redirect(pdfUrl);
+          res.redirect(pdf.pdfUrl);
+
+
+
 
         } catch (error) {
 
@@ -752,12 +747,21 @@ router.get(
             }
             
             
-          const pdfUrl = pdf.pdfUrl;            
+              const pdfUrl = cloudinary.url(
+                pdf.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    secure: true
+                }
+            );
 
+          
+          console.log("THEORY VIEW URL:", pdf.pdfUrl);
 
-            console.log("THEORY VIEW URL:", pdfUrl);
-
-            res.redirect(pdfUrl);
+          res.redirect(pdf.pdfUrl);
+          
+          
 
         } catch (error) {
 
