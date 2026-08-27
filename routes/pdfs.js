@@ -830,67 +830,34 @@ router.get(
 // GET /theory-pdfs/view/:id
 // =====================================================
 
+
+
 router.get(
     "/theory-pdfs/view/:id",
     async (req, res) => {
 
         try {
 
-            const pdf = await PDF.findById(
-                req.params.id
-            );
+            const pdf = await PDF.findById(req.params.id);
 
             if (!pdf) {
-
                 return res.status(404).send(
                     "Theory PDF not found"
                 );
-
             }
 
-            // Use the exact Cloudinary URL saved during upload
-            const pdfUrl = pdf.pdfUrl;
-
-            console.log(
-                "THEORY PDF VIEW:",
-                pdfUrl
+            const pdfUrl = cloudinary.url(
+                pdf.cloudinaryId,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    secure: true
+                }
             );
 
-            // Fetch the actual PDF from Cloudinary
-            const response = await fetch(pdfUrl);
+            console.log("THEORY VIEW URL:", pdfUrl);
 
-            if (!response.ok) {
-
-                console.error(
-                    "Cloudinary response:",
-                    response.status,
-                    response.statusText
-                );
-
-                return res.status(500).send(
-                    "Unable to retrieve PDF from storage."
-                );
-
-            }
-
-            // Tell browser this is a PDF
-            res.setHeader(
-                "Content-Type",
-                "application/pdf"
-            );
-
-            // Open inside browser
-            res.setHeader(
-                "Content-Disposition",
-                "inline"
-            );
-
-            // Send the actual PDF
-            const { Readable } = require("stream");
-
-            Readable
-                .fromWeb(response.body)
-                .pipe(res);
+            res.redirect(pdfUrl);
 
         } catch (error) {
 
@@ -900,7 +867,7 @@ router.get(
             );
 
             res.status(500).send(
-                "Unable to open Theory PDF."
+                "Unable to view PDF"
             );
 
         }
