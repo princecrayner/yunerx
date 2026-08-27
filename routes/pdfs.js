@@ -632,8 +632,11 @@ router.post(
 );
 
 
+
+
 // =====================================================
 // VIEW OBJECTIVE PDF
+// GET /objective-pdfs/view/:id
 // =====================================================
 
 router.get(
@@ -647,16 +650,55 @@ router.get(
             );
 
             if (!pdf) {
+
                 return res.status(404).send(
                     "Objective PDF not found"
                 );
+
             }
 
+            // Use the exact Cloudinary URL saved during upload
+            const pdfUrl = pdf.pdfUrl;
 
-          res.redirect(pdf.pdfUrl);
+            console.log(
+                "OBJECTIVE PDF VIEW:",
+                pdfUrl
+            );
 
+            const response = await fetch(pdfUrl);
 
+            if (!response.ok) {
 
+                console.error(
+                    "Cloudinary response:",
+                    response.status,
+                    response.statusText
+                );
+
+                return res.status(500).send(
+                    "Unable to retrieve PDF from storage."
+                );
+
+            }
+
+            // Tell browser this is a PDF
+            res.setHeader(
+                "Content-Type",
+                "application/pdf"
+            );
+
+            // Open inside browser
+            res.setHeader(
+                "Content-Disposition",
+                "inline"
+            );
+
+            // Send the actual PDF file
+            const { Readable } = require("stream");
+
+            Readable
+                .fromWeb(response.body)
+                .pipe(res);
 
         } catch (error) {
 
@@ -666,13 +708,15 @@ router.get(
             );
 
             res.status(500).send(
-                "Unable to view PDF"
+                "Unable to open Objective PDF."
             );
 
         }
 
     }
 );
+
+
 
 
 // =====================================================
