@@ -40,6 +40,7 @@ router.get("/", async (req, res) => {
         $group: {
             _id: {
                 level: "$level",
+                section: "$section",
                 category: "$category",
                 semester: "$semester",
                 subject: "$subject",
@@ -54,6 +55,7 @@ router.get("/", async (req, res) => {
         $project: {
             _id: 1,
             level: "$_id.level",
+            section: "$_id.section",
             category: "$_id.category",
             semester: "$_id.semester",
             subject: "$_id.subject",
@@ -462,7 +464,7 @@ router.get("/questions", async (req, res) => {
     }
 
 });
-
+     
 
 // =====================================================
 // DELETE ENTIRE CSV QUIZ
@@ -481,6 +483,15 @@ router.get(
                 subject,
                 quiz
             } = req.query;
+
+
+            console.log("DELETE QUIZ REQUEST:", {
+                level,
+                category,
+                semester,
+                subject,
+                quiz
+            });
 
 
             if (
@@ -505,13 +516,13 @@ router.get(
 
                     level: Number(level),
 
-                    category,
+                    category: category,
 
-                    semester,
+                    semester: semester,
 
-                    subject,
+                    subject: subject,
 
-                    quiz
+                    quiz: quiz
 
                 });
 
@@ -540,7 +551,6 @@ router.get(
 
     }
 );
-
 
 
 module.exports = router;

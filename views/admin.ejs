@@ -366,8 +366,8 @@
 
                 <br>
 
-                <a
-    href="/admin/delete-quiz?level=<%= encodeURIComponent(quiz.level) %>&category=<%= encodeURIComponent(quiz.category) %>&semester=<%= encodeURIComponent(quiz.semester) %>&subject=<%= encodeURIComponent(quiz.subject) %>&quiz=<%= encodeURIComponent(quiz.quiz) %>"
+               <a
+    href="/admin/delete-quiz?level=<%= encodeURIComponent(quiz.level) %>&section=<%= encodeURIComponent(quiz.section || '') %>&category=<%= encodeURIComponent(quiz.category) %>&semester=<%= encodeURIComponent(quiz.semester) %>&subject=<%= encodeURIComponent(quiz.subject) %>&quiz=<%= encodeURIComponent(quiz.quiz) %>"
     class="btn"
     onclick="return confirm('Delete this entire quiz and all its questions?');"
 >
