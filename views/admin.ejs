@@ -314,60 +314,65 @@
 
 <div class="container">
 
-    <h2>
-        📝 Objective Quiz Questions Library
+    <h2 class="admin-section-title">
+        📚 Objective Quiz Library
     </h2>
 
-    <% if (!questions || questions.length === 0) { %>
+    <p>
+        Manage uploaded quizzes. Deleting a quiz removes all
+        questions belonging to that quiz.
+    </p>
+
+    <% if (!quizzes || quizzes.length === 0) { %>
 
         <p class="library-empty">
-            No objective quiz questions uploaded yet.
+            No objective quizzes uploaded yet.
         </p>
 
     <% } else { %>
 
-        <% questions.forEach(question => { %>
+        <% quizzes.forEach(quiz => { %>
 
             <div class="pdf-card">
 
                 <h3>
-                    ❓ <%= question.question %>
+                    📝 <%= quiz.quiz %>
                 </h3>
 
                 <p>
                     <strong>Level:</strong>
-                    <%= question.level %>
-                </p>
-
-                <p>
-                    <strong>Subject:</strong>
-                    <%= question.subject %>
+                    <%= quiz.level %>
                 </p>
 
                 <p>
                     <strong>Category:</strong>
-                    <%= question.category %>
+                    <%= quiz.category %>
                 </p>
 
                 <p>
-                    <strong>Quiz:</strong>
-                    <%= question.quiz %>
+                    <strong>Semester:</strong>
+                    <%= quiz.semester %>
                 </p>
 
                 <p>
-                    <strong>Answer:</strong>
-                    <%= question.answer %>
+                    <strong>Subject:</strong>
+                    <%= quiz.subject %>
+                </p>
+
+                <p>
+                    <strong>Questions:</strong>
+                    <%= quiz.questionCount %>
                 </p>
 
                 <br>
 
                 <a
-                    href="/admin/delete-question/<%= question._id %>"
-                    class="btn"
-                    onclick="return confirm('Delete this question?');"
-                >
-                    🗑 Delete
-                </a>
+    href="/admin/delete-quiz?level=<%= encodeURIComponent(quiz.level) %>&category=<%= encodeURIComponent(quiz.category) %>&semester=<%= encodeURIComponent(quiz.semester) %>&subject=<%= encodeURIComponent(quiz.subject) %>&quiz=<%= encodeURIComponent(quiz.quiz) %>"
+    class="btn"
+    onclick="return confirm('Delete this entire quiz and all its questions?');"
+>
+    🗑 Delete Quiz
+</a>
 
             </div>
 
@@ -376,7 +381,6 @@
     <% } %>
 
 </div>
-
 
 <hr class="section-divider">
 

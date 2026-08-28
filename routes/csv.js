@@ -612,29 +612,5 @@ router.post(
 
 
 
-// =====================================================
-// DELETE QUESTION
-// =====================================================
-
-router.get('/delete-question/:id', async (req, res) => {
-
-    try {
-
-        await Question.findByIdAndDelete(req.params.id);
-
-        res.redirect('/admin');
-
-    } catch (error) {
-
-        console.error('DELETE QUESTION ERROR:', error);
-
-        res.status(500).send(
-            'Unable to delete question.'
-        );
-
-    }
-
-});
-
 
 module.exports = router;

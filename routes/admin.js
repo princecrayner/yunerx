@@ -35,10 +35,41 @@ router.get("/", async (req, res) => {
         });
         
         
-        
-        const questions = await Question.find().sort({
-            _id: -1
-        });
+       const quizzes = await Question.aggregate([
+    {
+        $group: {
+            _id: {
+                level: "$level",
+                category: "$category",
+                semester: "$semester",
+                subject: "$subject",
+                quiz: "$quiz"
+            },
+            questionCount: {
+                $sum: 1
+            }
+        }
+    },
+    {
+        $project: {
+            _id: 1,
+            level: "$_id.level",
+            category: "$_id.category",
+            semester: "$_id.semester",
+            subject: "$_id.subject",
+            quiz: "$_id.quiz",
+            questionCount: 1
+        }
+    },
+    {
+        $sort: {
+            level: 1,
+            category: 1,
+            subject: 1,
+            quiz: 1
+        }
+    }
+]);
 
 
         res.render("admin", {
@@ -46,7 +77,7 @@ router.get("/", async (req, res) => {
             pdfs,
             docs,
             objectivePDFs,
-            questions
+            quizzes
 
         });
 
@@ -433,46 +464,76 @@ router.get("/questions", async (req, res) => {
 });
 
 
-
-
 // =====================================================
-// DELETE INDIVIDUAL CSV QUESTION
+// DELETE ENTIRE CSV QUIZ
 // =====================================================
 
 router.get(
-    "/delete-question/:id",
+    "/delete-quiz",
     async (req, res) => {
 
         try {
 
-            const question =
-                await Question.findById(
-                    req.params.id
-                );
+            const {
+                level,
+                category,
+                semester,
+                subject,
+                quiz
+            } = req.query;
 
-            if (!question) {
 
-                return res.status(404).send(
-                    "Question not found."
+            if (
+                !level ||
+                !category ||
+                !semester ||
+                !subject ||
+                !quiz
+            ) {
+
+                return res.status(400).send(
+                    "Missing quiz information."
                 );
 
             }
 
-            await Question.findByIdAndDelete(
-                req.params.id
+
+            const result =
+                await Question.deleteMany({
+
+                    type: "objective",
+
+                    level: Number(level),
+
+                    category,
+
+                    semester,
+
+                    subject,
+
+                    quiz
+
+                });
+
+
+            console.log(
+                `Deleted quiz "${quiz}" - ${result.deletedCount} questions`
             );
 
+
             res.redirect("/admin");
+
 
         } catch (error) {
 
             console.error(
-                "Delete question error:",
+                "Delete quiz error:",
                 error
             );
 
+
             res.status(500).send(
-                "Unable to delete question."
+                "Unable to delete quiz."
             );
 
         }
