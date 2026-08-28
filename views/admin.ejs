@@ -309,6 +309,75 @@
 </div>
 
 
+
+<hr class="section-divider">
+
+<div class="container">
+
+    <h2>
+        📝 Objective Quiz Questions Library
+    </h2>
+
+    <% if (!questions || questions.length === 0) { %>
+
+        <p class="library-empty">
+            No objective quiz questions uploaded yet.
+        </p>
+
+    <% } else { %>
+
+        <% questions.forEach(question => { %>
+
+            <div class="pdf-card">
+
+                <h3>
+                    ❓ <%= question.question %>
+                </h3>
+
+                <p>
+                    <strong>Level:</strong>
+                    <%= question.level %>
+                </p>
+
+                <p>
+                    <strong>Subject:</strong>
+                    <%= question.subject %>
+                </p>
+
+                <p>
+                    <strong>Category:</strong>
+                    <%= question.category %>
+                </p>
+
+                <p>
+                    <strong>Quiz:</strong>
+                    <%= question.quiz %>
+                </p>
+
+                <p>
+                    <strong>Answer:</strong>
+                    <%= question.answer %>
+                </p>
+
+                <br>
+
+                <a
+                    href="/admin/delete-question/<%= question._id %>"
+                    class="btn"
+                    onclick="return confirm('Delete this question?');"
+                >
+                    🗑 Delete
+                </a>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+</div>
+
+
 <hr class="section-divider">
 
 

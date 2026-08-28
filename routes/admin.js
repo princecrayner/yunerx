@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const multer = require("multer");
-const csv = require("csvtojson");
 
 const Question = require("../models/Question");
 const Document = require("../models/Document");
@@ -13,14 +11,6 @@ const upload = require("../middleware/upload");
 
 const cloudinary = require("../config/cloudinary");
 
-
-// =====================================================
-// CSV UPLOAD STORAGE
-// =====================================================
-
-const csvUpload = multer({
-    dest: "uploads/"
-});
 
 
 
@@ -43,12 +33,20 @@ router.get("/", async (req, res) => {
         const objectivePDFs = await ObjectivePDF.find().sort({
             uploadedAt: -1
         });
+        
+        
+        
+        const questions = await Question.find().sort({
+            _id: -1
+        });
+
 
         res.render("admin", {
 
             pdfs,
             docs,
-            objectivePDFs
+            objectivePDFs,
+            questions
 
         });
 
@@ -65,240 +63,6 @@ router.get("/", async (req, res) => {
 });
 
 
-
-
-
-// =====================================================
-// UPLOAD OBJECTIVE QUESTIONS CSV
-// =====================================================
-
-router.post(
-    "/upload",
-    csvUpload.single("file"),
-    async (req, res) => {
-
-        try {
-
-            if (!req.file) {
-
-                return res.status(400).send(
-                    "❌ Please select a CSV file."
-                );
-
-            }
-
-
-            // Read CSV
-            const data = await csv({
-                trim: true
-            }).fromFile(req.file.path);
-
-
-            console.log("========== CSV DEBUG ==========");
-
-            console.log("CSV HEADERS:");
-            console.log(
-                Object.keys(data[0] || {})
-            );
-
-            console.log("FIRST CSV ROW:");
-            console.log(data[0]);
-
-            console.log("NUMBER OF ROWS:");
-            console.log(data.length);
-
-            console.log("================================");
-
-
-            // -----------------------------------------
-            // Helper to find CSV columns
-            // regardless of capitalization/spaces
-            // -----------------------------------------
-
-            function getValue(row, name) {
-
-                const wanted =
-                    name
-                        .trim()
-                        .toLowerCase();
-
-
-                const key =
-                    Object.keys(row).find(
-                        key =>
-                            key
-                                .trim()
-                                .toLowerCase() === wanted
-                    );
-
-
-                return key
-                    ? String(row[key] || "").trim()
-                    : "";
-
-            }
-
-
-            // -----------------------------------------
-            // Convert CSV rows into Questions
-            // -----------------------------------------
-
-            const questions = data.map((row, index) => {
-
-                const question =
-                    getValue(row, "question");
-
-                const A =
-                    getValue(row, "A");
-
-                const B =
-                    getValue(row, "B");
-
-                const C =
-                    getValue(row, "C");
-
-                const D =
-                    getValue(row, "D");
-
-                const answer =
-                    getValue(row, "answer");
-
-                const level =
-                    getValue(row, "level");
-
-                const category =
-                    getValue(row, "category");
-
-                const semester =
-                    getValue(row, "semester");
-
-                const subject =
-                    getValue(row, "subject");
-
-                const quiz =
-                    getValue(row, "quiz") ||
-                    "Quiz 1";
-
-
-                // Debug each row
-                console.log(
-                    `ROW ${index + 1}:`,
-                    {
-                        question,
-                        A,
-                        B,
-                        C,
-                        D,
-                        answer,
-                        level,
-                        category,
-                        semester,
-                        subject,
-                        quiz
-                    }
-                );
-
-
-                return {
-
-                    type: "objective",
-
-                    question,
-
-                    options: [
-                        A,
-                        B,
-                        C,
-                        D
-                    ],
-
-                    answer,
-
-                    level,
-
-                    category,
-
-                    semester,
-
-                    subject,
-
-                    quiz
-
-                };
-
-            });
-
-
-            // -----------------------------------------
-            // Check for missing required data
-            // BEFORE saving to MongoDB
-            // -----------------------------------------
-
-            const invalidRows =
-                questions.filter(q =>
-                    !q.question ||
-                    !q.answer ||
-                    !q.level ||
-                    !q.category ||
-                    !q.semester ||
-                    !q.subject
-                );
-
-
-            if (invalidRows.length > 0) {
-
-                console.log(
-                    "❌ INVALID CSV ROWS:"
-                );
-
-                console.log(
-                    invalidRows
-                );
-
-
-                return res.status(400).send(
-                    "❌ CSV contains missing required fields. Check your CSV headers and data."
-                );
-
-            }
-
-
-            // -----------------------------------------
-            // Save questions
-            // -----------------------------------------
-
-            await Question.insertMany(
-                questions
-            );
-
-
-            console.log(
-                `✅ ${questions.length} questions saved.`
-            );
-
-
-            res.send(
-                `✅ ${questions.length} objective questions uploaded successfully!`
-            );
-
-
-        } catch (err) {
-
-            console.error(
-                "CSV upload error:",
-                err
-            );
-
-
-            res.status(500).send(
-                "❌ CSV upload error: " +
-                err.message
-            );
-
-        }
-
-    }
-);
 
 // =====================================================
 // UPLOAD OBJECTIVE PAST QUESTION PDF
@@ -667,6 +431,54 @@ router.get("/questions", async (req, res) => {
     }
 
 });
+
+
+
+
+// =====================================================
+// DELETE INDIVIDUAL CSV QUESTION
+// =====================================================
+
+router.get(
+    "/delete-question/:id",
+    async (req, res) => {
+
+        try {
+
+            const question =
+                await Question.findById(
+                    req.params.id
+                );
+
+            if (!question) {
+
+                return res.status(404).send(
+                    "Question not found."
+                );
+
+            }
+
+            await Question.findByIdAndDelete(
+                req.params.id
+            );
+
+            res.redirect("/admin");
+
+        } catch (error) {
+
+            console.error(
+                "Delete question error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to delete question."
+            );
+
+        }
+
+    }
+);
 
 
 
