@@ -1,26 +1,80 @@
 body{
-    font-family:Arial;
-    background:#f4f4f4;
+    
+    font-family: Arial, sans-serif;
+    background: white;
+   
 }
 
-.container{
-    width:300px;
-    margin:50px auto;
-    background:white;
-    padding:20px;
-    border-radius:10px;
+.auth-box {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+    background: grey;
+    padding: 20px 40px;
+    margin: auto;
+    margin-top: 22%;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+
+}
+
+.auth-box h1{
+    color: #222;
+    margin: 0;
+    padding: 0;
+  
 }
 
 input{
-    width:100%;
-    padding:10px;
-    margin-bottom:10px;
+    width: 90%;
+    padding: 10px;
+    margin: 5px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 13px;
+   
 }
 
 button{
-    width:100%;
-    padding:10px;
-    background:blue;
-    color:white;
-    border:none;
+    width: 90%;
+    padding: 13px;
+    margin-top: 10px;
+    background: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover{
+    background: blue;
+}
+
+.auth-box a {
+
+  margin-top: 15px;
+  text-decoration: none;
+  color:  black;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+a:hover{
+    color: white;
+}
+
+
+@media (min-width: 768px) {
+
+
+.auth-box {
+    width: 20%;
+    margin-top: 8%;
+}
+
 }
