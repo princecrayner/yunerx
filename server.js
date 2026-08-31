@@ -261,32 +261,6 @@ app.get("/levels/level300", (req, res) => {
     res.render("levels/level300");
 });
 
-// PRIMARY + JHS PAGES
-
-app.get("/primary/100primary", (req, res) => {
-    res.render("primary/100primary");
-});
-
-app.get("/jhs/100jhs", (req, res) => {
-    res.render("jhs/100jhs");
-});
-
-app.get("/primary/200primary", (req, res) => {
-    res.render("primary/200primary");
-});
-
-app.get("/jhs/200jhs", (req, res) => {
-    res.render("jhs/200jhs");
-});
-
-app.get("/primary/300primary", (req, res) => {
-    res.render("primary/300primary");
-});
-
-app.get("/jhs/300jhs", (req, res) => {
-    res.render("jhs/300jhs");
-});
-
 
 
 
@@ -300,37 +274,9 @@ app.get("/videos", (req, res) => {
 });
 
 
-// Start objective from index 0
-app.get("/objective", (req, res) => {
-    const data = loadQuestions();
-    const index = 0;
 
-    const question = data.objective[index];
 
-    res.render("objective", {
-        question,
-        index,
-        total: data.objective.length
-    });
-});
 
-// Next questions
-app.get("/objective/:index", (req, res) => {
-    const data = loadQuestions();
-    const index = parseInt(req.params.index);
-
-    const question = data.objective[index];
-
-    if (!question) {
-        return res.send("<h2>Quiz Completed 🎉</h2><a href='/'>Go Home</a>");
-    }
-
-    res.render("objective", {
-        question,
-        index,
-        total: data.objective.length
-    });
-});
 
 
 // THEORY MODE

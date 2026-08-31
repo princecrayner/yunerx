@@ -18,6 +18,26 @@
         rel="stylesheet"
         href="/style.css"
     >
+    
+     <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+    >
+    
+    
+     <style>
+        .back-btn {
+
+            display: inline-block;
+
+            margin-bottom: 20px;
+
+            text-decoration: none;
+
+            color: royalblue;
+
+        }
+    </style>
 
 </head>
 
@@ -26,6 +46,19 @@
 
 
 <div class="container">
+
+
+    <a
+        href="/"
+        class="back-btn"
+    >
+
+        <i class="bx bx-arrow-back"></i>
+
+        Back to Semesters
+
+    </a>
+    
 
     <h1>
         📖 Past Theory Questions
@@ -60,7 +93,7 @@
 
     <% subjects.forEach(subject => { %>
 
-        <a href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/category/<%= encodeURIComponent(category) %>/semester/<%= encodeURIComponent(semester) %>/subject/<%= encodeURIComponent(subject) %>">
+        <a href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/category/<%= encodeURIComponent(category) %>/semester/<%= encodeURIComponent(semester) %>/subject/<%= encodeURIComponent(subject) %>" class="btn">
 
             📚 <%= subject %>
 
