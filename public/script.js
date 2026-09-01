@@ -32,6 +32,7 @@ if (menuBtn && sidebar && overlay) {
 
 
 
+
 //-----SEARCH-----//
 
 function searchSubjects() {

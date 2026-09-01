@@ -156,6 +156,16 @@
             text-decoration: none;
 
         }
+        
+        
+        .option.wrong-answer {
+          background: #fee2e2;
+          border-color: #ef4444;
+       }
+
+       .option.wrong-answer input {
+          accent-color: #ef4444;
+       }
 
     </style>
 
@@ -356,7 +366,13 @@ function submitQuiz() {
 
                 score++;
 
-            }
+            }  else {
+
+              selected
+             .closest(".option")
+             .classList.add("wrong-answer");
+
+           }
 
         }
     );
