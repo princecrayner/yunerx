@@ -35,14 +35,18 @@ router.get("/", async (req, res) => {
         });
         
         
-       const quizzes = await Question.aggregate([
+      const quizzes = await Question.aggregate([
+    {
+        $match: {
+            type: "objective"
+        }
+    },
     {
         $group: {
             _id: {
                 level: "$level",
                 section: "$section",
                 category: "$category",
-                semester: "$semester",
                 subject: "$subject",
                 quiz: "$quiz"
             },
@@ -57,7 +61,6 @@ router.get("/", async (req, res) => {
             level: "$_id.level",
             section: "$_id.section",
             category: "$_id.category",
-            semester: "$_id.semester",
             subject: "$_id.subject",
             quiz: "$_id.quiz",
             questionCount: 1

@@ -299,9 +299,9 @@ router.post(
                     ).trim();
                     
                     const quiz =
-                   String(
+                    String(
                         req.body.quiz || ''
-                  ).trim();
+                    ).trim();
 
 
                 const question =
@@ -396,11 +396,11 @@ router.post(
                 
                 if (!quiz) {
 
-    errors.push(
-        `Quiz name is required.`
-    );
+                    errors.push(
+                        `Quiz name is required.`
+                    );
 
-}
+                }
 
 
                 if (!question) {
