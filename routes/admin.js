@@ -518,11 +518,9 @@ router.get(
 
                     category: category,
 
-                    semester: semester,
 
                     subject: subject,
 
-                    quiz: quiz
 
                 });
 

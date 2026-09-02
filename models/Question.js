@@ -32,6 +32,12 @@ const questionSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+        
+        quiz: {
+            type: String,
+             required: true,
+             trim: true
+        },
 
         question: {
             type: String,

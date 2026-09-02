@@ -297,6 +297,11 @@ router.post(
                     String(
                         row.category || ''
                     ).trim();
+                    
+                    const quiz =
+                   String(
+                        req.body.quiz || ''
+                  ).trim();
 
 
                 const question =
@@ -388,6 +393,14 @@ router.post(
                     );
 
                 }
+                
+                if (!quiz) {
+
+    errors.push(
+        `Quiz name is required.`
+    );
+
+}
 
 
                 if (!question) {
@@ -493,6 +506,7 @@ router.post(
     section,
     subject,
     category,
+    quiz,
     question,
 
     options: {
