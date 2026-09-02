@@ -244,7 +244,9 @@ app.get("/contact", (req, res) => {
 
 // LOGOUT PAGE
 app.get("/logout", (req, res) => {
-    res.render("logout");
+    res.render("logout", {
+        user: req.session.user
+    });
 });
 
 

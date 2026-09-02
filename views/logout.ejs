@@ -10,23 +10,16 @@
      <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <style>
-
         .logout-profile{
-
-         width: 90px;
-         height: 90px;
-
-         border-radius: 50%;
-
-         object-fit: cover;
-
-         border: 4px solid #2563eb;
-
-         margin-bottom: 15px;
-
-         box-shadow: 0 0 20px rgba(37,99,235,0.4);
-
-         }
+           width:90px;
+           height:90px;
+           border-radius:50%;
+           object-fit:cover;
+           border:4px solid #2563eb;
+           margin:0 auto 15px;
+           display:block;
+           box-shadow:0 0 20px rgba(37,99,235,0.4);
+        }
 
         .logout-container{
 
@@ -68,7 +61,8 @@
             border-radius: 8px;
             text-decoration: none;
         }
-
+        
+        
         .no-btn{
 
             background: #2563eb;
@@ -79,6 +73,7 @@
         }
 
          .logout-container{
+
 
           animation: popup 0.4s ease;
 
@@ -100,28 +95,28 @@
     }
 
 
-        .back-btn i{
-          position: fixed;
+        .back-btn {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+
+          width: 40px;
+          height: 40px;
+
+          padding: 0;
+          background: #555;
+          border-radius: 50%;
+          cursor:pointer;
+
           display: flex;
-          flex-direction: flex-start;
-          font-size: 20px;
-          height: 50px;
-          width: 50px;
-          justify-content: center;
           align-items: center;
-          cursor: pointer;
-          margin-top: 20px;
-          margin-left: 20px;
+          justify-content: center;
+       }
+        .back-btn i {
           color: white;
+          font-size: 28px;
+       }
 
-        }
-
-        .back-btn i:hover{
-          background: #2563eb;
-          border-radius: 50px;
-          z-index: 2000;
-
-        }
 
 
     </style>
@@ -136,7 +131,7 @@
 
 
 <h1 class="logout-title">
-<img src="/profile.png" class="logout-profile">
+<img src="<%= user.profileImage %>" class="logout-profile">
 
 <div class="logout-container">
 
