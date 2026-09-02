@@ -4,7 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Videos</title>
 
-<link rel="stylesheet" href="/css/videos.css">
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
@@ -19,19 +18,24 @@ body{
 }
 
 .upload-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: gray;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  align-items: center;
-  justify-content: center;
+   position: absolute;
+   top: 15px;
+   right: 15px;
+
+   width: 40px;
+   height: 40px;
+
+   padding: 0;
+   background: #555;
+   border-radius: 50%;
+   cursor:pointer;
+
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }
 .upload-btn i {
-  color: white;
-  font-size: 30px;
+  font-size: 28px;
 }
 
 .video-grid{
@@ -61,9 +65,12 @@ video{
 
     width: 100%;
     height: 70%;
+    border-radius: 15px 15px 0 0;
 
     background: #333;
     box-sizing: border-box;
+    padding: 50px;
+    padding-bottom: none;
 
     transform: translateY(100%);
     transition: transform 0.3s ease;
@@ -76,9 +83,10 @@ video{
 }
 
 input{
-    width:98%;
+    width:100%;
     padding:12px;
     margin-bottom:15px;
+    box-sizing: border-box;
 }
 
 
