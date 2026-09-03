@@ -468,9 +468,10 @@ router.get("/questions", async (req, res) => {
 
 });
      
-
+     
+     
 // =====================================================
-// DELETE ENTIRE CSV QUIZ
+// DELETE ONE CSV QUIZ
 // =====================================================
 
 router.get(
@@ -481,8 +482,8 @@ router.get(
 
             const {
                 level,
+                section,
                 category,
-                semester,
                 subject,
                 quiz
             } = req.query;
@@ -490,17 +491,21 @@ router.get(
 
             console.log("DELETE QUIZ REQUEST:", {
                 level,
+                section,
                 category,
-                semester,
                 subject,
                 quiz
             });
 
 
+            // -----------------------------------------
+            // CHECK REQUIRED INFORMATION
+            // -----------------------------------------
+
             if (
                 !level ||
+                !section ||
                 !category ||
-                !semester ||
                 !subject ||
                 !quiz
             ) {
@@ -512,6 +517,10 @@ router.get(
             }
 
 
+            // -----------------------------------------
+            // DELETE ONLY THIS SPECIFIC QUIZ
+            // -----------------------------------------
+
             const result =
                 await Question.deleteMany({
 
@@ -519,11 +528,13 @@ router.get(
 
                     level: Number(level),
 
-                    category: category,
+                    section: section,
 
+                    category: category,
 
                     subject: subject,
 
+                    quiz: quiz
 
                 });
 
@@ -532,6 +543,10 @@ router.get(
                 `Deleted quiz "${quiz}" - ${result.deletedCount} questions`
             );
 
+
+            // -----------------------------------------
+            // RETURN TO ADMIN PAGE
+            // -----------------------------------------
 
             res.redirect("/admin");
 
@@ -552,6 +567,5 @@ router.get(
 
     }
 );
-
 
 module.exports = router;
