@@ -13,13 +13,14 @@
     <title>Semesters</title>
 
     <link rel="stylesheet" href="/style.css">
-    
-     <link
+
+    <link
         href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
         rel="stylesheet"
     >
-    
-      <style>
+
+    <style>
+
         .back-btn {
 
             display: inline-block;
@@ -31,60 +32,86 @@
             color: royalblue;
 
         }
+
     </style>
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
-<a
-    href="javascript:history.back()"
-    class="back-btn"
->
-        ← Back to Categories
+
+    <a
+        href="/"
+        class="back-btn"
+    >
+
+        <i class="bx bx-arrow-back"></i>
+
+        Back Home
+
     </a>
 
-    <h1>📅 Semesters</h1>
+
+    <h1>
+        📅 Semesters
+    </h1>
+
 
     <p>
-        Level: <strong><%= level %></strong>
+        Select a semester to view available subjects.
     </p>
 
+
     <p>
-        Category: <strong><%= category %></strong>
+        Level:
+        <strong>
+            <%= level %>
+        </strong>
     </p>
+
 
 </div>
 
 
+
 <div class="container">
 
-    <% if (semesters.length === 0) { %>
+
+    <% if (!semesters || semesters.length === 0) { %>
 
         <p>
             No semesters available.
         </p>
 
+    <% } else { %>
+
+
+        <% semesters.forEach(semester => { %>
+
+
+            <a
+                href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/semester/<%= encodeURIComponent(semester) %>"
+                class="btn"
+            >
+
+                📅 <%= semester %>
+
+            </a>
+
+
+        <% }) %>
+
+
     <% } %>
 
-
-    <% semesters.forEach(semester => { %>
-
-        <a
-            href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/category/<%= encodeURIComponent(category) %>/semester/<%= encodeURIComponent(semester) %>"
-            class="btn"
-        >
-
-            <%= semester %>
-
-        </a>
-
-    <% }) %>
 
 </div>
 
 
 </body>
+
 </html>

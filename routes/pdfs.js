@@ -182,13 +182,10 @@ router.get(
 );
 
 
-
 // =====================================================
 // THEORY PAST QUESTIONS
 //
 // LEVEL
-//   ↓
-// CATEGORY
 //   ↓
 // SEMESTER
 //   ↓
@@ -210,76 +207,11 @@ router.get(
                     req.params.level
                 );
 
-            const categories =
-                await PDF.distinct(
-                    "category",
-                    {
-                        level: level
-                    }
-                );
-
-            categories.sort();
-
-            res.render(
-                "theorycategories",
-                {
-
-                    level,
-
-                    categories
-
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Theory category error:",
-                error
-            );
-
-            res.status(500).send(
-                "Unable to load theory categories"
-            );
-
-        }
-
-    }
-);
-
-
-
-// =====================================================
-// THEORY CATEGORY PAGE
-//
-// /theory-pdfs/level/:level/category/:category
-// =====================================================
-
-router.get(
-    "/theory-pdfs/level/:level/category/:category",
-    async (req, res) => {
-
-        try {
-
-            const level =
-                decodeURIComponent(
-                    req.params.level
-                );
-
-            const category =
-                decodeURIComponent(
-                    req.params.category
-                );
-
             const semesters =
                 await PDF.distinct(
                     "semester",
                     {
-
-                        level: level,
-
-                        category: category
-
+                        level: level
                     }
                 );
 
@@ -290,8 +222,6 @@ router.get(
                 {
 
                     level,
-
-                    category,
 
                     semesters
 
@@ -313,6 +243,149 @@ router.get(
 
     }
 );
+
+
+
+// =====================================================
+// THEORY SUBJECT PAGE
+//
+// /theory-pdfs/level/:level/semester/:semester
+// =====================================================
+
+router.get(
+    "/theory-pdfs/level/:level/semester/:semester",
+    async (req, res) => {
+
+        try {
+
+            const level =
+                decodeURIComponent(
+                    req.params.level
+                );
+
+            const semester =
+                decodeURIComponent(
+                    req.params.semester
+                );
+
+            const subjects =
+                await PDF.distinct(
+                    "subject",
+                    {
+
+                        level: level,
+
+                        semester: semester
+
+                    }
+                );
+
+            subjects.sort();
+
+            res.render(
+                "theorysubjects",
+                {
+
+                    level,
+
+                    semester,
+
+                    subjects
+
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Theory subject error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to load theory subjects"
+            );
+
+        }
+
+    }
+);
+
+
+
+// =====================================================
+// THEORY PDF DOCUMENTS PAGE
+//
+// /theory-pdfs/level/:level/semester/:semester/subject/:subject
+// =====================================================
+
+router.get(
+    "/theory-pdfs/level/:level/semester/:semester/subject/:subject",
+    async (req, res) => {
+
+        try {
+
+            const level =
+                decodeURIComponent(
+                    req.params.level
+                );
+
+            const semester =
+                decodeURIComponent(
+                    req.params.semester
+                );
+
+            const subject =
+                decodeURIComponent(
+                    req.params.subject
+                );
+
+            const pdfs =
+                await PDF.find({
+
+                    level: level,
+
+                    semester: semester,
+
+                    subject: subject
+
+                }).sort({
+
+                    uploadedAt: -1
+
+                });
+
+            res.render(
+                "theorydocuments",
+                {
+
+                    level,
+
+                    semester,
+
+                    subject,
+
+                    pdfs
+
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Theory documents error:",
+                error
+            );
+
+            res.status(500).send(
+                "Unable to load theory past question documents"
+            );
+
+        }
+
+    }
+);
+
 
 
 
