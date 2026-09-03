@@ -12,15 +12,17 @@ router.get('/', async (req, res) => {
 
     try {
 
-        // Get all different level/section combinations
         const questions = await Question.find({
-    type: "objective"
-})
-    .select('level section subject category')
-    .lean();
+            type: "objective"
+        })
+        .select('level section subject category')
+        .lean();
 
 
-        // Build levels structure
+        // =================================================
+        // BUILD LEVEL STRUCTURE
+        // =================================================
+
         const levels = {};
 
 
@@ -33,9 +35,13 @@ router.get('/', async (req, res) => {
             if (!levels[levelKey]) {
 
                 levels[levelKey] = {
+
                     level: question.level,
+
                     section: question.section,
+
                     subjects: {}
+
                 };
 
             }
@@ -66,7 +72,10 @@ router.get('/', async (req, res) => {
         });
 
 
-        // Convert Sets to arrays
+        // =================================================
+        // CONVERT SETS TO ARRAYS
+        // =================================================
+
         Object.values(levels).forEach(level => {
 
             Object.values(level.subjects).forEach(subject => {
@@ -80,7 +89,9 @@ router.get('/', async (req, res) => {
 
 
         res.render('objectivequizes', {
+
             levels
+
         });
 
 
@@ -102,7 +113,7 @@ router.get('/', async (req, res) => {
 
 
 // =====================================================
-// QUESTIONS FOR A CATEGORY
+// SHOW QUIZZES INSIDE A CATEGORY
 // =====================================================
 
 router.get(
@@ -119,8 +130,14 @@ router.get(
             } = req.params;
 
 
+            // =================================================
+            // FIND ALL QUESTIONS FOR THIS CATEGORY
+            // =================================================
+
             const questions =
                 await Question.find({
+
+                    type: "objective",
 
                     level: Number(level),
 
@@ -131,6 +148,124 @@ router.get(
                     category: category
 
                 })
+                .select('quiz')
+                .lean();
+
+
+            if (!questions.length) {
+
+                return res.status(404).send(
+                    'No quizzes found for this category.'
+                );
+
+            }
+
+
+            // =================================================
+            // GET UNIQUE QUIZ NAMES
+            // =================================================
+
+            const quizSet = new Set();
+
+
+            questions.forEach(question => {
+
+                if (question.quiz) {
+
+                    quizSet.add(
+                        question.quiz
+                    );
+
+                }
+
+            });
+
+
+            const quizzes =
+                Array.from(quizSet);
+
+
+            if (!quizzes.length) {
+
+                return res.status(404).send(
+                    'No quizzes have been created for this category.'
+                );
+
+            }
+
+
+            res.render('objective-quiz-list', {
+
+                level,
+
+                section,
+
+                subject,
+
+                category,
+
+                quizzes
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                'QUIZ LIST ERROR:',
+                error
+            );
+
+
+            res.status(500).send(
+                'Unable to load quizzes.'
+            );
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// LOAD QUESTIONS FOR ONE SPECIFIC QUIZ
+// =====================================================
+
+router.get(
+    '/:level/:section/:subject/:category/:quiz',
+    async (req, res) => {
+
+        try {
+
+            const {
+                level,
+                section,
+                subject,
+                category,
+                quiz
+            } = req.params;
+
+
+            // =================================================
+            // FIND QUESTIONS FOR THIS EXACT QUIZ
+            // =================================================
+
+            const questions =
+                await Question.find({
+
+                    type: "objective",
+
+                    level: Number(level),
+
+                    section: section,
+
+                    subject: subject,
+
+                    category: category,
+
+                    quiz: quiz
+
+                })
                 .sort({ createdAt: 1 })
                 .lean();
 
@@ -138,7 +273,7 @@ router.get(
             if (!questions.length) {
 
                 return res.status(404).send(
-                    'No questions found for this category.'
+                    'No questions found for this quiz.'
                 );
 
             }
@@ -154,7 +289,9 @@ router.get(
 
                 subject,
 
-                category
+                category,
+
+                quiz
 
             });
 

@@ -10,9 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        <%= subject %> - Yunerx
-    </title>
+   <title>
+    <%= quiz %> - <%= category %> - Yunerx
+   </title>
 
     <link rel="stylesheet" href="/style.css">
 
@@ -191,17 +191,21 @@
 
     <div class="quiz-header">
 
-        <h1>
-            <%= subject %>
-        </h1>
+       <h1>
+          <%= category %>
+       </h1>
 
-        <div class="quiz-info">
+       <h2>
+         📝 <%= quiz %>
+       </h2>
 
-            Level <%= level %>
-            |
-            <%= section %>
-            |
-            <%= category %>
+       <div class="quiz-info">
+
+          <%= subject %>
+          |
+          Level <%= level %>
+          |
+          <%= section %>
 
         </div>
 

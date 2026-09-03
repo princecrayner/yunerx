@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        <%= category %> - Quizzes - Yunerx
+    </title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        .quiz-container {
+
+            max-width: 900px;
+
+            margin: 30px auto;
+
+            padding: 20px;
+
+        }
+
+
+        .back-btn {
+
+            display: inline-block;
+
+            margin-bottom: 25px;
+
+            color: royalblue;
+
+            text-decoration: none;
+
+            font-size: 16px;
+
+        }
+
+
+        .quiz-header {
+
+            text-align: center;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .quiz-header h1 {
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .quiz-info {
+
+            color: #777;
+
+            font-size: 15px;
+
+        }
+
+
+        .quiz-list {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 15px;
+
+        }
+
+
+        .quiz-card {
+
+            display: block;
+
+            padding: 20px;
+
+            background: white;
+
+            border: 1px solid #eee;
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            color: #222;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,.08);
+
+            transition:
+                transform .2s,
+                box-shadow .2s;
+
+        }
+
+
+        .quiz-card:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 6px 18px rgba(0,0,0,.12);
+
+        }
+
+
+        .quiz-icon {
+
+            font-size: 32px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .quiz-name {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+            color: royalblue;
+
+        }
+
+
+        .empty {
+
+            text-align: center;
+
+            color: #777;
+
+            padding: 40px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="quiz-container">
+
+
+    <!-- BACK -->
+
+    <a
+        href="/objectivequizes"
+        class="back-btn"
+    >
+
+        <i class="bx bx-arrow-back"></i>
+
+        Back to Objective Quizzes
+
+    </a>
+
+
+
+    <!-- HEADER -->
+
+    <div class="quiz-header">
+
+        <h1>
+
+            📚 <%= category %>
+
+        </h1>
+
+
+        <div class="quiz-info">
+
+            <%= subject %>
+
+            |
+
+            Level <%= level %>
+
+            |
+
+            <%= section %>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- QUIZ LIST -->
+
+    <% if (!quizzes || quizzes.length === 0) { %>
+
+
+        <div class="empty">
+
+            No quizzes available yet.
+
+        </div>
+
+
+    <% } else { %>
+
+
+        <div class="quiz-list">
+
+
+            <% quizzes.forEach((quiz, index) => { %>
+
+
+                <a
+                    href="/objectivequizes/<%= level %>/<%= encodeURIComponent(section) %>/<%= encodeURIComponent(subject) %>/<%= encodeURIComponent(category) %>/<%= encodeURIComponent(quiz) %>"
+                    class="quiz-card"
+                >
+
+
+                    <div class="quiz-icon">
+
+                        📝
+
+                    </div>
+
+
+                    <div class="quiz-name">
+
+                        <%= quiz %>
+
+                    </div>
+
+
+                </a>
+
+
+            <% }) %>
+
+
+        </div>
+
+
+    <% } %>
+
+
+</div>
+
+
+</body>
+
+</html>
