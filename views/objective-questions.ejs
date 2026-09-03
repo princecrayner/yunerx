@@ -10,9 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-   <title>
-    <%= quiz %> - <%= category %> - Yunerx
-   </title>
+    <title>
+        <%= quiz %> - <%= subject %> - Yunerx
+    </title>
 
     <link rel="stylesheet" href="/style.css">
 
@@ -39,6 +39,13 @@
         .quiz-header h1 {
 
             margin-bottom: 5px;
+
+        }
+
+
+        .quiz-header h2 {
+
+            margin-top: 5px;
 
         }
 
@@ -156,16 +163,22 @@
             text-decoration: none;
 
         }
-        
-        
-        .option.wrong-answer {
-          background: #fee2e2;
-          border-color: #ef4444;
-       }
 
-       .option.wrong-answer input {
-          accent-color: #ef4444;
-       }
+
+        .option.wrong-answer {
+
+            background: #fee2e2;
+
+            border-color: #ef4444;
+
+        }
+
+
+        .option.wrong-answer input {
+
+            accent-color: #ef4444;
+
+        }
 
     </style>
 
@@ -178,40 +191,53 @@
 <div class="questions-container">
 
 
+    <!-- =====================================================
+         BACK TO SUBJECT QUIZZES
+    ===================================================== -->
+
     <a
-        href="/objectivequizes"
+        href="/objectivequizes/subject/<%= encodeURIComponent(subject) %>"
         class="back-btn"
     >
 
-        ← Back to Objective Quizzes
+        ← Back to <%= subject %> Quizzes
 
     </a>
 
 
+    <!-- =====================================================
+         QUIZ HEADER
+    ===================================================== -->
 
     <div class="quiz-header">
 
-       <h1>
-          <%= category %>
-       </h1>
+        <h1>
 
-       <h2>
-         📝 <%= quiz %>
-       </h2>
+            <%= subject %>
 
-       <div class="quiz-info">
+        </h1>
 
-          <%= subject %>
-          |
-          Level <%= level %>
-          |
-          <%= section %>
+
+        <h2>
+
+            📝 <%= quiz %>
+
+        </h2>
+
+
+        <div class="quiz-info">
+
+            <%= questions.length %>
+            Questions
 
         </div>
 
     </div>
 
 
+    <!-- =====================================================
+         QUESTIONS
+    ===================================================== -->
 
     <form
         action="#"
@@ -240,6 +266,7 @@
                 </div>
 
 
+                <!-- OPTION A -->
 
                 <label class="option">
 
@@ -256,6 +283,7 @@
                 </label>
 
 
+                <!-- OPTION B -->
 
                 <label class="option">
 
@@ -272,6 +300,7 @@
                 </label>
 
 
+                <!-- OPTION C -->
 
                 <label class="option">
 
@@ -288,6 +317,7 @@
                 </label>
 
 
+                <!-- OPTION D -->
 
                 <label class="option">
 
@@ -310,6 +340,9 @@
         <% }) %>
 
 
+        <!-- =================================================
+             SUBMIT
+        ================================================= -->
 
         <button
             type="button"
@@ -324,13 +357,19 @@
 
     </form>
 
-</div>
 
+</div>
 
 
 <script>
 
+
+// =====================================================
+// SUBMIT QUIZ
+// =====================================================
+
 function submitQuiz() {
+
 
     const questions =
         <%- JSON.stringify(
@@ -349,11 +388,16 @@ function submitQuiz() {
     questions.forEach(
         (question, index) => {
 
+
             const selected =
                 document.querySelector(
                     `input[name="question_${index}"]:checked`
                 );
 
+
+            // ---------------------------------------------
+            // UNANSWERED
+            // ---------------------------------------------
 
             if (!selected) {
 
@@ -364,23 +408,40 @@ function submitQuiz() {
             }
 
 
+            // ---------------------------------------------
+            // CORRECT
+            // ---------------------------------------------
+
             if (
                 selected.value === question.answer
             ) {
 
                 score++;
 
-            }  else {
+            }
 
-              selected
-             .closest(".option")
-             .classList.add("wrong-answer");
 
-           }
+            // ---------------------------------------------
+            // WRONG
+            // ---------------------------------------------
+
+            else {
+
+                selected
+                    .closest(".option")
+                    .classList.add(
+                        "wrong-answer"
+                    );
+
+            }
 
         }
     );
 
+
+    // =====================================================
+    // RESULT
+    // =====================================================
 
     let message =
         `You scored ${score} out of ${questions.length}.`;
@@ -389,7 +450,7 @@ function submitQuiz() {
     if (unanswered > 0) {
 
         message +=
-            `\\n\\nUnanswered questions: ${unanswered}`;
+            `\n\nUnanswered questions: ${unanswered}`;
 
     }
 
@@ -397,6 +458,7 @@ function submitQuiz() {
     alert(message);
 
 }
+
 
 </script>
 

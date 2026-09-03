@@ -11,7 +11,7 @@
     >
 
     <title>
-        <%= category %> - Quizzes - Yunerx
+        <%= subject %> - Quizzes - Yunerx
     </title>
 
     <link rel="stylesheet" href="/style.css">
@@ -22,6 +22,10 @@
     >
 
     <style>
+
+        /* =====================================================
+           CONTAINER
+        ===================================================== */
 
         .quiz-container {
 
@@ -34,9 +38,17 @@
         }
 
 
+        /* =====================================================
+           BACK BUTTON
+        ===================================================== */
+
         .back-btn {
 
-            display: inline-block;
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
 
             margin-bottom: 25px;
 
@@ -49,18 +61,22 @@
         }
 
 
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
         .quiz-header {
 
             text-align: center;
 
-            margin-bottom: 35px;
+            margin-bottom: 25px;
 
         }
 
 
         .quiz-header h1 {
 
-            margin-bottom: 10px;
+            margin-bottom: 8px;
 
         }
 
@@ -74,6 +90,70 @@
         }
 
 
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        .quiz-search {
+
+            position: relative;
+
+            max-width: 600px;
+
+            margin: 0 auto 30px;
+
+        }
+
+
+        .quiz-search i {
+
+            position: absolute;
+
+            left: 15px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 20px;
+
+            color: #777;
+
+        }
+
+
+        .quiz-search input {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 14px 45px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 15px;
+
+            background: white;
+
+        }
+
+
+        .quiz-search input:focus {
+
+            border-color: royalblue;
+
+        }
+
+
+        /* =====================================================
+           QUIZ LIST
+        ===================================================== */
+
         .quiz-list {
 
             display: grid;
@@ -86,9 +166,17 @@
         }
 
 
+        /* =====================================================
+           QUIZ CARD
+        ===================================================== */
+
         .quiz-card {
 
-            display: block;
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
 
             padding: 20px;
 
@@ -122,18 +210,40 @@
         }
 
 
+        /* =====================================================
+           QUIZ ICON
+        ===================================================== */
+
         .quiz-icon {
 
-            font-size: 32px;
+            width: 45px;
 
-            margin-bottom: 10px;
+            height: 45px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #f1f4ff;
+
+            border-radius: 10px;
+
+            font-size: 24px;
+
+            flex-shrink: 0;
 
         }
 
 
+        /* =====================================================
+           QUIZ NAME
+        ===================================================== */
+
         .quiz-name {
 
-            font-size: 18px;
+            font-size: 17px;
 
             font-weight: bold;
 
@@ -142,6 +252,10 @@
         }
 
 
+        /* =====================================================
+           NO RESULTS
+        ===================================================== */
+
         .empty {
 
             text-align: center;
@@ -149,6 +263,37 @@
             color: #777;
 
             padding: 40px;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 600px) {
+
+            .quiz-container {
+
+                margin: 20px auto;
+
+                padding: 15px;
+
+            }
+
+
+            .quiz-list {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .quiz-header h1 {
+
+                font-size: 25px;
+
+            }
 
         }
 
@@ -163,7 +308,9 @@
 <div class="quiz-container">
 
 
-    <!-- BACK -->
+    <!-- =====================================================
+         BACK TO SUBJECTS
+    ===================================================== -->
 
     <a
         href="/objectivequizes"
@@ -172,42 +319,54 @@
 
         <i class="bx bx-arrow-back"></i>
 
-        Back to Objective Quizzes
+        Back to Subjects
 
     </a>
 
 
-
-    <!-- HEADER -->
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
 
     <div class="quiz-header">
 
         <h1>
 
-            📚 <%= category %>
+            📚 <%= subject %>
 
         </h1>
 
 
         <div class="quiz-info">
 
-            <%= subject %>
-
-            |
-
-            Level <%= level %>
-
-            |
-
-            <%= section %>
+            Select a quiz to start answering questions.
 
         </div>
 
     </div>
 
 
+    <!-- =====================================================
+         SEARCH QUIZZES
+    ===================================================== -->
 
-    <!-- QUIZ LIST -->
+    <div class="quiz-search">
+
+        <i class="bx bx-search"></i>
+
+        <input
+            type="text"
+            id="quizSearch"
+            placeholder="Search quizzes..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <!-- =====================================================
+         QUIZZES
+    ===================================================== -->
 
     <% if (!quizzes || quizzes.length === 0) { %>
 
@@ -222,15 +381,19 @@
     <% } else { %>
 
 
-        <div class="quiz-list">
+        <div
+            class="quiz-list"
+            id="quizList"
+        >
 
 
-            <% quizzes.forEach((quiz, index) => { %>
+            <% quizzes.forEach(quiz => { %>
 
 
                 <a
-                    href="/objectivequizes/<%= level %>/<%= encodeURIComponent(section) %>/<%= encodeURIComponent(subject) %>/<%= encodeURIComponent(category) %>/<%= encodeURIComponent(quiz) %>"
+                    href="/objectivequizes/subject/<%= encodeURIComponent(subject) %>/quiz/<%= encodeURIComponent(quiz) %>"
                     class="quiz-card"
+                    data-quiz="<%= quiz.toLowerCase() %>"
                 >
 
 
@@ -257,10 +420,98 @@
         </div>
 
 
+        <div
+            class="empty"
+            id="noResults"
+            style="display:none;"
+        >
+
+            No quizzes found.
+
+        </div>
+
+
     <% } %>
 
 
 </div>
+
+
+<script>
+
+
+// =====================================================
+// QUIZ SEARCH
+// =====================================================
+
+const quizSearch =
+    document.getElementById("quizSearch");
+
+
+const quizCards =
+    document.querySelectorAll(".quiz-card");
+
+
+const noResults =
+    document.getElementById("noResults");
+
+
+if (quizSearch) {
+
+    quizSearch.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            let visibleCount = 0;
+
+
+            quizCards.forEach(card => {
+
+                const quiz =
+                    card.dataset.quiz;
+
+
+                if (
+                    quiz.includes(search)
+                ) {
+
+                    card.style.display =
+                        "flex";
+
+                    visibleCount++;
+
+                } else {
+
+                    card.style.display =
+                        "none";
+
+                }
+
+            });
+
+
+            if (noResults) {
+
+                noResults.style.display =
+                    visibleCount === 0
+                        ? "block"
+                        : "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+</script>
 
 
 </body>

@@ -6,6 +6,8 @@ const Question = require('../models/Question');
 
 // =====================================================
 // OBJECTIVE QUIZ HOME
+// Shows ALL subjects alphabetically
+// No level, section, or category
 // =====================================================
 
 router.get('/', async (req, res) => {
@@ -15,82 +17,44 @@ router.get('/', async (req, res) => {
         const questions = await Question.find({
             type: "objective"
         })
-        .select('level section subject category')
+        .select('subject')
         .lean();
 
 
         // =================================================
-        // BUILD LEVEL STRUCTURE
+        // GET UNIQUE SUBJECTS
         // =================================================
 
-        const levels = {};
+        const subjectSet = new Set();
 
 
         questions.forEach(question => {
 
-            const levelKey =
-                `${question.level} ${question.section}`;
+            if (question.subject) {
 
-
-            if (!levels[levelKey]) {
-
-                levels[levelKey] = {
-
-                    level: question.level,
-
-                    section: question.section,
-
-                    subjects: {}
-
-                };
+                subjectSet.add(
+                    question.subject
+                );
 
             }
-
-
-            const subject =
-                question.subject;
-
-
-            if (!levels[levelKey].subjects[subject]) {
-
-                levels[levelKey].subjects[subject] = {
-
-                    name: subject,
-
-                    categories: new Set()
-
-                };
-
-            }
-
-
-            levels[levelKey]
-                .subjects[subject]
-                .categories
-                .add(question.category);
 
         });
 
 
         // =================================================
-        // CONVERT SETS TO ARRAYS
+        // CONVERT TO ARRAY AND SORT ALPHABETICALLY
         // =================================================
 
-        Object.values(levels).forEach(level => {
-
-            Object.values(level.subjects).forEach(subject => {
-
-                subject.categories =
-                    Array.from(subject.categories);
-
-            });
-
-        });
+        const subjects =
+            Array.from(subjectSet)
+                .sort((a, b) =>
+                    a.localeCompare(b)
+                );
 
 
         res.render('objectivequizes', {
 
-            levels
+            subjects
 
         });
 
@@ -113,25 +77,22 @@ router.get('/', async (req, res) => {
 
 
 // =====================================================
-// SHOW QUIZZES INSIDE A CATEGORY
+// SHOW QUIZZES FOR ONE SUBJECT
 // =====================================================
 
 router.get(
-    '/:level/:section/:subject/:category',
+    '/subject/:subject',
     async (req, res) => {
 
         try {
 
             const {
-                level,
-                section,
-                subject,
-                category
+                subject
             } = req.params;
 
 
             // =================================================
-            // FIND ALL QUESTIONS FOR THIS CATEGORY
+            // FIND ALL QUESTIONS FOR THIS SUBJECT
             // =================================================
 
             const questions =
@@ -139,13 +100,7 @@ router.get(
 
                     type: "objective",
 
-                    level: Number(level),
-
-                    section: section,
-
-                    subject: subject,
-
-                    category: category
+                    subject: subject
 
                 })
                 .select('quiz')
@@ -155,7 +110,7 @@ router.get(
             if (!questions.length) {
 
                 return res.status(404).send(
-                    'No quizzes found for this category.'
+                    'No quizzes found for this subject.'
                 );
 
             }
@@ -181,6 +136,10 @@ router.get(
             });
 
 
+            // =================================================
+            // CONVERT TO ARRAY
+            // =================================================
+
             const quizzes =
                 Array.from(quizSet);
 
@@ -188,25 +147,40 @@ router.get(
             if (!quizzes.length) {
 
                 return res.status(404).send(
-                    'No quizzes have been created for this category.'
+                    'No quizzes have been created for this subject.'
                 );
 
             }
 
 
-            res.render('objective-quiz-list', {
+            // =================================================
+            // SORT QUIZZES
+            // =================================================
 
-                level,
+            quizzes.sort((a, b) => {
 
-                section,
-
-                subject,
-
-                category,
-
-                quizzes
+                return a.localeCompare(
+                    b,
+                    undefined,
+                    {
+                        numeric: true,
+                        sensitivity: 'base'
+                    }
+                );
 
             });
+
+
+            res.render(
+                'objective-quiz-list',
+                {
+
+                    subject,
+
+                    quizzes
+
+                }
+            );
 
 
         } catch (error) {
@@ -232,16 +206,13 @@ router.get(
 // =====================================================
 
 router.get(
-    '/:level/:section/:subject/:category/:quiz',
+    '/subject/:subject/quiz/:quiz',
     async (req, res) => {
 
         try {
 
             const {
-                level,
-                section,
                 subject,
-                category,
                 quiz
             } = req.params;
 
@@ -255,18 +226,14 @@ router.get(
 
                     type: "objective",
 
-                    level: Number(level),
-
-                    section: section,
-
                     subject: subject,
-
-                    category: category,
 
                     quiz: quiz
 
                 })
-                .sort({ createdAt: 1 })
+                .sort({
+                    createdAt: 1
+                })
                 .lean();
 
 
@@ -279,21 +246,18 @@ router.get(
             }
 
 
-            res.render('objective-questions', {
+            res.render(
+                'objective-questions',
+                {
 
-                questions,
+                    questions,
 
-                level,
+                    subject,
 
-                section,
+                    quiz
 
-                subject,
-
-                category,
-
-                quiz
-
-            });
+                }
+            );
 
 
         } catch (error) {

@@ -21,6 +21,10 @@
 
     <style>
 
+        /* =====================================================
+           QUIZ CONTAINER
+        ===================================================== */
+
         .quiz-container {
 
             max-width: 900px;
@@ -31,6 +35,31 @@
 
         }
 
+
+        /* =====================================================
+           BACK BUTTON
+        ===================================================== */
+
+        .back-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-bottom: 20px;
+
+            text-decoration: none;
+
+            color: royalblue;
+
+        }
+
+
+        /* =====================================================
+           TITLE
+        ===================================================== */
 
         .quiz-container h1 {
 
@@ -47,105 +76,190 @@
 
             color: #777;
 
-            margin-bottom: 30px;
-
-        }
-
-
-        .level-card {
-
-            background: #fff;
-
-            border-radius: 12px;
-
-            padding: 20px;
-
             margin-bottom: 25px;
 
-            box-shadow:
-                0 3px 12px rgba(0,0,0,.1);
+        }
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        .quiz-search {
+
+            position: relative;
+
+            max-width: 600px;
+
+            margin: 0 auto 30px;
 
         }
 
 
-        .level-card h2 {
+        .quiz-search i {
 
-            margin-top: 0;
+            position: absolute;
 
-            color: royalblue;
+            left: 15px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 20px;
+
+            color: #777;
 
         }
 
 
-        .subject-card {
+        .quiz-search input {
 
-            border: 1px solid #eee;
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 14px 45px;
+
+            border: 1px solid #ddd;
 
             border-radius: 10px;
 
-            padding: 15px;
+            outline: none;
 
-            margin-top: 15px;
+            font-size: 15px;
 
-        }
-
-
-        .subject-card h3 {
-
-            margin-top: 0;
+            background: white;
 
         }
 
 
-        .category-list {
+        .quiz-search input:focus {
+
+            border-color: royalblue;
+
+        }
+
+
+        /* =====================================================
+           SUBJECT LIST
+        ===================================================== */
+
+        .subjects-list {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 15px;
+
+        }
+
+
+        /* =====================================================
+           SUBJECT BUTTON
+        ===================================================== */
+
+        .subject-btn {
 
             display: flex;
 
-            flex-wrap: wrap;
+            align-items: center;
+
+            justify-content: space-between;
 
             gap: 10px;
 
-        }
+            padding: 18px;
 
+            background: white;
 
-        .category-btn {
+            border: 1px solid #eee;
 
-            display: inline-block;
-
-            padding: 10px 14px;
-
-            background: royalblue;
-
-            color: white;
+            border-radius: 12px;
 
             text-decoration: none;
 
-            border-radius: 8px;
+            color: #222;
 
-            font-size: 14px;
+            box-shadow:
+                0 3px 12px rgba(0,0,0,.07);
 
-        }
-
-
-        .category-btn:hover {
-
-            opacity: .85;
+            transition:
+                transform .2s,
+                box-shadow .2s;
 
         }
 
 
-        .back-btn {
+        .subject-btn:hover {
 
-            display: inline-block;
+            transform: translateY(-2px);
 
-            margin-bottom: 20px;
+            box-shadow:
+                0 5px 16px rgba(0,0,0,.12);
 
-            text-decoration: none;
+        }
+
+
+        .subject-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+
+        .subject-icon {
+
+            width: 42px;
+
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #f1f4ff;
 
             color: royalblue;
 
+            font-size: 22px;
+
+            flex-shrink: 0;
+
         }
 
+
+        .subject-name {
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+        }
+
+
+        .subject-arrow {
+
+            font-size: 22px;
+
+            color: #999;
+
+        }
+
+
+        /* =====================================================
+           EMPTY / NO SEARCH RESULTS
+        ===================================================== */
 
         .empty {
 
@@ -154,6 +268,37 @@
             color: #777;
 
             padding: 30px;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 600px) {
+
+            .quiz-container {
+
+                margin: 20px auto;
+
+                padding: 15px;
+
+            }
+
+
+            .subjects-list {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .quiz-container h1 {
+
+                font-size: 25px;
+
+            }
 
         }
 
@@ -168,6 +313,10 @@
 <div class="quiz-container">
 
 
+    <!-- =====================================================
+         BACK HOME
+    ===================================================== -->
+
     <a
         href="/"
         class="back-btn"
@@ -180,6 +329,10 @@
     </a>
 
 
+    <!-- =====================================================
+         TITLE
+    ===================================================== -->
+
     <h1>
         📚 Objective Quizzes
     </h1>
@@ -187,92 +340,184 @@
 
     <p class="quiz-description">
 
-        Select your level, subject and category
-        to start answering questions.
+        Choose a subject to see its available quizzes.
 
     </p>
 
 
+    <!-- =====================================================
+         SEARCH BAR
+    ===================================================== -->
 
-    <% if (!levels || Object.keys(levels).length === 0) { %>
+    <div class="quiz-search">
+
+        <i class="bx bx-search"></i>
+
+        <input
+            type="text"
+            id="subjectSearch"
+            placeholder="Search subjects..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <!-- =====================================================
+         SUBJECTS
+    ===================================================== -->
+
+    <% if (!subjects || subjects.length === 0) { %>
+
 
         <div class="empty">
 
-            No objective questions have been uploaded yet.
+            No objective quizzes have been uploaded yet.
 
         </div>
+
 
     <% } else { %>
 
 
-        <% Object.values(levels).forEach(level => { %>
+        <div
+            class="subjects-list"
+            id="subjectsList"
+        >
 
 
-            <div class="level-card">
+            <% subjects.forEach(subject => { %>
 
 
-                <h2>
-
-                    LEVEL <%= level.level %>
-                    <%= level.section %>
-
-                </h2>
-
+                <a
+                    href="/objectivequizes/subject/<%= encodeURIComponent(subject) %>"
+                    class="subject-btn"
+                    data-subject="<%= subject.toLowerCase() %>"
+                >
 
 
-                <% Object.values(level.subjects)
-                    .forEach(subject => { %>
+                    <div class="subject-left">
 
 
-                    <div class="subject-card">
+                        <div class="subject-icon">
 
-
-                        <h3>
-
-                            📖 <%= subject.name %>
-
-                        </h3>
-
-
-                        <div class="category-list">
-
-
-                            <% subject.categories
-                                .forEach(category => { %>
-
-
-                                <a
-                                    href="/objectivequizes/<%= level.level %>/<%= encodeURIComponent(level.section) %>/<%= encodeURIComponent(subject.name) %>/<%= encodeURIComponent(category) %>"
-                                    class="category-btn"
-                                >
-
-                                    <%= category %>
-
-                                </a>
-
-
-                            <% }) %>
-
+                            <i class="bx bx-book-open"></i>
 
                         </div>
+
+
+                        <span class="subject-name">
+
+                            <%= subject %>
+
+                        </span>
 
 
                     </div>
 
 
-                <% }) %>
+                    <i class="bx bx-chevron-right subject-arrow"></i>
 
 
-            </div>
+                </a>
 
 
-        <% }) %>
+            <% }) %>
+
+
+        </div>
+
+
+        <div
+            class="empty"
+            id="noResults"
+            style="display:none;"
+        >
+
+            No subjects found.
+
+        </div>
 
 
     <% } %>
 
 
 </div>
+
+
+<script>
+
+
+// =====================================================
+// SUBJECT SEARCH
+// =====================================================
+
+const subjectSearch =
+    document.getElementById("subjectSearch");
+
+const subjectButtons =
+    document.querySelectorAll(".subject-btn");
+
+const noResults =
+    document.getElementById("noResults");
+
+
+if (subjectSearch) {
+
+    subjectSearch.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            let visibleCount = 0;
+
+
+            subjectButtons.forEach(button => {
+
+                const subject =
+                    button.dataset.subject;
+
+
+                if (
+                    subject.includes(search)
+                ) {
+
+                    button.style.display =
+                        "flex";
+
+                    visibleCount++;
+
+                } else {
+
+                    button.style.display =
+                        "none";
+
+                }
+
+            });
+
+
+            if (noResults) {
+
+                noResults.style.display =
+                    visibleCount === 0
+                        ? "block"
+                        : "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+</script>
 
 
 </body>
