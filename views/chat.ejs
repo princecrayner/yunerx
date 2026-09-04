@@ -222,6 +222,13 @@
 
             text-align: right;
         }
+        
+        
+        .message-check {
+           margin-left: 4px;
+           font-size: 12px;
+           font-weight: bold;
+        }
 
 
         /* ================================
@@ -434,24 +441,33 @@
 
             <% messages.forEach(msg => { %>
 
-                <div
-                    class="message <%= msg.sender === currentUser ? 'mine' : 'theirs' %>"
-                >
+    <div
+        class="message <%= msg.sender === currentUser ? 'mine' : 'theirs' %>"
+    >
 
-                    <%= msg.message %>
+        <%= msg.message %>
 
+        <% if (msg.time) { %>
 
-                    <% if (msg.time) { %>
+            <small class="message-time">
 
-                        <small class="message-time">
-                            <%= msg.time %>
-                        </small>
+                <%= msg.time %>
 
-                    <% } %>
+                <% if (msg.sender === currentUser) { %>
 
-                </div>
+                    <span class="message-check">
+                        <%= msg.seen ? '✓✓' : '✓' %>
+                    </span>
 
-            <% }) %>
+                <% } %>
+
+            </small>
+
+        <% } %>
+
+    </div>
+
+<% }) %>
 
 
         <% } else { %>
@@ -513,49 +529,13 @@
 
 
 
-<script>
-
-/* =========================================
-   AUTO SCROLL
-========================================= */
-
-const messagesContainer =
-    document.getElementById(
-        "messagesContainer"
-    );
-
-messagesContainer.scrollTop =
-    messagesContainer.scrollHeight;
-
-
-/* =========================================
-   FORM
-========================================= */
-
-const messageForm =
-    document.getElementById(
-        "messageForm"
-    );
-
-const messageInput =
-    document.getElementById(
-        "messageInput"
-    );
-
-
-/*
-    Socket.IO will be connected
-    in the next step.
-
-    For now we only prepare
-    the form.
-*/
-
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-const socket = io();
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const messagesContainer =
     document.getElementById("messagesContainer");
@@ -574,10 +554,6 @@ const messageInput =
 const currentUser =
     <%- JSON.stringify(currentUser) %>;
 
-socket.emit(
-    "joinUser",
-    currentUser
-);
 
 /* =========================================
    OTHER USER
@@ -585,6 +561,33 @@ socket.emit(
 
 const otherUser =
     <%- JSON.stringify(otherUser) %>;
+
+
+/* =========================================
+   SOCKET.IO
+========================================= */
+
+const socket = io();
+
+
+socket.emit(
+    "joinUser",
+    currentUser
+);
+
+
+/* =========================================
+   MARK MESSAGES AS SEEN
+========================================= */
+
+fetch(
+    "/chat/" +
+    encodeURIComponent(otherUser) +
+    "/seen",
+    {
+        method: "POST"
+    }
+);
 
 
 /* =========================================
@@ -702,12 +705,26 @@ socket.on(
         }
 
 
+        const checkMark =
+            data.sender === currentUser
+                ? (data.seen ? "✓✓" : "✓")
+                : "";
+
+
         div.innerHTML = `
 
             ${escapeHtml(data.message)}
 
             <small class="message-time">
+
                 ${escapeHtml(data.time || "")}
+
+                ${
+                    checkMark
+                        ? `<span class="message-check">${checkMark}</span>`
+                        : ""
+                }
+
             </small>
 
         `;
@@ -717,6 +734,37 @@ socket.on(
 
 
         scrollToBottom();
+
+    }
+);
+
+
+
+/* =========================================
+   MESSAGE SEEN
+========================================= */
+
+socket.on(
+    "messagesSeen",
+    function(data) {
+
+        if (!data || data.by !== otherUser) {
+            return;
+        }
+
+        const myMessages =
+            messagesContainer.querySelectorAll(".message.mine");
+
+        myMessages.forEach(function(message) {
+
+            const check =
+                message.querySelector(".message-check");
+
+            if (check) {
+                check.textContent = "✓✓";
+            }
+
+        });
 
     }
 );
@@ -738,9 +786,6 @@ function escapeHtml(text) {
 }
 
 </script>
-
-</script>
-
 
 </body>
 

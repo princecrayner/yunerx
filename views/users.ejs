@@ -1,31 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Users</title>
 
-<link rel="stylesheet" href="/css/chats.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Users</title>
+
+    <link rel="stylesheet" href="/css/chats.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chat-container h1 {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            background: white;
+            padding: 16px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-info h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .user-info p {
+            font-size: 13px;
+            color: #888;
+        }
+
+        .chat-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 9px 16px;
+
+            background: #4169e1;
+            color: white;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            flex-shrink: 0;
+        }
+
+        .chat-button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 500px) {
+
+            .chat-container {
+                padding: 14px;
+            }
+
+            .message {
+                padding: 13px;
+            }
+
+            .chat-button {
+                padding: 8px 12px;
+            }
+
+        }
+
+    </style>
 
 </head>
+
 <body>
 
 <div class="chat-container">
 
-<h1>Users</h1>
+    <h1>Users</h1>
 
-<% users.forEach(user => { %>
+    <% users.forEach(user => { %>
 
-<div class="message">
+        <div class="message">
 
-<h3><%= user.username %></h3>
+            <div class="user-info">
 
-<p><%= user.phone %></p>
+                <h3>
+                    <%= user.username %>
+                </h3>
 
-<button>Chat</button>
+                <p>
+                    <%= user.phone %>
+                </p>
 
-</div>
+            </div>
 
-<% }) %>
+            <a
+                href="/chat/<%= encodeURIComponent(user.username) %>"
+                class="chat-button"
+            >
+                Chat
+            </a>
+
+        </div>
+
+    <% }) %>
 
 </div>
 

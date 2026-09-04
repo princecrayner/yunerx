@@ -72,6 +72,7 @@ app.use("/", pdfRoutes);
 app.use("/", authRoutes);
 app.use("/", videoRoutes);
 app.use("/", chatRoutes);
+chatRoutes.setSocketIO(io);
 app.use('/admin', csvRoutes);
 app.use("/objectivequizes", objectiveRoutes);
 

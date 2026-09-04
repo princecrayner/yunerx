@@ -6,6 +6,12 @@ const express = require("express");
 
 const router = express.Router();
 
+let io;
+
+router.setSocketIO = function(socketIO) {
+    io = socketIO;
+};
+
 const Message = require("../models/Message");
 
 const User = require("../models/User");
@@ -193,6 +199,54 @@ router.get("/chat/:username", async (req, res) => {
 
     }
 
+});
+
+
+// MARK PRIVATE MESSAGES AS SEEN
+router.post("/chat/:username/seen", async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({
+                success: false
+            });
+        }
+
+        const currentUser = req.session.user.username;
+        const otherUser = req.params.username;
+
+        const result = await Message.updateMany(
+            {
+                sender: otherUser,
+                receiver: currentUser,
+                seen: false
+            },
+            {
+                $set: {
+                    seen: true
+                }
+            }
+        );
+
+        if (result.modifiedCount > 0 && io) {
+
+            io.to(`user:${otherUser}`)
+                .emit("messagesSeen", {
+                    by: currentUser
+                });
+
+        }
+
+        res.json({
+            success: true
+        });
+
+    } catch (error) {
+        console.error("Mark messages seen error:", error);
+
+        res.status(500).json({
+            success: false
+        });
+    }
 });
 
 
