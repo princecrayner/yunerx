@@ -18,22 +18,13 @@ const User = require("../models/User");
 
 
 
-
 router.get("/chats", async (req, res) => {
-
     try {
-
         if (!req.session.user) {
             return res.redirect("/login?redirect=/chats");
         }
 
         const currentUser = req.session.user.username;
-
-        /*
-        =================================
-        GET ALL MESSAGES INVOLVING USER
-        =================================
-        */
 
         const messages = await Message.find({
             $or: [
@@ -42,98 +33,55 @@ router.get("/chats", async (req, res) => {
             ]
         }).sort({ _id: -1 });
 
-
-        /*
-        =================================
-        FIND UNIQUE CONVERSATIONS
-        =================================
-        */
-
         const conversations = [];
-
         const seenUsers = new Set();
-
 
         for (const message of messages) {
 
             let otherUser;
 
-
             if (message.sender === currentUser) {
-
                 otherUser = message.receiver;
-
             } else {
-
                 otherUser = message.sender;
-
             }
 
-
-            /*
-            Ignore messages where the other
-            person's identity isn't available.
-            */
-
-            if (!otherUser) {
-                continue;
-            }
-
-
-            /*
-            Only keep each person once.
-            Because messages are sorted newest
-            first, the first message we encounter
-            gives us the latest message.
-            */
+            if (!otherUser) continue;
 
             if (!seenUsers.has(otherUser)) {
 
                 seenUsers.add(otherUser);
 
-                conversations.push({
-
-                    username: otherUser,
-
-                    message: message.message,
-
-                    time: message.time,
-
-                    date: message.date,
-
-                    seen: message.seen
-
+                // Count unread messages from this user
+                const unreadCount = await Message.countDocuments({
+                    sender: otherUser,
+                    receiver: currentUser,
+                    seen: false
                 });
 
+                conversations.push({
+                    username: otherUser,
+                    message: message.message,
+                    time: message.time,
+                    date: message.date,
+                    seen: message.seen,
+                    unreadCount: unreadCount
+                });
             }
-
         }
 
-
         res.render("chats", {
-
             messages: conversations,
-
             groups: [],
-
             currentUser
-
         });
-
 
     } catch (error) {
 
-        console.error(
-            "Chats page error:",
-            error
-        );
+        console.error("Chats page error:", error);
 
-        res.status(500).send(
-            "Unable to load chats."
-        );
-
+        res.status(500).send("Unable to load chats.");
     }
-
 });
 
 
