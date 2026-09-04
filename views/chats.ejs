@@ -1,148 +1,1459 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+<meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Chats</title>
 
-<link rel="stylesheet" href="/css/chats.css">
+<link
+    href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+    rel="stylesheet"
+>
 
-<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<style>
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+.conversation {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* =========================================
+   MAIN PAGE
+========================================= */
+
+.chat-page {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 75px;
+}
+
+
+/* =========================================
+   MAIN CHAT AREA
+========================================= */
+
+.chat-main {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+
+/* =========================================
+   SCREENS
+========================================= */
+
+.chat-screen {
+    display: none;
+    min-height: calc(100vh - 75px);
+    padding: 18px;
+}
+
+.chat-screen.active {
+    display: block;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.chat-header h1 {
+    font-size: 27px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.chat-header p {
+    color: #777;
+    font-size: 14px;
+}
+
+
+/* =========================================
+   HEADER BUTTONS
+========================================= */
+
+.contacts-btn,
+.create-group-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    text-decoration: none;
+
+    background: #4169e1;
+    color: white;
+
+    padding: 10px 14px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.contacts-btn:hover,
+.create-group-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.contacts-btn i,
+.create-group-btn i {
+    font-size: 20px;
+}
+
+
+/* =========================================
+   STORIES
+========================================= */
+
+.stories-section {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,0.06);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.section-title h2 {
+    font-size: 18px;
+}
+
+.story-more,
+.search-chat-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 23px;
+    color: #555;
+}
+
+
+/* =========================================
+   STORY CONTAINER
+========================================= */
+
+.stories-container {
+    display: flex;
+    gap: 12px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+}
+
+.stories-container::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =========================================
+   STORY
+========================================= */
+
+.story {
+    flex: 0 0 72px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.story-image {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 7px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9edf7;
+
+    border: 3px solid #4169e1;
+
+    color: #4169e1;
+
+    font-size: 25px;
+}
+
+.story span {
+    display: block;
+
+    font-size: 12px;
+
+    color: #444;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* YOUR STORY */
+
+.create-story .story-image {
+    border: 3px dashed #4169e1;
+    background: #f0f3ff;
+}
+
+
+/* =========================================
+   CONVERSATION SECTION
+========================================= */
+
+.conversation-section {
+    background: white;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,0.06);
+}
+
+
+/* =========================================
+   CONVERSATION HEADER
+========================================= */
+
+.conversation-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 16px;
+
+    border-bottom: 1px solid #eee;
+}
+
+.conversation-header h2 {
+    font-size: 18px;
+}
+
+
+/* =========================================
+   CONVERSATION LIST
+========================================= */
+
+.conversation-list {
+    width: 100%;
+}
+
+
+/* =========================================
+   CONVERSATION ITEM
+========================================= */
+
+.conversation {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 14px 16px;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #f0f0f0;
+
+    transition: background 0.2s;
+}
+
+.conversation:last-child {
+    border-bottom: none;
+}
+
+.conversation:hover {
+    background: #f7f8fc;
+}
+
+
+/* =========================================
+   AVATAR
+========================================= */
+
+.conversation-avatar,
+.group-avatar {
+    flex-shrink: 0;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #e9edf7;
+
+    color: #4169e1;
+
+    font-size: 26px;
+}
+
+
+/* =========================================
+   CONVERSATION INFO
+========================================= */
+
+.conversation-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.conversation-top {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 5px;
+}
+
+.conversation-top strong {
+    font-size: 15px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.conversation-top small {
+    color: #888;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   LAST MESSAGE
+========================================= */
+
+.conversation-bottom {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+.conversation-bottom p {
+    color: #777;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    flex: 1;
+}
+
+.conversation-bottom i {
+    color: #999;
+
+    font-size: 17px;
+}
+
+.conversation-bottom .seen {
+    color: #4169e1;
+}
+
+
+/* =========================================
+   EMPTY CHAT
+========================================= */
+
+.empty-chats,
+.empty-groups {
+    text-align: center;
+
+    padding: 60px 25px;
+}
+
+.empty-chats > i,
+.empty-groups > i {
+    font-size: 55px;
+
+    color: #4169e1;
+
+    margin-bottom: 12px;
+}
+
+.empty-chats h3,
+.empty-groups h3 {
+    font-size: 19px;
+
+    margin-bottom: 8px;
+}
+
+.empty-chats p,
+.empty-groups p {
+    max-width: 400px;
+
+    margin: 0 auto 20px;
+
+    color: #777;
+
+    line-height: 1.5;
+
+    font-size: 14px;
+}
+
+.empty-chats a,
+.empty-groups a {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    text-decoration: none;
+
+    background: #4169e1;
+
+    color: white;
+
+    padding: 11px 16px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   GROUP LIST
+========================================= */
+
+.group-list {
+    background: white;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,0.06);
+}
+
+.group-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px 16px;
+
+    text-decoration: none;
+
+    color: inherit;
+
+    border-bottom: 1px solid #eee;
+
+    transition: 0.2s;
+}
+
+.group-item:last-child {
+    border-bottom: none;
+}
+
+.group-item:hover {
+    background: #f7f8fc;
+}
+
+.group-info {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.group-info h3 {
+    font-size: 15px;
+
+    margin-bottom: 5px;
+}
+
+.group-info p {
+    font-size: 13px;
+
+    color: #888;
+}
+
+.group-arrow {
+    font-size: 22px;
+
+    color: #aaa;
+}
+
+
+/* =========================================
+   GROUP AVATAR
+========================================= */
+
+.group-avatar {
+    background: #eef1ff;
+}
+
+
+/* =========================================
+   BOTTOM NAVIGATION
+========================================= */
+
+.chat-footer {
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 70px;
+
+    background: rgba(255,255,255,0.97);
+
+    border-top: 1px solid #e7e7e7;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-around;
+
+    z-index: 1000;
+
+    box-shadow:
+        0 -3px 15px rgba(0,0,0,0.05);
+}
+
+
+/* =========================================
+   FOOTER TAB
+========================================= */
+
+.footer-tab {
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    width: 50%;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    color: #888;
+
+    transition: 0.25s;
+}
+
+.footer-tab i {
+    font-size: 25px;
+}
+
+.footer-tab span {
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+.footer-tab.active {
+    color: #4169e1;
+}
+
+
+/* =========================================
+   SWIPE TRANSITION
+========================================= */
+
+.chat-screen {
+    animation-duration: 0.25s;
+    animation-timing-function: ease;
+    animation-fill-mode: both;
+}
+
+.messages-screen.active {
+    animation-name: slideFromLeft;
+}
+
+.groups-screen.active {
+    animation-name: slideFromRight;
+}
+
+@keyframes slideFromLeft {
+
+    from {
+        opacity: 0;
+        transform: translateX(-35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+@keyframes slideFromRight {
+
+    from {
+        opacity: 0;
+        transform: translateX(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width: 900px) {
+
+    body {
+        background: #eef1f7;
+    }
+
+    .chat-page {
+        padding-bottom: 0;
+
+        min-height: 100vh;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+    }
+
+    .chat-main {
+        width: 700px;
+
+        height: 90vh;
+
+        background: white;
+
+        border-radius: 18px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 10px 35px rgba(0,0,0,0.10);
+    }
+
+    .chat-screen {
+        height: calc(90vh - 70px);
+
+        min-height: 0;
+
+        overflow-y: auto;
+
+        padding: 25px;
+    }
+
+    .chat-footer {
+        position: fixed;
+
+        width: 700px;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        bottom: 5vh;
+
+        border-radius: 0 0 18px 18px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 400px) {
+
+    .chat-screen {
+        padding: 12px;
+    }
+
+    .chat-header h1 {
+        font-size: 23px;
+    }
+
+    .chat-header p {
+        font-size: 12px;
+    }
+
+    .contacts-btn span,
+    .create-group-btn span {
+        display: none;
+    }
+
+    .contacts-btn,
+    .create-group-btn {
+        width: 42px;
+        height: 42px;
+
+        padding: 0;
+
+        border-radius: 50%;
+    }
+
+    .stories-section,
+    .conversation-section,
+    .group-list {
+        border-radius: 13px;
+    }
+
+}
+
+</style>
 
 </head>
+
+
 <body>
 
-<div class="chat-container">
 
-<h1>Realtime Chats</h1>
+<div class="chat-page">
 
-<div class="chat-box" id="chatBox">
 
-<% messages.forEach(msg => { %>
+    <!-- =================================
+         MAIN CHAT AREA
+    ================================= -->
 
-<div class="message">
+    <main class="chat-main">
 
-<p>
-<strong><%= msg.sender %></strong>
-</p>
 
-<p><%= msg.message %></p>
+        <!-- =================================
+             MESSAGES
+        ================================= -->
 
-<small>
-<%= msg.date %> - <%= msg.time %>
-</small>
+        <section
+            class="chat-screen messages-screen active"
+            id="messagesScreen"
+        >
+
+
+            <!-- HEADER -->
+
+            <div class="chat-header">
+
+                <div>
+
+                    <h1>Messages</h1>
+
+                    <p>
+                        Chat with Yunerx users
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="/users"
+                    class="contacts-btn"
+                >
+
+                    <i class='bx bx-user-plus'></i>
+
+                    <span>Contacts</span>
+
+                </a>
+
+            </div>
+
+
+            <!-- =================================
+                 STORIES
+            ================================= -->
+
+            <div class="stories-section">
+
+                <div class="section-title">
+
+                    <h2>Stories</h2>
+
+                    <button
+                        type="button"
+                        class="story-more"
+                    >
+
+                        <i class='bx bx-dots-horizontal-rounded'></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="stories-container">
+
+
+                    <!-- YOUR STORY -->
+
+                    <div class="story create-story">
+
+                        <div class="story-image">
+
+                            <i class='bx bx-plus'></i>
+
+                        </div>
+
+                        <span>
+                            Your story
+                        </span>
+
+                    </div>
+
+
+                    <!-- TEMPORARY STORIES -->
+
+                    <div class="story">
+
+                        <div class="story-image">
+
+                            <i class='bx bx-user'></i>
+
+                        </div>
+
+                        <span>
+                            Story
+                        </span>
+
+                    </div>
+
+
+                    <div class="story">
+
+                        <div class="story-image">
+
+                            <i class='bx bx-user'></i>
+
+                        </div>
+
+                        <span>
+                            Story
+                        </span>
+
+                    </div>
+
+
+                    <div class="story">
+
+                        <div class="story-image">
+
+                            <i class='bx bx-user'></i>
+
+                        </div>
+
+                        <span>
+                            Story
+                        </span>
+
+                    </div>
+
+
+                    <div class="story">
+
+                        <div class="story-image">
+
+                            <i class='bx bx-user'></i>
+
+                        </div>
+
+                        <span>
+                            Story
+                        </span>
+
+                    </div>
+
+
+                    <div class="story">
+
+                        <div class="story-image">
+
+                            <i class='bx bx-user'></i>
+
+                        </div>
+
+                        <span>
+                            Story
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 CONVERSATIONS
+            ================================= -->
+
+            <div class="conversation-section">
+
+
+                <div class="conversation-header">
+
+                    <h2>
+                        Chats
+                    </h2>
+
+
+                    <button
+                        type="button"
+                        class="search-chat-btn"
+                    >
+
+                        <i class='bx bx-search'></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="conversation-list">
+
+
+                    <% if (messages && messages.length > 0) { %>
+
+
+                        <% messages.forEach(msg => { %>
+
+
+                           <a
+                             href="/chat/<%= encodeURIComponent(msg.username) %>"
+                             class="conversation"
+                            >
+
+
+                                <div class="conversation-avatar">
+
+                                    <i class='bx bx-user'></i>
+
+                                </div>
+
+
+                                <div class="conversation-info">
+
+
+                                    <div class="conversation-top">
+
+                                        <strong>
+
+                                           <%= msg.username || "Yunerx User" %>
+
+                                        </strong>
+
+
+                                        <small>
+
+                                            <%= msg.time || "" %>
+
+                                        </small>
+
+                                    </div>
+
+
+                                    <div class="conversation-bottom">
+
+                                        <p>
+
+                                            <%= msg.message || "" %>
+
+                                        </p>
+
+
+                                        <% if (msg.seen) { %>
+
+                                            <i
+                                                class='bx bx-check-double seen'
+                                            ></i>
+
+                                        <% } else { %>
+
+                                            <i
+                                                class='bx bx-check'
+                                            ></i>
+
+                                        <% } %>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </a>
+
+
+                        <% }) %>
+
+
+                    <% } else { %>
+
+
+                        <!-- EMPTY STATE -->
+
+                        <div class="empty-chats">
+
+                            <i class='bx bx-message-rounded-dots'></i>
+
+                            <h3>
+                                No messages yet
+                            </h3>
+
+                            <p>
+
+                                Find a Yunerx user in your
+                                contacts and start a conversation.
+
+                            </p>
+
+
+                            <a href="/users">
+
+                                <i class='bx bx-user-plus'></i>
+
+                                Find contacts
+
+                            </a>
+
+                        </div>
+
+
+                    <% } %>
+
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================
+             GROUPS
+        ================================= -->
+
+        <section
+            class="chat-screen groups-screen"
+            id="groupsScreen"
+        >
+
+
+            <!-- HEADER -->
+
+            <div class="chat-header">
+
+                <div>
+
+                    <h1>
+                        Groups
+                    </h1>
+
+                    <p>
+                        Chat with your groups
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="/creategroup"
+                    class="create-group-btn"
+                >
+
+                    <i class='bx bx-plus'></i>
+
+                    <span>
+                        Create
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- GROUP LIST -->
+
+            <div class="group-list">
+
+
+                <% if (
+                    typeof groups !== "undefined" &&
+                    groups.length > 0
+                ) { %>
+
+
+                    <% groups.forEach(group => { %>
+
+
+                        <a
+                            href="/group/<%= group._id %>"
+                            class="group-item"
+                        >
+
+
+                            <div class="group-avatar">
+
+                                <i class='bx bx-group'></i>
+
+                            </div>
+
+
+                            <div class="group-info">
+
+                                <h3>
+
+                                    <%= group.groupName %>
+
+                                </h3>
+
+
+                                <p>
+
+                                    <%= group.members ?
+                                        group.members.length :
+                                        0 %>
+
+                                    members
+
+                                </p>
+
+                            </div>
+
+
+                            <i
+                                class='bx bx-chevron-right group-arrow'
+                            ></i>
+
+
+                        </a>
+
+
+                    <% }) %>
+
+
+                <% } else { %>
+
+
+                    <!-- EMPTY GROUP STATE -->
+
+                    <div class="empty-groups">
+
+                        <i class='bx bx-group'></i>
+
+                        <h3>
+                            No groups yet
+                        </h3>
+
+                        <p>
+
+                            Create a group and start chatting
+                            with other Yunerx users.
+
+                        </p>
+
+
+                        <a href="/creategroup">
+
+                            <i class='bx bx-plus'></i>
+
+                            Create group
+
+                        </a>
+
+                    </div>
+
+
+                <% } %>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =================================
+         FOOTER
+    ================================= -->
+
+    <nav class="chat-footer">
+
+
+        <button
+            type="button"
+            class="footer-tab active"
+            id="messagesTab"
+        >
+
+            <i class='bx bx-message-rounded-dots'></i>
+
+            <span>
+                Messages
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="footer-tab"
+            id="groupsTab"
+        >
+
+            <i class='bx bx-group'></i>
+
+            <span>
+                Groups
+            </span>
+
+        </button>
+
+
+    </nav>
+
 
 </div>
 
-<% }) %>
 
-</div>
-
-<div class="typing" id="typing"></div>
-
-<form id="chatForm">
-
-<input
-type="text"
-id="messageInput"
-placeholder="Type message..."
-required>
-
-<button type="submit">
-<i class='bx bx-send'></i>
-</button>
-
-</form>
-
-</div>
-
-<!-- FOOTER -->
-
-<div class="footer">
-
-    <div class="footer-icon chats">
-        <i class='bx bx-message-rounded-dots'></i>
-    </div>
-
-    <div class="footer-icon groups">
-      <i class='bx bx-group'></i>
-    </div>
-
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
 
 <script>
 
-const socket = io();
+/* =========================================
+   ELEMENTS
+========================================= */
 
-const form = document.getElementById("chatForm");
+const messagesScreen =
+    document.getElementById("messagesScreen");
 
-const input = document.getElementById("messageInput");
+const groupsScreen =
+    document.getElementById("groupsScreen");
 
-const chatBox = document.getElementById("chatBox");
+const messagesTab =
+    document.getElementById("messagesTab");
 
-const typing = document.getElementById("typing");
+const groupsTab =
+    document.getElementById("groupsTab");
 
-input.addEventListener("keypress", () => {
 
-    typing.innerHTML = "Typing...";
+/* =========================================
+   SHOW MESSAGES
+========================================= */
 
-    setTimeout(() => {
-        typing.innerHTML = "";
-    }, 1000);
+function showMessages() {
 
-});
+    messagesScreen.classList.add("active");
 
-form.addEventListener("submit", (e) => {
+    groupsScreen.classList.remove("active");
 
-    e.preventDefault();
+    messagesTab.classList.add("active");
 
-    const now = new Date();
+    groupsTab.classList.remove("active");
 
-    const messageData = {
+}
 
-        sender: "User",
 
-        message: input.value,
+/* =========================================
+   SHOW GROUPS
+========================================= */
 
-        date: now.toLocaleDateString(),
+function showGroups() {
 
-        time: now.toLocaleTimeString()
+    groupsScreen.classList.add("active");
 
-    };
+    messagesScreen.classList.remove("active");
 
-    socket.emit("sendMessage", messageData);
+    groupsTab.classList.add("active");
 
-    input.value = "";
+    messagesTab.classList.remove("active");
 
-});
+}
 
-socket.on("receiveMessage", (data) => {
 
-    const div = document.createElement("div");
+/* =========================================
+   BUTTON CLICK
+========================================= */
 
-    div.classList.add("message");
+messagesTab.addEventListener(
+    "click",
+    showMessages
+);
 
-    div.innerHTML = `
+groupsTab.addEventListener(
+    "click",
+    showGroups
+);
 
-        <p><strong>${data.sender}</strong></p>
 
-        <p>${data.message}</p>
+/* =========================================
+   SWIPE
+========================================= */
 
-        <small>${data.date} - ${data.time}</small>
+let touchStartX = 0;
 
-    `;
+let touchEndX = 0;
 
-    chatBox.appendChild(div);
 
-    chatBox.scrollTop = chatBox.scrollHeight;
+document.addEventListener(
+    "touchstart",
+    function(event) {
 
-});
+        touchStartX =
+            event.changedTouches[0].screenX;
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+document.addEventListener(
+    "touchend",
+    function(event) {
+
+        touchEndX =
+            event.changedTouches[0].screenX;
+
+        handleSwipe();
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+function handleSwipe() {
+
+    const distance =
+        touchEndX - touchStartX;
+
+
+    /* SWIPE LEFT */
+
+    if (distance < -60) {
+
+        showGroups();
+
+    }
+
+
+    /* SWIPE RIGHT */
+
+    if (distance > 60) {
+
+        showMessages();
+
+    }
+
+}
 
 </script>
+
 
 <script src="/js/footer.js"></script>
 
 </body>
+
 </html>

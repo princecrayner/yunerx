@@ -10,19 +10,192 @@ const Message = require("../models/Message");
 
 const User = require("../models/User");
 
+
+
+
 router.get("/chats", async (req, res) => {
 
-    if (!req.session.user) {
-        return res.redirect("/login?redirect=/chats");
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login?redirect=/chats");
+        }
+
+        const currentUser = req.session.user.username;
+
+        /*
+        =================================
+        GET ALL MESSAGES INVOLVING USER
+        =================================
+        */
+
+        const messages = await Message.find({
+            $or: [
+                { sender: currentUser },
+                { receiver: currentUser }
+            ]
+        }).sort({ _id: -1 });
+
+
+        /*
+        =================================
+        FIND UNIQUE CONVERSATIONS
+        =================================
+        */
+
+        const conversations = [];
+
+        const seenUsers = new Set();
+
+
+        for (const message of messages) {
+
+            let otherUser;
+
+
+            if (message.sender === currentUser) {
+
+                otherUser = message.receiver;
+
+            } else {
+
+                otherUser = message.sender;
+
+            }
+
+
+            /*
+            Ignore messages where the other
+            person's identity isn't available.
+            */
+
+            if (!otherUser) {
+                continue;
+            }
+
+
+            /*
+            Only keep each person once.
+            Because messages are sorted newest
+            first, the first message we encounter
+            gives us the latest message.
+            */
+
+            if (!seenUsers.has(otherUser)) {
+
+                seenUsers.add(otherUser);
+
+                conversations.push({
+
+                    username: otherUser,
+
+                    message: message.message,
+
+                    time: message.time,
+
+                    date: message.date,
+
+                    seen: message.seen
+
+                });
+
+            }
+
+        }
+
+
+        res.render("chats", {
+
+            messages: conversations,
+
+            groups: [],
+
+            currentUser
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Chats page error:",
+            error
+        );
+
+        res.status(500).send(
+            "Unable to load chats."
+        );
+
     }
 
-    const messages = await Message.find();
+});
 
-    res.render("chats", {
-        messages
-    });
+
+
+// =========================================
+// PRIVATE CHAT
+// =========================================
+
+router.get("/chat/:username", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect(
+                "/login?redirect=/chat/" +
+                encodeURIComponent(req.params.username)
+            );
+        }
+
+        const currentUser = req.session.user.username;
+        const otherUser = req.params.username;
+
+        // Find the other user
+        const user = await User.findOne({
+            username: otherUser
+        });
+
+        if (!user) {
+            return res.status(404).send("User not found.");
+        }
+
+        // Get messages between these two users
+        const messages = await Message.find({
+            $or: [
+                {
+                    sender: currentUser,
+                    receiver: otherUser
+                },
+                {
+                    sender: otherUser,
+                    receiver: currentUser
+                }
+            ]
+        }).sort({ _id: 1 });
+
+        res.render("chat", {
+            messages,
+            currentUser,
+            otherUser,
+            user
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Private chat error:",
+            error
+        );
+
+        res.status(500).send(
+            "Unable to load conversation."
+        );
+
+    }
 
 });
+
+
 
 router.get("/users", async (req, res) => {
 

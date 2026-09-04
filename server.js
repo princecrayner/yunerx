@@ -265,34 +265,11 @@ app.get("/logout", (req, res) => {
 });
 
 
-// LEVEL PAGES
-app.get("/levels/level100", (req, res) => {
-    res.render("levels/level100");
-});
 
-app.get("/levels/level200", (req, res) => {
-    res.render("levels/level200");
-});
-
-app.get("/levels/level300", (req, res) => {
-    res.render("levels/level300");
-});
-
-
-
-
-
-app.get("/chats", (req, res) => {
-    res.render("chats");
-});
 
 app.get("/videos", (req, res) => {
     res.render("videos");
 });
-
-
-
-
 
 
 
@@ -382,16 +359,74 @@ app.get("/theory/:subject", async (req, res) => {
 io.on("connection", (socket) => {
 
     console.log("User Connected");
+    
+    
+    socket.on("joinUser", (username) => {
 
-    socket.on("sendMessage", async (data) => {
+    if (!username) {
+        return;
+    }
 
-      const message = new Message(data);
+    socket.join(`user:${username}`);
+
+    console.log(
+        `${username} joined their private socket room`
+    );
+
+});
+
+   socket.on("sendMessage", async (data) => {
+
+    try {
+
+        const message = new Message({
+            sender: data.sender,
+            receiver: data.receiver,
+            message: data.message,
+            seen: false,
+            date: data.date,
+            time: data.time
+        });
 
         await message.save();
 
-   io.emit("receiveMessage", data);
+        const messageData = {
+            _id: message._id,
+            sender: message.sender,
+            receiver: message.receiver,
+            message: message.message,
+            seen: message.seen,
+            date: message.date,
+            time: message.time
+        };
 
-   });
+
+        // Send to the receiver
+        io.to(`user:${data.receiver}`)
+            .emit(
+                "receivePrivateMessage",
+                messageData
+            );
+
+
+        // Send back to the sender
+        io.to(`user:${data.sender}`)
+            .emit(
+                "receivePrivateMessage",
+                messageData
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Send message error:",
+            error
+        );
+
+    }
+
+});
 
 
 socket.on("groupMessage", async (data) => {
