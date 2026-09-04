@@ -10,6 +10,7 @@
     "bcryptjs": "^3.0.3",
     "body-parser": "^1.20.5",
     "cloudinary": "^1.41.3",
+    "connect-mongo": "^6.0.0",
     "csv-parse": "^7.0.2",
     "csvtojson": "^2.0.14",
     "dotenv": "^17.4.2",

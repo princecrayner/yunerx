@@ -24,6 +24,7 @@ const videoRoutes = require("./routes/videos");
 const chatRoutes = require("./routes/chats");
 
 const session = require("express-session");
+const { MongoStore } = require("connect-mongo");
 
 const mongoose = require("mongoose");
 const Question = require("./models/Question");
@@ -49,8 +50,21 @@ app.use(express.json());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: "sessions"
+    }),
+
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax"
+    }
 }));
+
 app.use("/admin", adminRoutes);
 app.use("/docs", docsRoutes);
 app.use("/", pdfRoutes);
