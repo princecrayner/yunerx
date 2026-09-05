@@ -199,16 +199,42 @@ router.post("/chat/:username/seen", async (req, res) => {
 });
 
 
-
 router.get("/users", async (req, res) => {
+    try {
 
-    const users = await User.find();
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
 
-    res.render("users", {
-        users
-    });
+        const currentUser = req.session.user.username;
 
+        const search = req.query.search || "";
+
+        const users = await User.find({
+            username: {
+                $ne: currentUser,
+                $regex: search,
+                $options: "i"
+            }
+        }).sort({
+            username: 1
+        });
+
+        res.render("users", {
+            users,
+            currentUser,
+            search
+        });
+
+    } catch (error) {
+
+        console.error("Contacts page error:", error);
+
+        res.status(500).send("Unable to load contacts.");
+
+    }
 });
+
 
 
 // GROUPS PAGE

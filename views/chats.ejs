@@ -111,37 +111,32 @@ body {
    HEADER BUTTONS
 ========================================= */
 
-.contacts-btn,
-.create-group-btn {
+.contacts-button {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 6px;
+
+    padding: 8px 12px;
+
+    border-radius: 20px;
 
     text-decoration: none;
 
-    background: #4169e1;
-    color: white;
-
-    padding: 10px 14px;
-
-    border-radius: 10px;
+    background: #f1f3f5;
+    color: #222;
 
     font-size: 14px;
     font-weight: 600;
 
-    transition: 0.2s;
+    transition: 0.2s ease;
 }
 
-.contacts-btn:hover,
-.create-group-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+.contacts-button:hover {
+    background: #e2e6ea;
 }
 
-.contacts-btn i,
-.create-group-btn i {
-    font-size: 20px;
+.contacts-button i {
+    font-size: 18px;
 }
 
 
@@ -859,16 +854,10 @@ body {
                 </div>
 
 
-                <a
-                    href="/users"
-                    class="contacts-btn"
-                >
-
-                    <i class='bx bx-user-plus'></i>
-
-                    <span>Contacts</span>
-
-                </a>
+                <a href="/users" class="contacts-button">
+                  <i class='bx bx-user-plus'></i>
+                  Contacts
+             </a>
 
             </div>
 

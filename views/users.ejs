@@ -23,6 +23,36 @@
             font-family: Arial, Helvetica, sans-serif;
             background: #f5f7fb;
         }
+        
+        .contacts-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 600px;
+
+    margin: 20px auto;
+    padding: 12px 16px;
+
+    background: #f1f3f5;
+    border-radius: 25px;
+}
+
+.contacts-search i {
+    font-size: 20px;
+    color: #666;
+}
+
+.contacts-search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-size: 15px;
+}
+        
 
         .chat-container {
             width: 100%;
@@ -33,6 +63,7 @@
 
         .chat-container h1 {
             margin-bottom: 20px;
+            color: black;
         }
 
         .message {
@@ -56,6 +87,7 @@
         .user-info h3 {
             font-size: 16px;
             margin-bottom: 4px;
+            color: black;
         }
 
         .user-info p {
@@ -110,6 +142,18 @@
 <body>
 
 <div class="chat-container">
+
+
+<form action="/users" method="GET" class="contacts-search">
+    <i class='bx bx-search'></i>
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search Yunerx users..."
+        value="<%= search || '' %>"
+    >
+</form>
 
     <h1>Users</h1>
 
