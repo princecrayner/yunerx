@@ -65,6 +65,7 @@ router.get("/chats", async (req, res) => {
                     time: message.time,
                     date: message.date,
                     seen: message.seen,
+                    sender: message.sender,
                     unreadCount: unreadCount
                 });
             }

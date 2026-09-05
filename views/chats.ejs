@@ -1079,17 +1079,13 @@ body {
             <%= msg.unreadCount > 99 ? "99+" : msg.unreadCount %>
         </span>
 
-    <% } else if (msg.seen) { %>
+    <% } else if (msg.sender === currentUser && msg.seen) { %>
 
-        <i
-            class='bx bx-check-double seen'
-        ></i>
+        <i class='bx bx-check-double seen'></i>
 
-    <% } else { %>
+    <% } else if (msg.sender === currentUser) { %>
 
-        <i
-            class='bx bx-check'
-        ></i>
+        <i class='bx bx-check'></i>
 
     <% } %>
 
