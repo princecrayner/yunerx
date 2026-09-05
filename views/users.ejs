@@ -52,7 +52,65 @@
 
     font-size: 15px;
 }
+
+
+.contacts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+.contacts-header h1 {
+    margin-bottom: 5px;
+    color: black;
+}
+
+.contacts-header p {
+    font-size: 13px;
+    color: #888;
+}
+
+.contacts-count {
+    min-width: 30px;
+    height: 30px;
+
+    padding: 0 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #4169e1;
+    color: white;
+
+    font-size: 13px;
+    font-weight: bold;
+}
         
+        
+        .no-contacts {
+    text-align: center;
+    padding: 50px 20px;
+    color: #777;
+}
+
+.no-contacts i {
+    font-size: 50px;
+    margin-bottom: 12px;
+}
+
+.no-contacts h3 {
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.no-contacts p {
+    font-size: 14px;
+}
 
         .chat-container {
             width: 100%;
@@ -63,7 +121,6 @@
 
         .chat-container h1 {
             margin-bottom: 20px;
-            color: black;
         }
 
         .message {
@@ -155,7 +212,28 @@
     >
 </form>
 
-    <h1>Users</h1>
+<div class="contacts-header">
+    <div>
+        <h1>Contacts</h1>
+        <p>Yunerx users you can chat with</p>
+    </div>
+
+    <span class="contacts-count">
+        <%= users.length %>
+    </span>
+</div>
+
+
+<% if (users.length === 0) { %>
+
+    <div class="no-contacts">
+        <i class='bx bx-user-x'></i>
+        <h3>No users found</h3>
+        <p>Try searching for another username.</p>
+    </div>
+
+<% } %>
+
 
     <% users.forEach(user => { %>
 
