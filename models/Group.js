@@ -2,9 +2,21 @@ const mongoose = require("mongoose");
 
 const GroupSchema = new mongoose.Schema({
 
-    groupName: String,
+    groupName: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
-    members: [String],
+    admin: {
+        type: String,
+        required: true
+    },
+
+    members: {
+        type: [String],
+        default: []
+    },
 
     createdAt: {
         type: Date,

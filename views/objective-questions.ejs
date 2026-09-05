@@ -163,6 +163,21 @@
             text-decoration: none;
 
         }
+        
+        
+        .option.correct-answer {
+
+    background: #dbeafe;
+
+    border-color: royalblue;
+
+}
+
+.option.correct-answer input {
+
+    accent-color: royalblue;
+
+}
 
 
         .option.wrong-answer {
@@ -417,6 +432,10 @@ function submitQuiz() {
             ) {
 
                 score++;
+                
+                 selected
+               .closest(".option")
+               .classList.add("correct-answer");
 
             }
 

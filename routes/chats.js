@@ -20,55 +20,75 @@ const User = require("../models/User");
 
 router.get("/chats", async (req, res) => {
     try {
+
         if (!req.session.user) {
             return res.redirect("/login?redirect=/chats");
         }
 
         const currentUser = req.session.user.username;
 
+        // Get all private messages involving the current user
         const messages = await Message.find({
             $or: [
                 { sender: currentUser },
                 { receiver: currentUser }
             ]
-        }).sort({ _id: -1 });
+        })
+        .sort({ _id: -1 })
+        .lean();
 
-        const conversations = [];
-        const seenUsers = new Set();
+        const unreadMessages = await Message.find({
+    receiver: currentUser,
+    seen: false
+})
+.select("sender")
+.lean();
 
-        for (const message of messages) {
+const unreadCounts = {};
 
-            let otherUser;
+for (const unreadMessage of unreadMessages) {
 
-            if (message.sender === currentUser) {
-                otherUser = message.receiver;
-            } else {
-                otherUser = message.sender;
+    if (!unreadMessage.sender) {
+        continue;
+    }
+
+    unreadCounts[unreadMessage.sender] =
+        (unreadCounts[unreadMessage.sender] || 0) + 1;
+}
+
+const conversations = [];
+const seenUsers = new Set();
+
+for (const message of messages) {
+
+            const otherUser =
+                message.sender === currentUser
+                    ? message.receiver
+                    : message.sender;
+
+            if (!otherUser) {
+                continue;
             }
 
-            if (!otherUser) continue;
-
-            if (!seenUsers.has(otherUser)) {
-
-                seenUsers.add(otherUser);
-
-                // Count unread messages from this user
-                const unreadCount = await Message.countDocuments({
-                    sender: otherUser,
-                    receiver: currentUser,
-                    seen: false
-                });
-
-                conversations.push({
-                    username: otherUser,
-                    message: message.message,
-                    time: message.time,
-                    date: message.date,
-                    seen: message.seen,
-                    sender: message.sender,
-                    unreadCount: unreadCount
-                });
+            // We only need the newest message for each person
+            if (seenUsers.has(otherUser)) {
+                continue;
             }
+
+            seenUsers.add(otherUser);
+
+            // Count unread messages from this user
+           const unreadCount = unreadCounts[otherUser] || 0;
+
+            conversations.push({
+                username: otherUser,
+                message: message.message,
+                time: message.time,
+                date: message.date,
+                seen: message.seen,
+                sender: message.sender,
+                unreadCount
+            });
         }
 
         res.render("chats", {
@@ -240,17 +260,37 @@ router.get("/users", async (req, res) => {
 // GROUPS PAGE
 router.get("/groups", async (req, res) => {
 
-    if(!req.session.user){
-        return res.redirect("/login");
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = req.session.user.username;
+
+        const groups = await Group.find({
+            members: currentUser
+        }).sort({
+            _id: -1
+        });
+
+        res.render("groups", {
+            groups,
+            currentUser
+        });
+
+    } catch (error) {
+
+        console.error("Groups page error:", error);
+
+        res.status(500).send(
+            "Unable to load groups."
+        );
+
     }
 
-    const groups = await Group.find();
-
-    res.render("groups", {
-        groups
-    });
-
 });
+
 
 // CREATE GROUP PAGE
 router.get("/creategroup", (req, res) => {
@@ -283,16 +323,51 @@ router.post("/creategroup", async (req, res) => {
 // SINGLE GROUP CHAT
 router.get("/group/:id", async (req, res) => {
 
-    const group = await Group.findById(req.params.id);
+    try {
 
-    const messages = await GroupMessage.find({
-        groupId: req.params.id
-    });
+        if (!req.session.user) {
+            return res.redirect(
+                "/login?redirect=/group/" +
+                encodeURIComponent(req.params.id)
+            );
+        }
 
-    res.render("groupchat", {
-        group,
-        messages
-    });
+        const currentUser = req.session.user.username;
+
+        const group = await Group.findById(req.params.id);
+
+        if (!group) {
+            return res.status(404).send("Group not found.");
+        }
+
+        // Check whether the current user belongs to this group
+        if (!group.members.includes(currentUser)) {
+            return res.status(403).send(
+                "You are not a member of this group."
+            );
+        }
+
+        const messages = await GroupMessage.find({
+            groupId: req.params.id
+        }).sort({
+            _id: 1
+        });
+
+        res.render("groupchat", {
+            group,
+            messages,
+            currentUser
+        });
+
+    } catch (error) {
+
+        console.error("Group chat error:", error);
+
+        res.status(500).send(
+            "Unable to load group chat."
+        );
+
+    }
 
 });
 
