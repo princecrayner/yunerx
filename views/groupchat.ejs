@@ -14,8 +14,43 @@
 <body>
 
 <div class="chat-container">
-
 <h1><%= group.groupName %></h1>
+
+<a href="/group/<%= group._id %>/addmembers">
+    <button type="button">
+        <i class='bx bx-user-plus'></i>
+        Add Members
+    </button>
+</a>
+
+<button type="button" id="leaveGroupBtn">
+    <i class='bx bx-log-out'></i>
+    Leave Group
+</button>
+
+<!-- ↓↓↓ PASTE THE WHOLE MEMBER LIST BLOCK HERE ↓↓↓ -->
+<div id="memberList">
+    <h3>Members</h3>
+    <% group.members.forEach(member => { %>
+        <div class="member-row">
+            <span><%= member %></span>
+            <% if (member === group.admin) { %>
+                <small>(admin)</small>
+            <% } %>
+            <% if (currentUser === group.admin && member !== currentUser) { %>
+                <button
+                    type="button"
+                    class="remove-member-btn"
+                    data-username="<%= member %>"
+                >
+                    Remove
+                </button>
+            <% } %>
+        </div>
+    <% }) %>
+</div>
+<!-- ↑↑↑ END OF MEMBER LIST BLOCK ↑↑↑ -->
+
 
 <div class="chat-box" id="chatBox">
 
@@ -60,6 +95,7 @@ required>
 <script>
 
 const socket = io();
+socket.emit("joinGroup", "<%= group._id %>");
 
 const form = document.getElementById("groupForm");
 
@@ -77,7 +113,7 @@ form.addEventListener("submit", (e) => {
 
         groupId: "<%= group._id %>",
 
-        sender: "User",
+        sender: "<%= currentUser %>",
 
         message: input.value,
 
@@ -118,6 +154,89 @@ socket.on("receiveGroupMessage", (data) => {
     chatBox.scrollTop = chatBox.scrollHeight;
 
 });
+
+
+
+
+document.getElementById("leaveGroupBtn").addEventListener("click", async function() {
+
+    const confirmLeave = confirm("Are you sure you want to leave this group?");
+
+    if (!confirmLeave) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/group/<%= group._id %>/leave",
+            { method: "POST" }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+            window.location.href = "/chats";
+        } else {
+            alert(result.message || "Unable to leave group.");
+        }
+
+    } catch (error) {
+
+        console.error("Leave group error:", error);
+        alert("Something went wrong.");
+
+    }
+
+});
+
+
+
+document.querySelectorAll(".remove-member-btn").forEach(function(button) {
+
+    button.addEventListener("click", async function() {
+
+        const username = button.getAttribute("data-username");
+
+        const confirmRemove = confirm("Remove " + username + " from the group?");
+
+        if (!confirmRemove) {
+            return;
+        }
+
+        try {
+
+            const response = await fetch(
+                "/group/<%= group._id %>/removemember",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username })
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+                button.closest(".member-row").remove();
+            } else {
+                alert(result.message || "Unable to remove member.");
+            }
+
+        } catch (error) {
+
+            console.error("Remove member error:", error);
+            alert("Something went wrong.");
+
+        }
+
+    });
+
+});
+
+
 
 </script>
 

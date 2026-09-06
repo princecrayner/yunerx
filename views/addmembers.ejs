@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Members</title>
+
+<link rel="stylesheet" href="/css/chats.css">
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
+}
+
+.add-members-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.add-members-header {
+    margin-bottom: 20px;
+}
+
+.add-members-header h1 {
+    margin-bottom: 6px;
+}
+
+.add-members-header p {
+    color: #777;
+    font-size: 14px;
+}
+
+.user-card {
+    background: white;
+    padding: 14px;
+
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.user-info p {
+    color: #888;
+    font-size: 13px;
+}
+
+.add-user-button {
+    border: none;
+    background: #4169e1;
+    color: white;
+
+    padding: 9px 14px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.add-user-button:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 500px) {
+
+    .add-members-container {
+        padding: 14px;
+    }
+
+    .user-card {
+        padding: 12px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="add-members-container">
+
+    <div class="add-members-header">
+
+        <h1>
+            Add Members
+        </h1>
+
+        <p>
+            Add Yunerx users to
+            <strong><%= group.groupName %></strong>
+        </p>
+
+    </div>
+
+    <% users.forEach(user => { %>
+
+        <div class="user-card">
+
+            <div class="user-info">
+
+                <h3>
+                    <%= user.username %>
+                </h3>
+
+                <p>
+                    <%= user.phone || "Yunerx User" %>
+                </p>
+
+            </div>
+
+            <button
+                class="add-user-button"
+                data-username="<%= user.username %>"
+            >
+                Add
+            </button>
+
+        </div>
+
+    <% }) %>
+
+</div>
+
+
+
+
+<script>
+
+const groupId = "<%= group._id %>";
+
+document.querySelectorAll(".add-user-button").forEach(function(button) {
+
+    button.addEventListener("click", async function() {
+
+        const username = button.getAttribute("data-username");
+
+        button.disabled = true;
+        button.textContent = "Adding...";
+
+        try {
+
+            const response = await fetch(
+                `/group/${groupId}/addmembers`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username })
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                button.textContent = "Added";
+                button.closest(".user-card").style.opacity = "0.5";
+
+            } else {
+
+                alert(result.message || "Unable to add member.");
+                button.disabled = false;
+                button.textContent = "Add";
+
+            }
+
+        } catch (error) {
+
+            console.error("Add member error:", error);
+            alert("Something went wrong. Please try again.");
+            button.disabled = false;
+            button.textContent = "Add";
+
+        }
+
+    });
+
+});
+
+</script>
+
+
+</body>
+</html>

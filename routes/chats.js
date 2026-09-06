@@ -38,28 +38,26 @@ router.get("/chats", async (req, res) => {
         .lean();
 
         const unreadMessages = await Message.find({
-    receiver: currentUser,
-    seen: false
-})
-.select("sender")
-.lean();
+            receiver: currentUser,
+            seen: false
+        })
+        .select("sender")
+        .lean();
 
-const unreadCounts = {};
+        const unreadCounts = {};
 
-for (const unreadMessage of unreadMessages) {
+        for (const unreadMessage of unreadMessages) {
+            if (!unreadMessage.sender) {
+                continue;
+            }
+            unreadCounts[unreadMessage.sender] =
+                (unreadCounts[unreadMessage.sender] || 0) + 1;
+        }
 
-    if (!unreadMessage.sender) {
-        continue;
-    }
+        const conversations = [];
+        const seenUsers = new Set();
 
-    unreadCounts[unreadMessage.sender] =
-        (unreadCounts[unreadMessage.sender] || 0) + 1;
-}
-
-const conversations = [];
-const seenUsers = new Set();
-
-for (const message of messages) {
+        for (const message of messages) {
 
             const otherUser =
                 message.sender === currentUser
@@ -70,15 +68,13 @@ for (const message of messages) {
                 continue;
             }
 
-            // We only need the newest message for each person
             if (seenUsers.has(otherUser)) {
                 continue;
             }
 
             seenUsers.add(otherUser);
 
-            // Count unread messages from this user
-           const unreadCount = unreadCounts[otherUser] || 0;
+            const unreadCount = unreadCounts[otherUser] || 0;
 
             conversations.push({
                 username: otherUser,
@@ -91,9 +87,16 @@ for (const message of messages) {
             });
         }
 
+        // NEW: load the user's real groups, same as /groups does
+        const groups = await Group.find({
+            members: currentUser
+        }).sort({
+            _id: -1
+        });
+
         res.render("chats", {
             messages: conversations,
-            groups: [],
+            groups,
             currentUser
         });
 
@@ -306,19 +309,40 @@ router.get("/creategroup", (req, res) => {
 // CREATE GROUP
 router.post("/creategroup", async (req, res) => {
 
-    const group = new Group({
+    try {
 
-        groupName: req.body.groupName,
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
 
-        members: [req.session.user.username]
+        const currentUser = req.session.user.username;
 
-    });
+        const group = new Group({
 
-    await group.save();
+            groupName: req.body.groupName,
 
-    res.redirect("/groups");
+            admin: currentUser,
+
+            members: [currentUser]
+
+        });
+
+        await group.save();
+
+        res.redirect("/groups");
+
+    } catch (error) {
+
+        console.error("Create group error:", error);
+
+        res.status(500).send(
+            "Unable to create group."
+        );
+
+    }
 
 });
+
 
 // SINGLE GROUP CHAT
 router.get("/group/:id", async (req, res) => {
@@ -370,5 +394,304 @@ router.get("/group/:id", async (req, res) => {
     }
 
 });
+
+
+// =========================================
+// ADD MEMBERS PAGE
+// =========================================
+
+router.get("/group/:id/addmembers", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = req.session.user.username;
+
+        // Find the group
+        const group = await Group.findById(req.params.id);
+
+        if (!group) {
+            return res.status(404).send("Group not found.");
+        }
+
+        // Only group members can open this page
+        if (!group.members.includes(currentUser)) {
+            return res.status(403).send(
+                "You are not a member of this group."
+            );
+        }
+
+        // Get users who are NOT already members
+        const users = await User.find({
+            username: {
+                $ne: currentUser,
+                $nin: group.members
+            }
+        }).sort({
+            username: 1
+        });
+
+        res.render("addmembers", {
+            group,
+            users,
+            currentUser
+        });
+
+    } catch (error) {
+
+        console.error("Add members page error:", error);
+
+        res.status(500).send(
+            "Unable to load add members page."
+        );
+
+    }
+
+});
+
+
+// =========================================
+// ADD MEMBER TO GROUP
+// =========================================
+
+router.post("/group/:id/addmembers", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login first."
+            });
+        }
+
+        const currentUser = req.session.user.username;
+
+        // Find the group
+        const group = await Group.findById(req.params.id);
+
+        if (!group) {
+            return res.status(404).json({
+                success: false,
+                message: "Group not found."
+            });
+        }
+
+        // Only existing members can add someone
+        if (!group.members.includes(currentUser)) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not a member of this group."
+            });
+        }
+
+        const username = req.body.username;
+
+        if (!username) {
+            return res.status(400).json({
+                success: false,
+                message: "Username is required."
+            });
+        }
+
+        // Find the user
+        const user = await User.findOne({
+            username
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found."
+            });
+        }
+
+        // Check if already a member
+        if (group.members.includes(username)) {
+            return res.status(400).json({
+                success: false,
+                message: "User is already a member."
+            });
+        }
+
+        // Add the user
+        group.members.push(username);
+
+        await group.save();
+
+        res.json({
+            success: true,
+            message: username + " added to the group."
+        });
+
+    } catch (error) {
+
+        console.error("Add member error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to add member."
+        });
+
+    }
+
+});
+
+
+// REMOVE MEMBER FROM GROUP (admin only)
+router.post("/group/:id/removemember", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login first."
+            });
+        }
+
+        const currentUser = req.session.user.username;
+
+        const group = await Group.findById(req.params.id);
+
+        if (!group) {
+            return res.status(404).json({
+                success: false,
+                message: "Group not found."
+            });
+        }
+
+        // Only the admin can remove members
+        if (group.admin !== currentUser) {
+            return res.status(403).json({
+                success: false,
+                message: "Only the group admin can remove members."
+            });
+        }
+
+        const username = req.body.username;
+
+        if (!username) {
+            return res.status(400).json({
+                success: false,
+                message: "Username is required."
+            });
+        }
+
+        // Admin cannot remove themselves this way — they should use Leave Group
+        if (username === currentUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Use Leave Group to remove yourself."
+            });
+        }
+
+        if (!group.members.includes(username)) {
+            return res.status(400).json({
+                success: false,
+                message: "User is not a member of this group."
+            });
+        }
+
+        group.members = group.members.filter(
+            member => member !== username
+        );
+
+        await group.save();
+
+        res.json({
+            success: true,
+            message: username + " removed from the group."
+        });
+
+    } catch (error) {
+
+        console.error("Remove member error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to remove member."
+        });
+
+    }
+
+});
+
+
+// LEAVE GROUP
+router.post("/group/:id/leave", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login first."
+            });
+        }
+
+        const currentUser = req.session.user.username;
+
+        const group = await Group.findById(req.params.id);
+
+        if (!group) {
+            return res.status(404).json({
+                success: false,
+                message: "Group not found."
+            });
+        }
+
+        if (!group.members.includes(currentUser)) {
+            return res.status(400).json({
+                success: false,
+                message: "You are not a member of this group."
+            });
+        }
+
+        // Remove the user from members
+        group.members = group.members.filter(
+            member => member !== currentUser
+        );
+
+        // If the admin is leaving, hand admin role to the next member
+        if (group.admin === currentUser) {
+
+            if (group.members.length > 0) {
+                group.admin = group.members[0];
+            } else {
+                // No members left — delete the group entirely
+                await Group.findByIdAndDelete(req.params.id);
+
+                return res.json({
+                    success: true,
+                    groupDeleted: true
+                });
+            }
+
+        }
+
+        await group.save();
+
+        res.json({
+            success: true,
+            groupDeleted: false
+        });
+
+    } catch (error) {
+
+        console.error("Leave group error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to leave group."
+        });
+
+    }
+
+});
+
 
 module.exports = router;

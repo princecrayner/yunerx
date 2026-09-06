@@ -38,6 +38,7 @@ const app = express();
 app.set("trust proxy", 1);
 const server = http.createServer(app);
 const io = new Server(server);
+
 const PORT = process.env.PORT || 4000;
 
 
@@ -48,7 +49,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(session({
+const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -64,7 +65,11 @@ app.use(session({
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax"
     }
-}));
+});
+
+app.use(sessionMiddleware);
+io.engine.use(sessionMiddleware);
+
 
 app.use("/admin", adminRoutes);
 app.use("/docs", docsRoutes);
@@ -362,19 +367,38 @@ io.on("connection", (socket) => {
     console.log("User Connected");
     
     
-    socket.on("joinUser", (username) => {
+   socket.on("joinUser", () => {
 
-    if (!username) {
+    const sessionUser = socket.request.session?.user;
+
+    if (!sessionUser) {
+        console.log("Rejected joinUser: no valid session");
         return;
     }
 
-    socket.join(`user:${username}`);
+    socket.join(`user:${sessionUser.username}`);
 
     console.log(
-        `${username} joined their private socket room`
+        `${sessionUser.username} joined their private socket room`
     );
 
 });
+
+
+socket.on("joinGroup", (groupId) => {
+
+    if (!groupId) {
+        return;
+    }
+
+    socket.join(`group:${groupId}`);
+
+    console.log(
+        `Socket joined group room: ${groupId}`
+    );
+
+});
+
 
    socket.on("sendMessage", async (data) => {
 
@@ -436,7 +460,7 @@ socket.on("groupMessage", async (data) => {
 
     await message.save();
 
-    io.emit("receiveGroupMessage", data);
+io.to(`group:${data.groupId}`).emit("receiveGroupMessage", data);
 
    });
 
