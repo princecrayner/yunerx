@@ -16,12 +16,14 @@
 <div class="chat-container">
 <h1><%= group.groupName %></h1>
 
-<a href="/group/<%= group._id %>/addmembers">
-    <button type="button">
-        <i class='bx bx-user-plus'></i>
-        Add Members
-    </button>
-</a>
+<% if (currentUser === group.admin) { %>
+    <a href="/group/<%= group._id %>/addmembers">
+        <button type="button">
+            <i class='bx bx-user-plus'></i>
+            Add Members
+        </button>
+    </a>
+<% } %>
 
 <button type="button" id="leaveGroupBtn">
     <i class='bx bx-log-out'></i>

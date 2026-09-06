@@ -417,12 +417,12 @@ router.get("/group/:id/addmembers", async (req, res) => {
             return res.status(404).send("Group not found.");
         }
 
-        // Only group members can open this page
-        if (!group.members.includes(currentUser)) {
-            return res.status(403).send(
-                "You are not a member of this group."
-            );
-        }
+        // Only the admin can open this page
+        if (group.admin !== currentUser) {
+             return res.status(403).send(
+        "Only the group admin can add members."
+         );
+       }
 
         // Get users who are NOT already members
         const users = await User.find({
@@ -480,13 +480,14 @@ router.post("/group/:id/addmembers", async (req, res) => {
             });
         }
 
-        // Only existing members can add someone
-        if (!group.members.includes(currentUser)) {
-            return res.status(403).json({
-                success: false,
-                message: "You are not a member of this group."
-            });
-        }
+
+        // Only the admin can add new members
+       if (group.admin !== currentUser) {
+          return res.status(403).json({
+        success: false,
+        message: "Only the group admin can add members."
+        });
+      }
 
         const username = req.body.username;
 
