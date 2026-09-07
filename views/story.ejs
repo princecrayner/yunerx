@@ -31,15 +31,39 @@ body {
     justify-content: center;
 }
 
+.story-progress-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    gap: 4px;
+    z-index: 20;
+}
+
+.progress-segment {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+}
+
 .story-top-bar {
     position: absolute;
-    top: 0;
+    top: 26px;
     left: 0;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px;
+    padding: 10px 16px;
     z-index: 10;
     background: linear-gradient(rgba(0,0,0,0.5), transparent);
 }
@@ -76,6 +100,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .story-content img,
@@ -99,6 +124,8 @@ body {
 
 <div class="story-page">
 
+    <div class="story-progress-container" id="progressContainer"></div>
+
     <div class="story-top-bar">
 
         <div class="story-user">
@@ -114,7 +141,7 @@ body {
 
     </div>
 
-    <div class="story-content">
+    <div class="story-content" id="storyContent">
 
         <% if (story.type === "image") { %>
 
@@ -122,7 +149,7 @@ body {
 
         <% } else if (story.type === "video") { %>
 
-            <video src="<%= story.content %>" controls autoplay></video>
+            <video id="storyVideo" src="<%= story.content %>" autoplay playsinline></video>
 
         <% } else { %>
 
@@ -135,6 +162,147 @@ body {
     </div>
 
 </div>
+
+<script>
+
+const currentUsername = "<%= storyUsername %>";
+const storyType = "<%= story.type %>";
+
+const urlParams = new URLSearchParams(window.location.search);
+const queueParam = urlParams.get("queue");
+
+const queue = queueParam
+    ? queueParam.split(",")
+    : [currentUsername];
+
+const currentIndex = queue.indexOf(currentUsername);
+
+
+/* =========================================
+   BUILD PROGRESS SEGMENTS
+========================================= */
+
+const progressContainer = document.getElementById("progressContainer");
+
+queue.forEach(function(username, index) {
+
+    const segment = document.createElement("div");
+    segment.classList.add("progress-segment");
+
+    const fill = document.createElement("div");
+    fill.classList.add("progress-fill");
+
+    if (index < currentIndex) {
+        fill.style.width = "100%";
+    }
+
+    segment.appendChild(fill);
+    progressContainer.appendChild(segment);
+
+});
+
+const currentFill =
+    progressContainer.children[currentIndex >= 0 ? currentIndex : 0]
+        .querySelector(".progress-fill");
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function goToNext() {
+
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex < queue.length) {
+
+        window.location.href =
+            "/story/" + encodeURIComponent(queue[nextIndex]) +
+            "?queue=" + encodeURIComponent(queue.join(","));
+
+    } else {
+
+        window.location.href = "/chats";
+
+    }
+
+}
+
+function goToPrevious() {
+
+    const prevIndex = currentIndex - 1;
+
+    if (prevIndex >= 0) {
+
+        window.location.href =
+            "/story/" + encodeURIComponent(queue[prevIndex]) +
+            "?queue=" + encodeURIComponent(queue.join(","));
+
+    }
+
+}
+
+
+/* =========================================
+   AUTO ADVANCE
+========================================= */
+
+if (storyType === "video") {
+
+    const videoEl = document.getElementById("storyVideo");
+
+    videoEl.addEventListener("timeupdate", function() {
+
+        if (!videoEl.duration) {
+            return;
+        }
+
+        const percent = (videoEl.currentTime / videoEl.duration) * 100;
+        currentFill.style.width = percent + "%";
+
+    });
+
+    videoEl.addEventListener("ended", goToNext);
+
+} else {
+
+    const duration = 5000;
+    const startTime = Date.now();
+
+    const interval = setInterval(function() {
+
+        const elapsed = Date.now() - startTime;
+        const percent = Math.min((elapsed / duration) * 100, 100);
+
+        currentFill.style.width = percent + "%";
+
+        if (elapsed >= duration) {
+            clearInterval(interval);
+            goToNext();
+        }
+
+    }, 50);
+
+}
+
+
+/* =========================================
+   TAP LEFT/RIGHT TO NAVIGATE
+========================================= */
+
+document.getElementById("storyContent").addEventListener("click", function(e) {
+
+    const isLeftSide = e.clientX < window.innerWidth / 2;
+
+    if (isLeftSide) {
+        goToPrevious();
+    } else {
+        goToNext();
+    }
+
+});
+
+</script>
 
 </body>
 </html>

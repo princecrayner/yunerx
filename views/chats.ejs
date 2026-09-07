@@ -887,46 +887,59 @@ body {
                
 
                   
-                          <div class="stories-container">
+                         <div class="stories-container">
 
+<%
+    // Build the order of stories: your own first, then contacts
+    const storyQueue = [];
+    if (myStory) {
+        storyQueue.push(currentUser);
+    }
+    if (typeof stories !== "undefined") {
+        stories.forEach(function(s) {
+            storyQueue.push(s.username);
+        });
+    }
+    const queueString = storyQueue.join(",");
+%>
 
     <!-- YOUR STORY -->
 
-    <a
-    href="<%= myStory ? '/story/' + currentUser : '/createstory' %>"
-    class="story create-story"
->
+    
+        href="<%= myStory ? '/story/' + currentUser + '?queue=' + queueString : '/createstory' %>"
+        class="story create-story"
+    >
 
-    <div class="story-image">
+        <div class="story-image">
 
-        <% if (myStory && myStory.type === "image") { %>
+            <% if (myStory && myStory.type === "image") { %>
 
-            <img
-                src="<%= myStory.content %>"
-                style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
-            >
+                <img
+                    src="<%= myStory.content %>"
+                    style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
+                >
 
-        <% } else if (myStory && myStory.type === "video") { %>
+            <% } else if (myStory && myStory.type === "video") { %>
 
-            <i class='bx bx-video'></i>
+                <i class='bx bx-video'></i>
 
-        <% } else if (myStory) { %>
+            <% } else if (myStory) { %>
 
-            <i class='bx bx-user'></i>
+                <i class='bx bx-user'></i>
 
-        <% } else { %>
+            <% } else { %>
 
-            <i class='bx bx-plus'></i>
+                <i class='bx bx-plus'></i>
 
-        <% } %>
+            <% } %>
 
-    </div>
+        </div>
 
-    <span>
-        <%= myStory ? "Your story" : "Add story" %>
-    </span>
+        <span>
+            <%= myStory ? "Your story" : "Add story" %>
+        </span>
 
-</a>
+    </a>
 
 
     <!-- CONTACT STORIES -->
@@ -935,7 +948,10 @@ body {
 
         <% stories.forEach(story => { %>
 
-            <div class="story" onclick="window.location.href='/story/<%= story.username %>'">
+            
+                href="/story/<%= story.username %>?queue=<%= queueString %>"
+                class="story"
+            >
 
                 <div class="story-image">
 
@@ -962,7 +978,7 @@ body {
                     <%= story.username %>
                 </span>
 
-            </div>
+            </a>
 
         <% }) %>
 
@@ -970,7 +986,6 @@ body {
 
 
 </div>
-
             </div>
 
 
