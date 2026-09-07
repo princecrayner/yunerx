@@ -884,13 +884,12 @@ body {
                 </div>
 
 
-               
-
                   
-                         <div class="stories-container">
+                       
+               
+                  <div class="stories-container">
 
 <%
-    // Build the order of stories: your own first, then contacts
     const storyQueue = [];
     if (myStory) {
         storyQueue.push(currentUser);
@@ -903,87 +902,37 @@ body {
     const queueString = storyQueue.join(",");
 %>
 
-    <!-- YOUR STORY -->
-
-    
-        href="<%= myStory ? '/story/' + currentUser + '?queue=' + queueString : '/createstory' %>"
-        class="story create-story"
-    >
-
+    <a href="<%= myStory ? '/story/' + currentUser + '?queue=' + queueString : '/createstory' %>" class="story create-story">
         <div class="story-image">
-
             <% if (myStory && myStory.type === "image") { %>
-
-                <img
-                    src="<%= myStory.content %>"
-                    style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
-                >
-
+                <img src="<%= myStory.content %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
             <% } else if (myStory && myStory.type === "video") { %>
-
                 <i class='bx bx-video'></i>
-
             <% } else if (myStory) { %>
-
                 <i class='bx bx-user'></i>
-
             <% } else { %>
-
                 <i class='bx bx-plus'></i>
-
             <% } %>
-
         </div>
-
-        <span>
-            <%= myStory ? "Your story" : "Add story" %>
-        </span>
-
+        <span><%= myStory ? "Your story" : "Add story" %></span>
     </a>
 
-
-    <!-- CONTACT STORIES -->
-
     <% if (typeof stories !== "undefined") { %>
-
         <% stories.forEach(story => { %>
-
-            
-                href="/story/<%= story.username %>?queue=<%= queueString %>"
-                class="story"
-            >
-
+            <a href="/story/<%= story.username %>?queue=<%= queueString %>" class="story">
                 <div class="story-image">
-
                     <% if (story.type === "image") { %>
-
-                        <img
-                            src="<%= story.content %>"
-                            style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
-                        >
-
+                        <img src="<%= story.content %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
                     <% } else if (story.type === "video") { %>
-
                         <i class='bx bx-video'></i>
-
                     <% } else { %>
-
                         <i class='bx bx-user'></i>
-
                     <% } %>
-
                 </div>
-
-                <span>
-                    <%= story.username %>
-                </span>
-
+                <span><%= story.username %></span>
             </a>
-
         <% }) %>
-
     <% } %>
-
 
 </div>
             </div>
