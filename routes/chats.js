@@ -6,13 +6,24 @@ const express = require("express");
 
 const router = express.Router();
 
+const multer = require("multer");
+
+const cloudinary = require("../config/cloudinary");
+
+const storyUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 50 * 1024 * 1024
+    }
+});
+
 let io;
 
 router.setSocketIO = function(socketIO) {
     io = socketIO;
 };
 
-const Message = require("../models/Message");
+const { Message, Story } = require("../models/Message");
 
 const User = require("../models/User");
 
@@ -87,17 +98,49 @@ router.get("/chats", async (req, res) => {
             });
         }
 
-        // NEW: load the user's real groups, same as /groups does
+               // NEW: load the user's real groups, same as /groups does
         const groups = await Group.find({
             members: currentUser
         }).sort({
             _id: -1
         });
 
+        // Get list of contact usernames (people the user has messaged)
+        const contactUsernames = conversations.map(
+            convo => convo.username
+        );
+
+        // Fetch stories from contacts, newest first
+        const contactStories = await Story.find({
+            username: { $in: contactUsernames }
+        }).sort({ createdAt: -1 });
+
+        // Fetch the current user's own story (if any)
+        const myStory = await Story.findOne({
+            username: currentUser
+        }).sort({ createdAt: -1 });
+
+        // Keep only the newest story per contact (one circle per person)
+        const seenStoryUsers = new Set();
+        const stories = [];
+
+        for (const story of contactStories) {
+
+            if (seenStoryUsers.has(story.username)) {
+                continue;
+            }
+
+            seenStoryUsers.add(story.username);
+            stories.push(story);
+
+        }
+
         res.render("chats", {
             messages: conversations,
             groups,
-            currentUser
+            currentUser,
+            stories,
+            myStory
         });
 
     } catch (error) {
@@ -329,7 +372,7 @@ router.post("/creategroup", async (req, res) => {
 
         await group.save();
 
-        res.redirect("/groups");
+      res.redirect("/chats?tab=groups");
 
     } catch (error) {
 
@@ -689,6 +732,161 @@ router.post("/group/:id/leave", async (req, res) => {
             success: false,
             message: "Unable to leave group."
         });
+
+    }
+
+});
+
+
+
+// CREATE STORY PAGE
+router.get("/createstory", (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+
+    res.render("createstory");
+
+});
+
+
+
+       // CREATE STORY (text, image, or video)
+router.post(
+    "/createstory",
+    storyUpload.single("media"),
+    async (req, res) => {
+
+        try {
+
+            if (!req.session.user) {
+                return res.redirect("/login");
+            }
+
+            const currentUser = req.session.user.username;
+
+            const text = req.body.text;
+
+            const now = new Date();
+            const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+            // CASE 1: a file was uploaded (image or video)
+            if (req.file) {
+
+                const isVideo = req.file.mimetype.startsWith("video");
+
+                const result = await new Promise((resolve, reject) => {
+
+                    const stream = cloudinary.uploader.upload_stream(
+                        {
+                            folder: "yunerx/stories",
+                            resource_type: isVideo ? "video" : "image"
+                        },
+                        (error, result) => {
+                            if (error) {
+                                reject(error);
+                            } else {
+                                resolve(result);
+                            }
+                        }
+                    );
+
+                    stream.end(req.file.buffer);
+
+                });
+
+                const story = new Story({
+                    username: currentUser,
+                    type: isVideo ? "video" : "image",
+                    content: result.secure_url,
+                    expiresAt
+                });
+
+                await story.save();
+
+                return res.redirect("/chats");
+
+            }
+
+            // CASE 2: text-only story
+            if (!text || !text.trim()) {
+                return res.status(400).send("Story text or media is required.");
+            }
+
+            const story = new Story({
+                username: currentUser,
+                type: "text",
+                content: text.trim(),
+                expiresAt
+            });
+
+            await story.save();
+
+            res.redirect("/chats");
+
+        } catch (error) {
+
+            console.error("Create story error:", error);
+
+            res.status(500).send("Unable to create story.");
+
+        }
+
+    }
+);
+
+
+// VIEW A USER'S STORY
+router.get("/story/:username", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect(
+                "/login?redirect=/story/" +
+                encodeURIComponent(req.params.username)
+            );
+        }
+
+        const currentUser = req.session.user.username;
+        const storyUsername = req.params.username;
+
+        const story = await Story.findOne({
+            username: storyUsername
+        }).sort({ createdAt: -1 });
+
+        if (!story) {
+            return res.status(404).send("This story is no longer available.");
+        }
+
+        // Only allow viewing your own story, or a contact's story
+        if (storyUsername !== currentUser) {
+
+            const hasChatted = await Message.findOne({
+                $or: [
+                    { sender: currentUser, receiver: storyUsername },
+                    { sender: storyUsername, receiver: currentUser }
+                ]
+            });
+
+            if (!hasChatted) {
+                return res.status(403).send("You can't view this story.");
+            }
+
+        }
+
+        res.render("story", {
+            story,
+            storyUsername,
+            currentUser
+        });
+
+    } catch (error) {
+
+        console.error("View story error:", error);
+
+        res.status(500).send("Unable to load story.");
 
     }
 

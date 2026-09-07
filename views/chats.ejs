@@ -884,104 +884,92 @@ body {
                 </div>
 
 
-                <div class="stories-container">
+               
+
+                  
+                          <div class="stories-container">
 
 
-                    <!-- YOUR STORY -->
+    <!-- YOUR STORY -->
 
-                    <div class="story create-story">
+    <a
+    href="<%= myStory ? '/story/' + currentUser : '/createstory' %>"
+    class="story create-story"
+>
 
-                        <div class="story-image">
+    <div class="story-image">
 
-                            <i class='bx bx-plus'></i>
+        <% if (myStory && myStory.type === "image") { %>
 
-                        </div>
+            <img
+                src="<%= myStory.content %>"
+                style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
+            >
 
-                        <span>
-                            Your story
-                        </span>
+        <% } else if (myStory && myStory.type === "video") { %>
 
-                    </div>
+            <i class='bx bx-video'></i>
 
+        <% } else if (myStory) { %>
 
-                    <!-- TEMPORARY STORIES -->
+            <i class='bx bx-user'></i>
 
-                    <div class="story">
+        <% } else { %>
 
-                        <div class="story-image">
+            <i class='bx bx-plus'></i>
 
-                            <i class='bx bx-user'></i>
+        <% } %>
 
-                        </div>
+    </div>
 
-                        <span>
-                            Story
-                        </span>
+    <span>
+        <%= myStory ? "Your story" : "Add story" %>
+    </span>
 
-                    </div>
-
-
-                    <div class="story">
-
-                        <div class="story-image">
-
-                            <i class='bx bx-user'></i>
-
-                        </div>
-
-                        <span>
-                            Story
-                        </span>
-
-                    </div>
+</a>
 
 
-                    <div class="story">
+    <!-- CONTACT STORIES -->
 
-                        <div class="story-image">
+    <% if (typeof stories !== "undefined") { %>
 
-                            <i class='bx bx-user'></i>
+        <% stories.forEach(story => { %>
 
-                        </div>
+            <div class="story" onclick="window.location.href='/story/<%= story.username %>'">
 
-                        <span>
-                            Story
-                        </span>
+                <div class="story-image">
 
-                    </div>
+                    <% if (story.type === "image") { %>
 
+                        <img
+                            src="<%= story.content %>"
+                            style="width:100%; height:100%; object-fit:cover; border-radius:50%;"
+                        >
 
-                    <div class="story">
+                    <% } else if (story.type === "video") { %>
 
-                        <div class="story-image">
+                        <i class='bx bx-video'></i>
 
-                            <i class='bx bx-user'></i>
+                    <% } else { %>
 
-                        </div>
+                        <i class='bx bx-user'></i>
 
-                        <span>
-                            Story
-                        </span>
-
-                    </div>
-
-
-                    <div class="story">
-
-                        <div class="story-image">
-
-                            <i class='bx bx-user'></i>
-
-                        </div>
-
-                        <span>
-                            Story
-                        </span>
-
-                    </div>
-
+                    <% } %>
 
                 </div>
+
+                <span>
+                    <%= story.username %>
+                </span>
+
+            </div>
+
+        <% }) %>
+
+    <% } %>
+
+
+</div>
 
             </div>
 
@@ -1392,6 +1380,12 @@ groupsTab.addEventListener(
     "click",
     showGroups
 );
+
+const urlParams = new URLSearchParams(window.location.search);
+
+if (urlParams.get("tab") === "groups") {
+    showGroups();
+}
 
 
 /* =========================================

@@ -14,7 +14,7 @@ const profileUpload = multer({
       });
 
 const GroupMessage = require("./models/GroupMessage");
-const Message = require("./models/Message");
+const { Message, Story } = require("./models/Message");
 
 const http = require("http");
 const { Server } = require("socket.io");
