@@ -212,7 +212,7 @@ body{
   margin: 20px 0;
   border-radius: 10px;
   background: ;
-  border: 2px solid var(--color);
+  border: 1px solid var(--color);
   box-shadow: 0 3px 12px rgba(0,0,0,.2);
   color: var(--color);
   z-index: 1;
@@ -295,7 +295,7 @@ body{
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  padding: 22px 15px;
+  padding: 25px 15px;
   border-radius: 10px;
   background: ;
   box-shadow: 0 3px 12px rgba(0,0,0,.2);
@@ -516,9 +516,8 @@ body{
 
     justify-content: center;
     align-items: center;
-
+    margin-top: -19px;
     gap: 4px;
-
     cursor: pointer;
 
     transition: 0.3s ease;
