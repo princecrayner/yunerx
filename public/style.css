@@ -232,11 +232,13 @@ body{
   transition: all 0.7s;
 }
 
-.objective-btn a:hover {
+.objective-btn a:hover,
+.objective-btn a:active {
   color: #fff;
 }
 
-.objective-btn a:hover::before {
+.objective-btn a:hover::before,
+.objective-btn a:active::before {
   top: -30px;
   left: -30px;
 }
