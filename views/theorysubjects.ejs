@@ -26,6 +26,13 @@
     
     
      <style>
+     
+     .search-bar { display: flex; align-items: center; gap: 10px; background: #f1f3f5; border-radius: 25px; padding: 12px 18px; margin: 20px 0; }
+     .search-bar i { font-size: 20px; color: #666; }
+     .search-bar input { flex: 1; border: none; outline: none; background: transparent; font-size: 15px; font-family: inherit; }
+     .no-results { display: none; text-align: center; color: #777; padding: 30px 0; }
+
+
         .back-btn {
 
             display: inline-block;
@@ -79,29 +86,44 @@
 
 
 <div class="container">
-
     <% if (subjects.length === 0) { %>
-
-        <p>
-            No theory past questions available
-            for this semester.
-        </p>
-
+        <p>No theory past questions available for this semester.</p>
+    <% } else { %>
+        <div class="search-bar"><i class='bx bx-search'></i><input type="text" id="subjectSearch" placeholder="Search subjects..."></div>
+        <div id="subjects">
+            <% subjects.forEach(subject => { %>
+                <a href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/semester/<%= encodeURIComponent(semester) %>/subject/<%= encodeURIComponent(subject) %>" class="btn" data-subject="<%= subject.toLowerCase() %>">📚 <%= subject %></a>
+            <% }) %>
+        </div>
+        <p class="no-results" id="noResults">No subjects match your search.</p>
     <% } %>
-
-
-
-    <% subjects.forEach(subject => { %>
-
-        <a href="/theory-pdfs/level/<%= encodeURIComponent(level) %>/semester/<%= encodeURIComponent(semester) %>/subject/<%= encodeURIComponent(subject) %>" class="btn">
-
-            📚 <%= subject %>
-
-        </a>
-
-    <% }) %>
-
 </div>
+
+
+
+
+<script>
+const searchInput = document.getElementById("subjectSearch");
+const subjectLinks = document.querySelectorAll("#subjects .btn");
+const noResults = document.getElementById("noResults");
+
+searchInput.addEventListener("input", function() {
+    const query = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    subjectLinks.forEach(function(link) {
+        const subjectName = link.getAttribute("data-subject");
+        if (subjectName.includes(query)) {
+            link.style.display = "";
+            visibleCount++;
+        } else {
+            link.style.display = "none";
+        }
+    });
+
+    noResults.style.display = visibleCount === 0 ? "block" : "none";
+});
+</script>
 
 
 </body>

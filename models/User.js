@@ -2,18 +2,41 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
 
-    username: String,
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        minLength: 4,
+        maxLength: 20
+    },
 
-    email: String,
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true
+    },
 
-    phone: String,
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
 
-    password: String,
+    password: {
+        type: String,
+        required: true,
+        minLength: 8,
+        maxLength: 20
+    },
 
-profileImage: {
-    type: String,
-    default: "/profile.png"
-},
+    profileImage: {
+        type: String,
+        default: "/profile.png"
+    },
 
     videos: [
         {
@@ -23,5 +46,6 @@ profileImage: {
     ]
 
 });
+
 
 module.exports = mongoose.model("User", UserSchema);
