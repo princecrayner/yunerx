@@ -270,12 +270,12 @@ body{
 }
 
 .level-section h3 {
-  color: #fff2bd;
+  color: white;
   font-size: 25px;
 }
 
 .level-section h6 {
-  color: #fff2bd;
+  color: white;
     font-size: 15px;
 }
 
@@ -797,7 +797,7 @@ body{
    .footer-item {
 
     height: 40px;
-
+    margin-top: none;
     justify-content: flex-start;
     background: #1f2937;
     cursor: pointer;   
@@ -815,7 +815,7 @@ body{
     position: relative;
 
     text-decoration: none;
-
+    margin-top: none;
     display: flex;
     gap: none;
     cursor: pointer;
