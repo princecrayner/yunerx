@@ -188,28 +188,62 @@ body{
   color: blue;
   font-size: 25px;
   font-weight: bold;
+  margin-bottom: 40px;
 }
 
 .objective-btn {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 17px;
 }
 
+
 .objective-btn a {
-  color: blue;
+  --color: #285ccc;
+  display: inline-block;
+  text-align: center;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
   cursor: pointer;
   font-size: 15px;
-  padding: 20px;
-  border-radius: 15px;
-  border: 1px solid #285ccc;
- transition: 0.3s ease;
+  font-weight: bold;
+  padding: 22px 15px;
+  margin: 20px 0;
+  border-radius: 10px;
+  background: #d4def5;
+  border: 2px solid var(--color);
+  box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  color: var(--color);
+  z-index: 1;
+  transition: color 0.5s;
+}
+
+.objective-btn a::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: var(--color);
+  height: 150px;
+  width: 230px;
+  border-radius: 50%;
+  top: 100%;
+  left: 100%;
+  transition: all 0.7s;
 }
 
 .objective-btn a:hover {
-  background: #285ccc;
-  color: white;
+  color: #fff;
+}
+
+.objective-btn a:hover::before {
+  top: -30px;
+  left: -30px;
+}
+
+.objective-btn a:active::before {
+  background: #1d4bb0;
+  transition: background 0s;
 }
 
 .objective-hdr {
@@ -237,34 +271,66 @@ body{
 
 .level-section h3 {
   color: #fff2bd;
+  font-size: 25px;
 }
 
 .level-section h6 {
   color: #fff2bd;
+    font-size: 15px;
 }
 
 .level-btn {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 17px;
 }
 
 .level-btn a {
-  color: white;
+  --color: #fff2bd;
+  display: inline-block;
+  text-align: center;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
   cursor: pointer;
   font-size: 15px;
-  padding: 30px;
-  border-radius: 15px;
-  border: 1px solid #fff2bd;
- transition: 0.3s ease;
+  font-weight: bold;
+  padding: 22px 15px;
+  border-radius: 10px;
+  background: #FFF9E6;
+  box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  border: 1px solid var(--color);
+  color: #285ccc;
+  z-index: 1;
+  transition: color 0.5s;
+}
+
+.level-btn a::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: var(--color);
+  height: 150px;
+  width: 250px;
+  border-radius: 50%;
+  top: 100%;
+  left: 100%;
+  transition: all 0.7s;
 }
 
 .level-btn a:hover {
-  background: white;
-  color: #285ccc;
+  color: black;
 }
 
+.level-btn a:hover::before {
+  top: -30px;
+  left: -30px;
+}
+
+.level-btn a:active::before {
+  background: #e6d9a3;
+  transition: background 0s;
+}
 
 
 /* BUTTONS */
