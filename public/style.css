@@ -197,7 +197,6 @@ body{
   gap: 17px;
 }
 
-
 .objective-btn a {
   --color: #285ccc;
   display: inline-block;
@@ -208,45 +207,38 @@ body{
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
-  padding: 22px 15px;
-  margin: 20px 0;
+  padding: 25px 15px;
   border-radius: 10px;
-  background: ;
-  border: 1px solid var(--color);
   box-shadow: 0 3px 12px rgba(0,0,0,.2);
-  color: var(--color);
+  border: 1px solid var(--color);
+  color: #285ccc;
   z-index: 1;
   transition: color 0.5s;
 }
-
 .objective-btn a::before {
   content: "";
   position: absolute;
   z-index: -1;
   background: var(--color);
   height: 150px;
-  width: 230px;
+  width: 250px;
   border-radius: 50%;
   top: 100%;
   left: 100%;
   transition: all 0.7s;
 }
-
-.objective-btn a:hover,
-.objective-btn a:active {
-  color: #fff;
+.objective-btn a:hover {
+  color: white;
 }
-
-.objective-btn a:hover::before,
-.objective-btn a:active::before {
+.objective-btn a:hover::before {
   top: -30px;
   left: -30px;
 }
-
 .objective-btn a:active::before {
   background: #1d4bb0;
   transition: background 0s;
 }
+
 
 .objective-hdr {
   display: grid;
@@ -288,7 +280,7 @@ body{
 }
 
 .level-btn a {
-  --color: #fff2bd;
+  --color: white;
   display: inline-block;
   text-align: center;
   text-decoration: none;
