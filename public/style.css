@@ -211,7 +211,7 @@ body{
   padding: 22px 15px;
   margin: 20px 0;
   border-radius: 10px;
-  background: #d4def5;
+  background: ;
   border: 2px solid var(--color);
   box-shadow: 0 3px 12px rgba(0,0,0,.2);
   color: var(--color);
@@ -297,10 +297,10 @@ body{
   font-weight: bold;
   padding: 22px 15px;
   border-radius: 10px;
-  background: #FFF9E6;
+  background: ;
   box-shadow: 0 3px 12px rgba(0,0,0,.2);
   border: 1px solid var(--color);
-  color: #285ccc;
+  color: white;
   z-index: 1;
   transition: color 0.5s;
 }
