@@ -940,9 +940,9 @@ body {
             <% if (myStory && myStory.type === "image") { %>
                 <img src="<%= myStory.content %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
             <% } else if (myStory && myStory.type === "video") { %>
-                <i class='bx bx-video'></i>
+                <video src="<%= myStory.content %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></video>
             <% } else if (myStory) { %>
-                <i class='bx bx-user'></i>
+                 <i class='bx bx-user'></i>
             <% } else { %>
                 <i class='bx bx-plus'></i>
             <% } %>
@@ -957,7 +957,7 @@ body {
                     <% if (story.type === "image") { %>
                         <img src="<%= story.content %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
                     <% } else if (story.type === "video") { %>
-                        <i class='bx bx-video'></i>
+                        <video src="<%= story.content %>" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"></video>
                     <% } else { %>
                         <i class='bx bx-user'></i>
                     <% } %>
