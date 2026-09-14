@@ -45,7 +45,10 @@ const PORT = process.env.PORT || 4000;
 
 
 app.set("view engine", "ejs");
-app.use(express.static("public"));
+app.use(express.static("public", {
+    dotfiles: "allow"
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 

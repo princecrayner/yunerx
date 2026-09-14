@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.yunerx.app",
+      "sha256_cert_fingerprints": [
+        "BB:31:A9:60:47:94:BE:89:BA:34:AC:C0:BE:A5:01:E5:3F:38:ED:93:70:A7:13:BF:2B:E2:70:5D:6B:F1:94:D4"
+      ]
+    }
+  }
+]
