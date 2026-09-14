@@ -461,26 +461,144 @@
     </div>
 
 
-    <!-- LOADING -->
+      <!-- DOCUMENTS -->
 
-    <div id="docsLoading">
+    <div id="docsContainer">
 
-        <div class="loading-spinner"></div>
+        <% if (docs.length === 0) { %>
 
-        <span>
-            Loading documents...
-        </span>
+            <div class="no-documents">
+                <p>No documents found.</p>
+            </div>
+
+        <% } else { %>
+
+            <% docs.forEach(doc => { %>
+
+                <div class="document" data-name="<%= doc.name.toLowerCase() %>">
+
+                    <div class="document-info">
+
+                        <h3>📄 <%= doc.name %></h3>
+
+                        <p><%= new Date(doc.uploadedAt).toLocaleDateString() %></p>
+
+                    </div>
+
+                    <div class="menu">
+
+                        <button class="menuBtn" type="button">⋮</button>
+
+                        <div class="dropdown">
+
+                            <a href="/docs/<%= doc._id %>/viewer">Open</a>
+
+                            <a href="/docs/<%= doc._id %>/download">Download</a>
+
+                            <form action="/docs/<%= doc._id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                <button type="submit" class="deleteBtn">Delete</button>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <% }) %>
+
+        <% } %>
+
+        <div class="no-documents" id="noSearchResults" style="display:none;">
+            <p>No documents match your search.</p>
+        </div>
 
     </div>
-    
-     <!-- DOCUMENT -->
-     <div id="docsContainer"></div>
 
 </div>
 
 
-<script src="/script.js"></script>
+<script>
 
+// =========================
+// SEARCH (filters already-rendered documents, no fetch needed)
+// =========================
+
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const documentCards = document.querySelectorAll("#docsContainer .document");
+const noSearchResults = document.getElementById("noSearchResults");
+
+function filterDocuments() {
+
+    const query = searchInput.value.trim().toLowerCase();
+
+    let visibleCount = 0;
+
+    documentCards.forEach(card => {
+
+        const name = card.getAttribute("data-name");
+
+        if (name.includes(query)) {
+            card.style.display = "";
+            visibleCount++;
+        } else {
+            card.style.display = "none";
+        }
+
+    });
+
+    noSearchResults.style.display = visibleCount === 0 ? "block" : "none";
+
+}
+
+if (searchInput) {
+    searchInput.addEventListener("input", filterDocuments);
+}
+
+if (searchButton) {
+    searchButton.addEventListener("click", filterDocuments);
+}
+
+
+// =========================
+// THREE-DOT MENU
+// =========================
+
+document.addEventListener("click", function(e) {
+
+    const menuButton = e.target.closest(".menuBtn");
+
+    if (menuButton) {
+
+        e.stopPropagation();
+
+        const menu = menuButton.closest(".menu");
+        const dropdown = menu.querySelector(".dropdown");
+
+        document.querySelectorAll(".dropdown.active").forEach(openDropdown => {
+            if (openDropdown !== dropdown) {
+                openDropdown.classList.remove("active");
+            }
+        });
+
+        dropdown.classList.toggle("active");
+
+        return;
+
+    }
+
+    if (!e.target.closest(".menu")) {
+
+        document.querySelectorAll(".dropdown.active").forEach(dropdown => {
+            dropdown.classList.remove("active");
+        });
+
+    }
+
+});
+
+</script>
 
 </body>
 
