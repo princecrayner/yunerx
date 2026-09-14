@@ -485,7 +485,7 @@
 
                     </div>
 
-                    <div class="menu">
+                       <div class="menu">
 
                         <button class="menuBtn" type="button">⋮</button>
 
@@ -494,10 +494,6 @@
                             <a href="/docs/<%= doc._id %>/viewer">Open</a>
 
                             <a href="/docs/<%= doc._id %>/download">Download</a>
-
-                            <form action="/docs/<%= doc._id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this document?');">
-                                <button type="submit" class="deleteBtn">Delete</button>
-                            </form>
 
                         </div>
 
