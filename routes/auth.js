@@ -18,20 +18,56 @@ router.get("/login", (req, res) => {
 
 router.post("/register", async (req, res) => {
 
-    const { username, email, phone, password } = req.body;
+    try {
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+        const { username, email, phone, password } = req.body;
 
-    const user = new User({
-        username,
-        email,
-        phone,
-        password: hashedPassword
-    });
+        if (!username || !email || !phone || !password) {
+            return res.redirect("/register?error=" + encodeURIComponent("All fields are required."));
+        }
 
-    await user.save();
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    res.redirect("/login");
+        const user = new User({
+            username,
+            email,
+            phone,
+            password: hashedPassword
+        });
+
+        await user.save();
+
+        res.redirect("/login");
+
+    } catch (error) {
+
+        console.error("Register error:", error);
+
+        if (error.code === 11000) {
+
+            const duplicateField = Object.keys(error.keyPattern)[0];
+
+            return res.redirect(
+                "/register?error=" + encodeURIComponent(`That ${duplicateField} is already taken.`)
+            );
+
+        }
+
+        if (error.name === "ValidationError") {
+
+            const firstError = Object.values(error.errors)[0].message;
+
+            return res.redirect(
+                "/register?error=" + encodeURIComponent(firstError)
+            );
+
+        }
+
+        res.redirect(
+            "/register?error=" + encodeURIComponent("Unable to register. Please try again.")
+        );
+
+    }
 
 });
 
