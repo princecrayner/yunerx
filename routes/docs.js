@@ -18,7 +18,6 @@ router.post(
 
         try {
 
-
             if (!req.file) {
 
                 return res.status(400).json({
@@ -65,41 +64,22 @@ router.post(
 
 // =====================================================
 // GET /docs
+// Renders the full document list server-side
 // =====================================================
 
-router.get("/", (req, res) => {
-
-     res.render("docs");
-});    
-
-
-// =====================================================
-// API - GET STUDY MATERIALS
-// GET /docs/api
-// =====================================================
-
-router.get("/api", async (req, res) => {
+router.get("/", async (req, res) => {
 
     try {
 
-        const docs =
-            await Document.find()
-                .sort({
-                    uploadedAt: -1
-                });
+        const docs = await Document.find().sort({ uploadedAt: -1 });
 
-        res.json(docs);
+        res.render("docs", { docs });
 
     } catch (error) {
 
-        console.error(
-            "Error loading documents:",
-            error
-        );
+        console.error("Error loading documents:", error);
 
-        res.status(500).json({
-            message: "Unable to load documents."
-        });
+        res.render("docs", { docs: [] });
 
     }
 
@@ -154,7 +134,6 @@ router.get(
 
     }
 );
-
 
 
 // =====================================================
@@ -212,91 +191,47 @@ router.post(
 );
 
 
-
 // =====================================================
 // DELETE STUDY MATERIAL
-// DELETE /docs/:id
+// POST /docs/:id/delete
 // =====================================================
 
-router.delete(
-    "/:id",
-    async (req, res) => {
+router.post("/:id/delete", async (req, res) => {
 
-        try {
+    try {
 
-            const doc =
-                await Document.findById(
-                    req.params.id
-                );
+        const doc = await Document.findById(req.params.id);
 
+        if (!doc) {
+            return res.status(404).send("Study material not found.");
+        }
 
-            if (!doc) {
+        if (doc.cloudinaryId) {
 
-                return res.status(404).json({
-
-                    message:
-                        "Study material not found."
-
-                });
-
-            }
-
-
-            // -----------------------------------------
-            // DELETE FILE FROM CLOUDINARY
-            // -----------------------------------------
-
-            if (doc.cloudinaryId) {
-
-                await cloudinary.uploader.destroy(
-                    doc.cloudinaryId,
-                    {
-                        resource_type: "raw"
-                    }
-                );
-
-            }
-
-
-            // -----------------------------------------
-            // DELETE FROM MONGODB
-            // -----------------------------------------
-
-            await Document.findByIdAndDelete(
-                req.params.id
-            );
-
-
-            res.json({
-
-                message:
-                    "Study material deleted successfully."
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Delete study material error:",
-                error
-            );
-
-            res.status(500).json({
-
-                message:
-                    error.message
-
+            await cloudinary.uploader.destroy(doc.cloudinaryId, {
+                resource_type: "raw"
             });
 
         }
 
+        await Document.findByIdAndDelete(req.params.id);
+
+        res.redirect("/docs");
+
+    } catch (error) {
+
+        console.error("Delete study material error:", error);
+
+        res.status(500).send("Unable to delete study material.");
+
     }
-);
+
+});
 
 
 // =====================================================
 // DOWNLOAD PDF
-// GET /docs/download/:id
+// GET /docs/:id/download
 // =====================================================
 
 router.get("/:id/download", async (req, res) => {
@@ -315,7 +250,6 @@ router.get("/:id/download", async (req, res) => {
         }
 
 
-//get the cludinary URL
         const pdfUrl =
             cloudinary.url(
                 document.cloudinaryId,
@@ -329,7 +263,6 @@ router.get("/:id/download", async (req, res) => {
         console.log(pdfUrl);
 
 
-// fetch PDF from cloudinay
         const response =
             await fetch(pdfUrl);
 
@@ -348,15 +281,12 @@ router.get("/:id/download", async (req, res) => {
         }
 
 
-
-// remove characters that could cause problems in filename
         let filename =
             document.name
               .replace(/[<>:"/\\|?*]/g,"")
               .trim();
-        
 
-// make sure it ends with .pdf
+
         if (
             !filename
                 .toLowerCase()
@@ -368,20 +298,17 @@ router.get("/:id/download", async (req, res) => {
         }
 
 
-// tell browser/phone this a PDF
         res.setHeader(
             "Content-Type",
             "application/pdf"
         );
 
 
-// Tell browser to download it using the original uploaded name
         res.setHeader(
             "Content-Disposition",
             `attachment; filename="${filename}"`
         );
 
-// send file
         const { Readable } =
             require("stream");
 
@@ -404,9 +331,10 @@ router.get("/:id/download", async (req, res) => {
 
 });
 
+
 // =====================================================
-// OPEN PDF
-// GET /docs/open/:id
+// VIEW PDF (raw inline stream, used inside the viewer iframe)
+// GET /docs/:id/view
 // =====================================================
 
 router.get("/:id/view", async (req, res) => {
@@ -456,7 +384,6 @@ router.get("/:id/view", async (req, res) => {
             "application/pdf"
         );
 
-// inline means open instead of download
         res.setHeader(
             "Content-Disposition",
             "inline"
@@ -484,6 +411,37 @@ router.get("/:id/view", async (req, res) => {
 
 });
 
+
+// =====================================================
+// DOCUMENT VIEWER PAGE (in-app preview)
+// GET /docs/:id/viewer
+// =====================================================
+
+router.get("/:id/viewer", async (req, res) => {
+
+    try {
+
+        const document = await Document.findById(req.params.id);
+
+        if (!document) {
+            return res.status(404).send("Document not found.");
+        }
+
+        res.render("pdfviewer", {
+            title: document.name || "Study Material",
+            viewUrl: `/docs/${document._id}/view`,
+            downloadUrl: `/docs/${document._id}/download`
+        });
+
+    } catch (error) {
+
+        console.error("Document viewer error:", error);
+
+        res.status(500).send("Unable to load PDF viewer.");
+
+    }
+
+});
 
 
 module.exports = router;

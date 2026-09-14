@@ -41,6 +41,78 @@ const upload = multer({
 
 
 // =====================================================
+// OBJECTIVE PDF VIEWER PAGE (in-app preview)
+// GET /objective-pdfs/viewer/:id
+// =====================================================
+
+router.get(
+    "/objective-pdfs/viewer/:id",
+    async (req, res) => {
+
+        try {
+
+            const pdf = await ObjectivePDF.findById(req.params.id);
+
+            if (!pdf) {
+                return res.status(404).send("Objective PDF not found");
+            }
+
+            res.render("pdfviewer", {
+                title: pdf.title || "Objective Past Question",
+                viewUrl: `/objective-pdfs/view/${pdf._id}`,
+                downloadUrl: `/objective-pdfs/download/${pdf._id}`
+            });
+
+        } catch (error) {
+
+            console.error("Objective PDF viewer error:", error);
+
+            res.status(500).send("Unable to load PDF viewer.");
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// THEORY PDF VIEWER PAGE (in-app preview)
+// GET /theory-pdfs/viewer/:id
+// =====================================================
+
+router.get(
+    "/theory-pdfs/viewer/:id",
+    async (req, res) => {
+
+        try {
+
+            const pdf = await PDF.findById(req.params.id);
+
+            if (!pdf) {
+                return res.status(404).send("Theory PDF not found");
+            }
+
+            res.render("pdfviewer", {
+                title: pdf.title || "Theory Past Question",
+                viewUrl: `/theory-pdfs/view/${pdf._id}`,
+                downloadUrl: `/theory-pdfs/download/${pdf._id}`
+            });
+
+        } catch (error) {
+
+            console.error("Theory PDF viewer error:", error);
+
+            res.status(500).send("Unable to load PDF viewer.");
+
+        }
+
+    }
+);
+
+
+
+
+// =====================================================
 // OBJECTIVE PDF SEMESTER PAGE
 // /objective-pdfs
 // =====================================================
