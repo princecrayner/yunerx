@@ -26,13 +26,11 @@ const UserSchema = new mongoose.Schema({
         trim: true
     },
 
-    password: {
+       password: {
         type: String,
-        required: true,
-        minLength: 8,
-        maxLength: 20
+        required: true
     },
-
+    
     profileImage: {
         type: String,
         default: "/profile.png"

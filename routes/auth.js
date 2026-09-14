@@ -22,8 +22,16 @@ router.post("/register", async (req, res) => {
 
         const { username, email, phone, password } = req.body;
 
-        if (!username || !email || !phone || !password) {
+                if (!username || !email || !phone || !password) {
             return res.redirect("/register?error=" + encodeURIComponent("All fields are required."));
+        }
+
+        if (password.length < 8) {
+            return res.redirect("/register?error=" + encodeURIComponent("Password must be at least 8 characters."));
+        }
+
+        if (password.length > 20) {
+            return res.redirect("/register?error=" + encodeURIComponent("Password must be no more than 20 characters."));
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
