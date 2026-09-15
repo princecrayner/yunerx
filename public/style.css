@@ -106,7 +106,7 @@ body{
     top: 0;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 100px;
     background: white;
 
     display: flex;
@@ -122,7 +122,7 @@ body{
 .logo img{
     position: fixed;
     right: 15px;
-    top: 20px;
+    top: 40px;
     height: 45px;
     width: 45px;
     object-fit: cover;
@@ -134,42 +134,6 @@ body{
 .logo img:hover{
     transform: scale(1.05);
 }
-
-
-/* PROFILE */
-.profile-btn{
-    position: fixed;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid #3b82f6;
-    background: none;
-    cursor: pointer;
-    padding: 0;
-    transition: 0.3s ease;
-    top: 20px;
-    left: 40px;
-}
-
-.profile-btn img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-btn:hover{
-    transform: scale(1.08);
-    box-shadow: 0 0 12px rgba(59,130,246,0.5);
-}
-
-/* USER ICON */
-
-#userIcon{
-    color: white;
-    font-size: 18px;
-}
-
 
 
 /* OBJETIVE SECTION */
@@ -350,66 +314,6 @@ body{
     background: #2563eb;
     transform: translateY(-2px);
 }
-
-
-/* SIDEBAR */
-.sidebar{
-    position: fixed;
-    top: 0;
-    left: -300px;
-    width: 300px;
-    height: 100%;
-    background: #333;
-    color: white;
-    padding-top: 60px;
-    transition: 0.3s;
-    z-index: 3000;
-}
-
-.sidebar a{
-    display: block;
-    padding: 15px;
-    color: white;
-    text-decoration: none;
-    text-align: center;
-}
-
-.sidebar p{
-    color: white;
-    position: fixed;
-    bottom: 20px;
-    text-align: center;
-    font-size: 14px;
-    font-style: italic;
-    margin-left: 85px;
-}
-
-
-.sidebar a:hover{
-    background: #575757;
-}
-
-.sidebar.active{
-    left: 0;
-}
-
-
-/* OVERLAY */
-.overlay{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    z-index: 2000;
-}
-
-.overlay.active{
-    display: block;
-}
-
 
 
 
