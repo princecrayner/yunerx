@@ -119,8 +119,6 @@ router.post(
 
             const objectivePDF = new ObjectivePDF({
 
-                title: req.body.title,
-
                 subject: req.body.subject,
 
                 semester: req.body.semester,
@@ -139,10 +137,13 @@ router.post(
 
         } catch (err) {
 
-            console.error(err);
+            console.error(
+                "Objective PDF upload error:",
+                error
+            );
 
             res.status(500).send(
-                "❌ Error uploading Objective PDF: " +
+                "Failed to upload Objective PDF: " +
                 err.message
             );
 
@@ -202,7 +203,6 @@ router.post(
         try {
 
             const {
-                title,
                 subject,
                 semester
             } = req.body;
@@ -210,7 +210,6 @@ router.post(
             await ObjectivePDF.findByIdAndUpdate(
                 req.params.id,
                 {
-                    title,
                     subject,
                     semester
                 }
@@ -230,6 +229,9 @@ router.post(
 
     }
 );
+
+
+
 
 
 
@@ -284,6 +286,88 @@ router.get(
 
     }
 );
+
+
+
+// =====================================================
+// UPLOAD THEORY PAST QUESTION PDF
+// =====================================================
+
+router.post(
+    "/upload-pdf",
+    upload.single("pdf"),
+    async (req, res) => {
+
+        try {
+
+            console.log("===== THEORY PDF UPLOAD START =====");
+
+            console.log("BODY:", req.body);
+            console.log("FILE:", req.file);
+
+            if (!req.file) {
+                console.log("NO FILE RECEIVED");
+
+                return res.status(400).send(
+                    "❌ No PDF file received."
+                );
+            }
+
+            const newPDF = new PDF({
+
+                title: req.body.title,
+
+                subject: req.body.subject,
+
+                level: req.body.level,
+
+                semester: req.body.semester,
+
+                category: req.body.category,
+
+                pdfUrl: req.file.path,
+
+                cloudinaryId: req.file.filename
+
+            });
+
+            await newPDF.save();
+
+            console.log("MongoDB PDF saved successfully.");
+
+            console.log("Cloudinary URL:", req.file.path);
+            console.log("Cloudinary ID:", req.file.filename);
+
+            console.log("===== THEORY PDF UPLOAD SUCCESS =====");
+
+            res.send(
+                "✅ Theory Past Question PDF uploaded successfully!"
+            );
+
+        } catch (error) {
+
+            console.error("===== THEORY PDF UPLOAD ERROR =====");
+
+            console.error(error);
+
+            console.error("Message:", error.message);
+
+            console.error("Stack:", error.stack);
+
+            console.error("====================================");
+
+            res.status(500).send(
+                "❌ Theory PDF upload failed: " +
+                error.message
+            );
+
+        }
+
+    }
+);
+           
+
+
 
 
 
@@ -481,18 +565,12 @@ router.get(
         try {
 
             const {
-                level,
-                section,
-                category,
                 subject,
                 quiz
             } = req.query;
 
 
             console.log("DELETE QUIZ REQUEST:", {
-                level,
-                section,
-                category,
                 subject,
                 quiz
             });
@@ -503,9 +581,7 @@ router.get(
             // -----------------------------------------
 
             if (
-                !level ||
-                !section ||
-                !category ||
+              
                 !subject ||
                 !quiz
             ) {
@@ -525,12 +601,6 @@ router.get(
                 await Question.deleteMany({
 
                     type: "objective",
-
-                    level: Number(level),
-
-                    section: section,
-
-                    category: category,
 
                     subject: subject,
 

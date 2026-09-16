@@ -8,26 +8,8 @@ const questionSchema = new mongoose.Schema(
            enum: ['objective', 'theory']
         },
 
-      
-        level: {
-            type: Number,
-            required: true,
-            enum: [100, 200, 300]
-        },
-
-        section: {
-            type: String,
-            required: true,
-            trim: true
-        },
 
         subject: {
-            type: String,
-            required: true,
-            trim: true
-        },
-
-        category: {
             type: String,
             required: true,
             trim: true

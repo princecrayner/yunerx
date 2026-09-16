@@ -208,10 +208,7 @@ router.post(
 
             const requiredHeaders = [
 
-                'level',
-                'section',
                 'subject',
-                'category',
                 'question',
                 'optionA',
                 'optionB',
@@ -273,30 +270,11 @@ router.post(
                 const rowNumber = index + 2;
 
 
-                const level =
-                    Number(
-                        String(
-                            row.level || ''
-                        ).trim()
-                    );
-
-
-                const section =
-                    String(
-                        row.section || ''
-                    ).trim();
-
-
                 const subject =
                     String(
                         row.subject || ''
                     ).trim();
 
-
-                const category =
-                    String(
-                        row.category || ''
-                    ).trim();
                     
                     const quiz =
                     String(
@@ -348,33 +326,10 @@ router.post(
                     ).trim();
 
 
-                // -----------------------------------------
-                // LEVEL
-                // -----------------------------------------
-
-                if (
-                    ![100, 200, 300]
-                        .includes(level)
-                ) {
-
-                    errors.push(
-                        `Row ${rowNumber}: level must be 100, 200 or 300.`
-                    );
-
-                }
-
 
                 // -----------------------------------------
                 // REQUIRED TEXT
                 // -----------------------------------------
-
-                if (!section) {
-
-                    errors.push(
-                        `Row ${rowNumber}: section is required.`
-                    );
-
-                }
 
 
                 if (!subject) {
@@ -386,13 +341,7 @@ router.post(
                 }
 
 
-                if (!category) {
-
-                    errors.push(
-                        `Row ${rowNumber}: category is required.`
-                    );
-
-                }
+             
                 
                 if (!quiz) {
 
@@ -474,14 +423,7 @@ router.post(
 
                 if (
 
-                    [100, 200, 300]
-                        .includes(level)
-
-                    && section
-
-                    && subject
-
-                    && category
+                    subject
 
                     && question
 
@@ -501,11 +443,8 @@ router.post(
                     questions.push({
 
     type: "objective",
-
-    level,
-    section,
+    
     subject,
-    category,
     quiz,
     question,
 

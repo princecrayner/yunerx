@@ -109,7 +109,7 @@
 <div class="container">
 
     <h1>
-        🛠 Admin Dashboard
+         Admin Dashboard
     </h1>
 
 </div>
@@ -123,7 +123,7 @@
 <div class="container">
 
     <h2 class="admin-section-title">
-        📤 Upload Objective Quiz
+         Upload Objective Quiz
     </h2>
 
     <p>
@@ -137,71 +137,6 @@
     enctype="multipart/form-data"
 >
 
-        <!-- LEVEL -->
-
-        <label>
-            <strong>Level</strong>
-        </label>
-
-        <br>
-
-        <select
-            name="level"
-            required
-        >
-
-            <option value="">
-                -- Select Level --
-            </option>
-
-            <option value="100 Primary">
-                100 Primary
-            </option>
-
-            <option value="200 Primary">
-                200 Primary
-            </option>
-
-            <option value="300 Primary">
-                300 Primary
-            </option>
-
-            <option value="100 JHS">
-                100 JHS
-            </option>
-
-            <option value="200 JHS">
-                200 JHS
-            </option>
-
-            <option value="300 JHS">
-                300 JHS
-            </option>
-
-        </select>
-
-        <br><br>
-
-
-        <!-- CATEGORY -->
-
-        <label>
-            <strong>Category</strong>
-        </label>
-
-        <br>
-
-        <input
-            type="text"
-            name="category"
-            placeholder="e.g. Mathematics"
-            required
-        >
-
-        <br><br>
-
-
-     
 
 
         <!-- SUBJECT -->
@@ -262,7 +197,7 @@
             class="btn"
             type="submit"
         >
-            📤 Upload Quiz
+            Upload Quiz
         </button>
 
     </form>
@@ -312,20 +247,6 @@
                     📝 <%= quiz.quiz %>
                 </h3>
 
-                <p>
-                    <strong>Level:</strong>
-                    <%= quiz.level %>
-                </p>
-
-                <p>
-                    <strong>Category:</strong>
-                    <%= quiz.category %>
-                </p>
-
-                <p>
-                    <strong>Semester:</strong>
-                    <%= quiz.semester %>
-                </p>
 
                 <p>
                     <strong>Subject:</strong>
@@ -380,15 +301,6 @@
         method="POST"
         enctype="multipart/form-data"
     >
-
-        <input
-            type="text"
-            name="title"
-            placeholder="Past Question Title"
-            required
-        >
-
-        <br><br>
 
 
         <input
@@ -475,21 +387,10 @@
                     ).toLowerCase() %>"
                 >
 
+
                     <h3>
-                        📄 <%= pdf.title %>
+                       📄 <%= pdf.subject %>
                     </h3>
-
-
-                    <p>
-                        <strong>Subject:</strong>
-                        <%= pdf.subject %>
-                    </p>
-
-
-                    <p>
-                        <strong>Semester:</strong>
-                        <%= pdf.semester %>
-                    </p>
 
 
                     <p>
@@ -502,13 +403,6 @@
                     </p>
 
 
-                    <p>
-                        <strong>Downloads:</strong>
-
-                        <%= pdf.downloads || 0 %>
-
-                    </p>
-
 
                     <br>
 
@@ -518,7 +412,7 @@
                         target="_blank"
                         class="btn"
                     >
-                        👁 View
+                        View
                     </a>
 
 

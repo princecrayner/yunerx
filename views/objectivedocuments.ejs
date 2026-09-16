@@ -184,9 +184,9 @@
         <% pdfs.forEach((pdf, index) => { %>
 
             <div class="pdf-card">
-
+                
                 <h3>
-                    📄 <%= pdf.title %>
+                    📄 <%= subject %>
                 </h3>
 
 
@@ -209,7 +209,7 @@
                 <div class="pdf-actions">
 
 
-                 <a href="/objective-pdfs/viewer/<%= pdf._id %>">👁 View PDF</a>
+                 <a href="/objective-pdfs/viewer/<%= pdf._id %>"> View PDF</a>
 
 <a
     href="/objective-pdfs/download/<%= pdf._id %>"

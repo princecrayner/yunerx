@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const objectivePDFSchema = new mongoose.Schema({
 
-    title: {
-        type: String,
-        required: true
-    },
 
     subject: {
         type: String,
