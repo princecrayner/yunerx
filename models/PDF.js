@@ -2,15 +2,6 @@ const mongoose = require("mongoose");
 
 const pdfSchema = new mongoose.Schema({
 
-    title: {
-        type: String,
-        required: true
-    },
-
-    subject: {
-        type: String,
-        required: true
-    },
 
     level: {
         type: String,
@@ -22,7 +13,7 @@ const pdfSchema = new mongoose.Schema({
         required: true
     },
 
-    category: {
+    subject: {
         type: String,
         required: true
     },

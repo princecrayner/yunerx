@@ -653,13 +653,10 @@ router.get(
 );
 
 
-
 // =====================================================
-// VIEW THEORY PDF
+// VIEW THEORY PDF (streamed inline, matches objective pattern)
 // GET /theory-pdfs/view/:id
 // =====================================================
-
-
 
 router.get(
     "/theory-pdfs/view/:id",
@@ -670,9 +667,7 @@ router.get(
             const pdf = await PDF.findById(req.params.id);
 
             if (!pdf) {
-                return res.status(404).send(
-                    "Theory PDF not found"
-                );
+                return res.status(404).send("Theory PDF not found");
             }
 
             const pdfUrl = cloudinary.url(
@@ -686,18 +681,36 @@ router.get(
 
             console.log("THEORY VIEW URL:", pdfUrl);
 
-            res.redirect(pdfUrl);
+            const response = await fetch(pdfUrl);
+
+            if (!response.ok) {
+
+                console.error(
+                    "Cloudinary response:",
+                    response.status,
+                    response.statusText
+                );
+
+                return res.status(500).send(
+                    "Unable to retrieve PDF from storage."
+                );
+
+            }
+
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader("Content-Disposition", "inline");
+
+            const { Readable } = require("stream");
+
+            Readable
+                .fromWeb(response.body)
+                .pipe(res);
 
         } catch (error) {
 
-            console.error(
-                "Theory PDF view error:",
-                error
-            );
+            console.error("Theory PDF view error:", error);
 
-            res.status(500).send(
-                "Unable to view PDF"
-            );
+            res.status(500).send("Unable to view PDF");
 
         }
 
@@ -705,10 +718,9 @@ router.get(
 );
 
 
-
-
 // =====================================================
 // DOWNLOAD THEORY PDF
+// GET /theory-pdfs/download/:id
 // =====================================================
 
 router.get(
@@ -720,13 +732,10 @@ router.get(
             const pdf = await PDF.findById(req.params.id);
 
             if (!pdf) {
-                return res.status(404).send(
-                    "Theory PDF not found"
-                );
+                return res.status(404).send("Theory PDF not found");
             }
 
-            pdf.downloads =
-                (pdf.downloads || 0) + 1;
+            pdf.downloads = (pdf.downloads || 0) + 1;
 
             await pdf.save();
 
@@ -741,22 +750,50 @@ router.get(
 
             console.log("THEORY DOWNLOAD URL:", pdfUrl);
 
-            res.redirect(pdfUrl);
+            const response = await fetch(pdfUrl);
+
+            if (!response.ok) {
+
+                console.error(
+                    "Cloudinary response:",
+                    response.status,
+                    response.statusText
+                );
+
+                return res.status(500).send(
+                    "Unable to retrieve PDF from storage."
+                );
+
+            }
+
+            let filename = (pdf.subject || "theory-question")
+                .replace(/[<>:"/\\|?*]/g, "")
+                .trim();
+
+            if (!filename.toLowerCase().endsWith(".pdf")) {
+                filename += ".pdf";
+            }
+
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="${filename}"`
+            );
+
+            const { Readable } = require("stream");
+
+            Readable
+                .fromWeb(response.body)
+                .pipe(res);
 
         } catch (error) {
 
-            console.error(
-                "Theory PDF download error:",
-                error
-            );
+            console.error("Theory PDF download error:", error);
 
-            res.status(500).send(
-                "Unable to download PDF"
-            );
+            res.status(500).send("Unable to download PDF");
 
         }
 
     }
 );
-
 module.exports = router;

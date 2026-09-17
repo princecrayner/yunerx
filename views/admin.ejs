@@ -410,7 +410,6 @@
                     <a
                         href="<%= pdf.pdfUrl %>"
                         target="_blank"
-                        class="btn"
                     >
                         View
                     </a>
@@ -418,7 +417,6 @@
 
                     <a
                         href="/admin/edit-objective-pdf/<%= pdf._id %>"
-                        class="btn"
                     >
                         ✏ Edit
                     </a>
@@ -426,7 +424,6 @@
 
                     <a
                         href="/admin/delete-objective-pdf/<%= pdf._id %>"
-                        class="btn"
                         onclick="return confirm('Delete this objective past question?');"
                     >
                         🗑 Delete
@@ -469,19 +466,6 @@
     enctype="multipart/form-data"
 >
 
-    <input
-        type="text"
-        name="title"
-        placeholder="PDF Title"
-        required
-    >
-
-    <input
-        type="text"
-        name="subject"
-        placeholder="Subject"
-        required
-    >
 
     <input
         type="text"
@@ -492,15 +476,15 @@
 
     <input
         type="text"
-        name="category"
-        placeholder="Category"
+        name="semester"
+        placeholder="Semester"
         required
     >
 
     <input
         type="text"
-        name="semester"
-        placeholder="Semester"
+        name="subject"
+        placeholder="Subject"
         required
     >
 
@@ -565,32 +549,15 @@
                     ).toLowerCase() %>"
                 >
 
+
                     <h3>
-                        📄 <%= pdf.title %>
+                        📄 <%= pdf.subject %>
                     </h3>
-
-
-                    <p>
-                        <strong>Subject:</strong>
-                        <%= pdf.subject %>
-                    </p>
 
 
                     <p>
                         <strong>Level:</strong>
                         <%= pdf.level %>
-                    </p>
-
-
-                    <p>
-                        <strong>Semester:</strong>
-                        <%= pdf.semester %>
-                    </p>
-
-
-                    <p>
-                        <strong>Category:</strong>
-                        <%= pdf.category %>
                     </p>
 
 
@@ -610,15 +577,13 @@
                     <a
                         href="<%= pdf.pdfUrl %>"
                         target="_blank"
-                        class="btn"
                     >
-                        👁 View
+                              View
                     </a>
 
 
                     <a
                         href="/admin/edit-pdf/<%= pdf._id %>"
-                        class="btn"
                     >
                         ✏ Edit
                     </a>
@@ -626,7 +591,6 @@
 
                     <a
                         href="/admin/delete-pdf/<%= pdf._id %>"
-                        class="btn"
                         onclick="
                             return confirm(
                                 'Delete this theory past question?'
@@ -782,15 +746,13 @@
                     <a
                         href="<%= doc.pdfUrl %>"
                         target="_blank"
-                        class="btn"
                     >
-                        👁 Preview
+                        Preview
                     </a>
 
 
                     <a
                         href="/docs/edit/<%= doc._id %>"
-                        class="btn"
                     >
                         ✏ Edit
                     </a>
