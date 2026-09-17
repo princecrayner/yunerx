@@ -428,7 +428,7 @@ router.get("/:id/viewer", async (req, res) => {
         }
 
         res.render("pdfviewer", {
-            title: document.name || "Study Material",
+            subject: document.name || "Study Material",
             viewUrl: `/docs/${document._id}/view`,
             downloadUrl: `/docs/${document._id}/download`
         });

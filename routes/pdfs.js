@@ -93,7 +93,7 @@ router.get(
             }
 
             res.render("pdfviewer", {
-                title: pdf.title || "Theory Past Question",
+                subject: pdf.subject || "Theory Past Question",
                 viewUrl: `/theory-pdfs/view/${pdf._id}`,
                 downloadUrl: `/theory-pdfs/download/${pdf._id}`
             });
