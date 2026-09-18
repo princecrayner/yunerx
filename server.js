@@ -273,7 +273,9 @@ app.get("/logout", (req, res) => {
     });
 });
 
-
+app.get("/download", (req, res) => {
+    res.render("download");
+});
 
 
 app.get("/videos", (req, res) => {
