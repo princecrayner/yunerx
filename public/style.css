@@ -122,7 +122,7 @@ body{
 .logo img{
     position: fixed;
     right: 15px;
-    top: 40px;
+    bottom: 5px;
     height: 45px;
     width: 45px;
     object-fit: cover;
@@ -408,7 +408,7 @@ body{
 
     justify-content: center;
     align-items: center;
-    margin-top: -11px;
+    margin-top: -10px;
     gap: 4px;
     cursor: pointer;
 
@@ -439,7 +439,7 @@ body{
 }
 
 .footer-text{
-    margin-top: 5px;
+    margin-top: 6px;
     color: white;
     font-size: 12px;
     font-weight: 500;
