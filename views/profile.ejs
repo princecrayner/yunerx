@@ -159,48 +159,132 @@ video{
 
 
 
-.shorts-row {
+.profile-tabs {
     display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding: 15px 20px;
-    scrollbar-width: none;
+    border-bottom: 1px solid #333;
+    margin: 10px 0;
 }
 
-.shorts-row::-webkit-scrollbar {
+.tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #888;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn.active {
+    color: white;
+    border-bottom-color: royalblue;
+}
+
+.tab-panel {
     display: none;
 }
 
-.short-card {
-    flex: 0 0 140px;
-    background: #222;
-    border-radius: 12px;
-    overflow: hidden;
-    text-decoration: none;
-    color: white;
+.tab-panel.active {
+    display: block;
 }
 
-.short-card video {
-    width: 140px;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 12px 12px 0 0;
-    aspect-ratio: unset;
+.empty-tab-message {
+    padding: 20px;
+    color: #888;
+    text-align: center;
 }
 
-.short-card p {
-    padding: 8px;
-    font-size: 12px;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+/* LONG VIDEOS — YouTube-style: wide 16:9 thumbnails, single/two column */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 16px 20px;
 }
 
 .video-card {
     text-decoration: none;
     color: white;
     display: block;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.video-card video {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+}
+
+.video-card p {
+    padding: 10px;
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* SHORTS — TikTok-style: tall 9:16 grid, 3 columns like a real shorts shelf */
+.shorts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 16px 20px;
+}
+
+.short-grid-card {
+    text-decoration: none;
+    color: white;
+    display: block;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.short-grid-card video {
+    width: 100%;
+    aspect-ratio: 9/16;
+    object-fit: cover;
+    display: block;
+}
+
+.short-grid-card p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 6px 8px;
+    margin: 0;
+    font-size: 11px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 500px) {
+
+    .shorts-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 12px;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
 }
 
 </style>
@@ -287,56 +371,120 @@ video{
 
 
 
-<% if (shorts.length > 0) { %>
+<!-- =========================
+     TAB SWITCHER
+========================= -->
 
-<h2 style="padding-left:20px;">Your Shorts</h2>
+<div class="profile-tabs">
 
-<div class="shorts-row">
+    <button type="button" class="tab-btn active" id="videosTab">
+        <i class='bx bx-play-circle'></i>
+        Videos
+    </button>
 
-    <% shorts.forEach(video => { %>
-
-        <a href="/shorts/<%= video._id %>" class="short-card">
-
-            <video muted>
-                <source src="<%= video.videoUrl %>">
-            </video>
-
-            <p><%= video.title %></p>
-
-        </a>
-
-    <% }) %>
+    <button type="button" class="tab-btn" id="shortsTab">
+        <i class='bx bx-video'></i>
+        Shorts
+    </button>
 
 </div>
 
-<% } %>
 
+<!-- =========================
+     LONG VIDEOS GRID
+========================= -->
 
-<h2 style="padding-left:20px;">Your Videos</h2>
+<div class="tab-panel active" id="videosPanel">
 
-<div class="video-grid">
+    <div class="video-grid">
 
-<% if (longVideos.length === 0) { %>
+        <% if (longVideos.length === 0) { %>
 
-    <p style="padding-left:20px; color:#888;">No videos uploaded yet.</p>
+            <p class="empty-tab-message">No videos uploaded yet.</p>
 
-<% } %>
+        <% } %>
 
-<% longVideos.forEach(video => { %>
+        <% longVideos.forEach(video => { %>
 
-<a href="/watch/<%= video._id %>" class="video-card">
+            <a href="/watch/<%= video._id %>" class="video-card">
 
-<video muted>
-<source src="<%= video.videoUrl %>">
-</video>
+                <video muted>
+                    <source src="<%= video.videoUrl %>">
+                </video>
 
-<p><%= video.title %></p>
+                <p><%= video.title %></p>
 
-</a>
+            </a>
 
-<% }) %>
+        <% }) %>
+
+    </div>
 
 </div>
+
+
+<!-- =========================
+     SHORTS GRID
+========================= -->
+
+<div class="tab-panel" id="shortsPanel">
+
+    <div class="shorts-grid">
+
+        <% if (shorts.length === 0) { %>
+
+            <p class="empty-tab-message">No shorts uploaded yet.</p>
+
+        <% } %>
+
+        <% shorts.forEach(video => { %>
+
+            <a href="/shorts/<%= video._id %>" class="short-grid-card">
+
+                <video muted>
+                    <source src="<%= video.videoUrl %>">
+                </video>
+
+                <p><%= video.title %></p>
+
+            </a>
+
+        <% }) %>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+const videosTab = document.getElementById("videosTab");
+const shortsTab = document.getElementById("shortsTab");
+const videosPanel = document.getElementById("videosPanel");
+const shortsPanel = document.getElementById("shortsPanel");
+
+videosTab.addEventListener("click", () => {
+
+    videosTab.classList.add("active");
+    shortsTab.classList.remove("active");
+
+    videosPanel.classList.add("active");
+    shortsPanel.classList.remove("active");
+
+});
+
+shortsTab.addEventListener("click", () => {
+
+    shortsTab.classList.add("active");
+    videosTab.classList.remove("active");
+
+    shortsPanel.classList.add("active");
+    videosPanel.classList.remove("active");
+
+});
+
+</script>
 
 
 <script src="/script.js"></script>
