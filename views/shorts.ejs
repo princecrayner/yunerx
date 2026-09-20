@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shorts - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background: black;
+    overflow: hidden;
+}
+
+.shorts-feed {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+}
+
+.short-slide {
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+}
+
+.short-slide video {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.short-back-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 20px;
+    z-index: 100;
+}
+
+.short-title {
+    position: absolute;
+    bottom: 30px;
+    left: 16px;
+    right: 16px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+</style>
+
+</head>
+<body>
+
+<a href="/videos" class="short-back-btn">
+    <i class='bx bx-arrow-back'></i>
+</a>
+
+<div class="shorts-feed" id="shortsFeed">
+
+    <% allShorts.forEach(short => { %>
+
+        <div class="short-slide" data-id="<%= short._id %>">
+
+            <video
+                <% if (short._id.toString() === startingId) { %>autoplay<% } %>
+                loop
+                muted
+                playsinline
+                controls
+            >
+                <source src="<%= short.videoUrl %>">
+            </video>
+
+            <div class="short-title"><%= short.title %></div>
+
+        </div>
+
+    <% }) %>
+
+</div>
+
+<script>
+
+const shortsFeed = document.getElementById("shortsFeed");
+const slides = document.querySelectorAll(".short-slide");
+const startingId = "<%= startingId %>";
+
+// Scroll to the short the user actually clicked on
+const startingSlide = document.querySelector(`.short-slide[data-id="${startingId}"]`);
+
+if (startingSlide) {
+    startingSlide.scrollIntoView();
+}
+
+// Auto play/pause based on which short is currently visible
+const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach((entry) => {
+
+        const video = entry.target.querySelector("video");
+
+        if (entry.isIntersecting) {
+            video.play().catch(() => {});
+        } else {
+            video.pause();
+        }
+
+    });
+
+}, {
+    threshold: 0.6
+});
+
+slides.forEach((slide) => {
+    observer.observe(slide);
+});
+
+</script>
+
+</body>
+</html>

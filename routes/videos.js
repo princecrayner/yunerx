@@ -4,26 +4,15 @@ const multer = require("multer");
 const router = express.Router();
 
 const Video = require("../models/Video");
+const cloudinary = require("../config/cloudinary");
 
-// STORAGE
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage();
 
-    destination: function(req, file, cb){
-        cb(null, "public/uploads");
-    },
-
-    filename: function(req, file, cb){
-        cb(null, Date.now() + "-" + file.originalname);
-    }
-
-});
-
-// VIDEO FILTER
 const fileFilter = (req, file, cb) => {
 
-    if(file.mimetype === "video/mp4"){
+    if (file.mimetype === "video/mp4") {
         cb(null, true);
-    }else{
+    } else {
         cb(new Error("Only MP4 videos allowed"), false);
     }
 
@@ -31,26 +20,40 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
     storage,
-    fileFilter
+    fileFilter,
+    limits: {
+        fileSize: 100 * 1024 * 1024
+    }
 });
 
 // VIDEOS PAGE
 router.get("/videos", async (req, res) => {
 
-    if(!req.session.user){
-        return res.redirect("/login?redirect=/videos");
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login?redirect=/videos");
+        }
+
+        const longVideos = await Video.find({ type: "long" }).sort({ createdAt: -1 });
+        const shorts = await Video.find({ type: "short" }).sort({ createdAt: -1 });
+
+        res.render("videos", { longVideos, shorts });
+
+    } catch (error) {
+
+        console.error("Videos page error:", error);
+
+        res.status(500).send("Unable to load videos.");
+
     }
-
-    const videos = await Video.find();
-
-    res.render("videos", { videos });
 
 });
 
 // UPLOAD PAGE
 router.get("/uploadvideo", (req, res) => {
 
-    if(!req.session.user){
+    if (!req.session.user) {
         return res.redirect("/login");
     }
 
@@ -61,24 +64,127 @@ router.get("/uploadvideo", (req, res) => {
 // UPLOAD VIDEO
 router.post("/uploadvideo", upload.single("video"), async (req, res) => {
 
-    if(!req.session.user){
-        return res.redirect("/login");
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        if (!req.file) {
+            return res.status(400).send("Please select a video file.");
+        }
+
+        const result = await new Promise((resolve, reject) => {
+
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "yunerx/videos",
+                    resource_type: "video"
+                },
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
+
+            stream.end(req.file.buffer);
+
+        });
+
+        const video = new Video({
+
+            title: req.body.title,
+
+            videoUrl: result.secure_url,
+
+            type: req.body.type === "short" ? "short" : "long",
+
+            userId: req.session.user._id
+
+        });
+
+        await video.save();
+
+        res.redirect("/profile");
+
+    } catch (error) {
+
+        console.error("Video upload error:", error);
+
+        res.status(500).send("Unable to upload video: " + error.message);
+
     }
 
-    const video = new Video({
+});
 
-        title: req.body.title,
 
-        videoUrl: "/uploads/" + req.file.filename,
+// WATCH PAGE (single long video + suggestions)
+router.get("/watch/:id", async (req, res) => {
 
-        userId: req.session.user._id
+    try {
 
-    });
+        if (!req.session.user) {
+            return res.redirect("/login?redirect=/watch/" + req.params.id);
+        }
 
-    await video.save();
+        const video = await Video.findById(req.params.id);
 
-    res.redirect("/profile");
+        if (!video) {
+            return res.status(404).send("Video not found.");
+        }
+
+        // Suggested videos: other long videos, excluding this one
+        const suggestions = await Video.find({
+            type: "long",
+            _id: { $ne: video._id }
+        }).sort({ createdAt: -1 }).limit(20);
+
+        res.render("watch", { video, suggestions });
+
+    } catch (error) {
+
+        console.error("Watch page error:", error);
+
+        res.status(500).send("Unable to load video.");
+
+    }
 
 });
+
+
+
+
+// SHORTS PAGE (vertical scroll feed, starting at the clicked short)
+router.get("/shorts/:id", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login?redirect=/shorts/" + req.params.id);
+        }
+
+        const startingShort = await Video.findById(req.params.id);
+
+        if (!startingShort) {
+            return res.status(404).send("Short not found.");
+        }
+
+        const allShorts = await Video.find({ type: "short" }).sort({ createdAt: -1 });
+
+        res.render("shorts", { allShorts, startingId: req.params.id });
+
+    } catch (error) {
+
+        console.error("Shorts page error:", error);
+
+        res.status(500).send("Unable to load shorts.");
+
+    }
+
+});
+
 
 module.exports = router;

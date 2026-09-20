@@ -141,6 +141,78 @@ button{
 }
 
 
+.type-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.type-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: #444;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.type-option input {
+    display: none;
+}
+
+.type-option:has(input:checked) {
+    background: red;
+    font-weight: bold;
+}
+
+
+.shorts-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 15px 20px;
+    scrollbar-width: none;
+}
+
+.shorts-row::-webkit-scrollbar {
+    display: none;
+}
+
+.short-card {
+    flex: 0 0 140px;
+    background: #222;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+}
+
+.short-card video {
+    width: 140px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    aspect-ratio: unset;
+}
+
+.short-card p {
+    padding: 8px;
+    font-size: 12px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-card {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
 </style>
 
 </head>
@@ -159,6 +231,20 @@ button{
 
 <input type="text" name="title" placeholder="Video Title" required>
 
+<div class="type-toggle">
+
+    <label class="type-option">
+        <input type="radio" name="type" value="long" checked>
+        <span>📹 Long Video</span>
+    </label>
+
+    <label class="type-option">
+        <input type="radio" name="type" value="short">
+        <span>⚡ Short</span>
+    </label>
+
+</div>
+
 <input type="file" name="video" accept="video/mp4" required>
 
 <button type="submit">Upload</button>
@@ -175,21 +261,54 @@ button{
       <i class='bx bx-plus'></i>
     </div>
 
-<h1 style="padding-left:20px;">All Videos</h1>
+<!-- =========================
+     SHORTS ROW
+========================= -->
+
+<% if (shorts.length > 0) { %>
+
+<h1 style="padding-left:20px;">Shorts</h1>
+
+<div class="shorts-row">
+
+    <% shorts.forEach((video, index) => { %>
+
+        <a href="/shorts/<%= video._id %>" class="short-card">
+
+            <video muted>
+                <source src="<%= video.videoUrl %>">
+            </video>
+
+            <p><%= video.title %></p>
+
+        </a>
+
+    <% }) %>
+
+</div>
+
+<% } %>
+
+
+<!-- =========================
+     LONG VIDEOS
+========================= -->
+
+<h1 style="padding-left:20px;">Videos</h1>
 
 <div class="video-grid">
 
-<% videos.forEach(video => { %>
+<% longVideos.forEach(video => { %>
 
-<div class="video-card">
+<a href="/watch/<%= video._id %>" class="video-card">
 
-<video controls>
+<video muted>
 <source src="<%= video.videoUrl %>">
 </video>
 
 <p><%= video.title %></p>
 
-</div>
+</a>
 
 <% }) %>
 

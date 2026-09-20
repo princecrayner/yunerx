@@ -156,23 +156,47 @@ router.get("/profile", async (req, res) => {
         return res.redirect("/login");
     }
 
-    const Video = require("../models/Video");
+    try {
 
-    const videos = await Video.find({
-        userId: req.session.user._id
-    });
+        const Video = require("../models/Video");
 
+        const user = await User.findById(req.session.user._id);
 
-const user = await User.findById(req.session.user._id);
+        if (!user) {
 
-console.log("PROFILE USER:", user);
+            // Session references a user that no longer exists — clear it and force re-login
+            req.session.destroy(() => {
+                res.redirect("/login");
+            });
 
-res.render("profile", {
+            return;
 
-    user,
-    videos
-  });
+        }
+
+        const longVideos = await Video.find({
+            userId: req.session.user._id,
+            type: "long"
+        }).sort({ createdAt: -1 });
+
+        const shorts = await Video.find({
+            userId: req.session.user._id,
+            type: "short"
+        }).sort({ createdAt: -1 });
+
+        res.render("profile", {
+            user,
+            longVideos,
+            shorts
+        });
+
+    } catch (error) {
+
+        console.error("Profile page error:", error);
+
+        res.status(500).send("Unable to load profile.");
+
+    }
+
 });
- 
 
 module.exports = router;

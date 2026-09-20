@@ -158,6 +158,51 @@ video{
 }
 
 
+
+.shorts-row {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 15px 20px;
+    scrollbar-width: none;
+}
+
+.shorts-row::-webkit-scrollbar {
+    display: none;
+}
+
+.short-card {
+    flex: 0 0 140px;
+    background: #222;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+}
+
+.short-card video {
+    width: 140px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    aspect-ratio: unset;
+}
+
+.short-card p {
+    padding: 8px;
+    font-size: 12px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-card {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
 </style>
 
 
@@ -242,24 +287,52 @@ video{
 
 
 
-<h2 style="padding-left:20px;">Your Videos</h2>
+<% if (shorts.length > 0) { %>
 
+<h2 style="padding-left:20px;">Your Shorts</h2>
+
+<div class="shorts-row">
+
+    <% shorts.forEach(video => { %>
+
+        <a href="/shorts/<%= video._id %>" class="short-card">
+
+            <video muted>
+                <source src="<%= video.videoUrl %>">
+            </video>
+
+            <p><%= video.title %></p>
+
+        </a>
+
+    <% }) %>
+
+</div>
+
+<% } %>
+
+
+<h2 style="padding-left:20px;">Your Videos</h2>
 
 <div class="video-grid">
 
-<% videos.forEach(video => { %>
+<% if (longVideos.length === 0) { %>
 
-<div class="video-card">
+    <p style="padding-left:20px; color:#888;">No videos uploaded yet.</p>
 
-<video controls>
+<% } %>
 
+<% longVideos.forEach(video => { %>
+
+<a href="/watch/<%= video._id %>" class="video-card">
+
+<video muted>
 <source src="<%= video.videoUrl %>">
-
 </video>
 
 <p><%= video.title %></p>
 
-</div>
+</a>
 
 <% }) %>
 

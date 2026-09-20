@@ -6,6 +6,12 @@ const VideoSchema = new mongoose.Schema({
 
     videoUrl: String,
 
+    type: {
+        type: String,
+        enum: ["long", "short"],
+        default: "long"
+    },
+
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
