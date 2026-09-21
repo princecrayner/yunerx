@@ -247,7 +247,7 @@
                 </h3>
 
                 <p>
-                    <%= user.phone %>
+                    <%= user.phone ? "******" + user.phone.slice(-4) : "Yunerx User" %>
                 </p>
 
             </div>

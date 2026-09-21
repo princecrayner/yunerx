@@ -907,6 +907,32 @@ body {
 }
 
 
+.chat-search-bar {
+    padding: 10px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.chat-search-bar input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: none;
+    background: #f1f3f5;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.no-chat-results {
+    display: none;
+    text-align: center;
+    padding: 30px 20px;
+    color: #999;
+    font-size: 14px;
+}
+
+
+
 </style>
 
 </head>
@@ -1042,9 +1068,9 @@ body {
             <div class="conversation-section">
 
 
-                <div class="conversation-header">
+                                <div class="conversation-header">
 
-                    <h2>
+                    <h2 id="chatsHeaderTitle">
                         Chats
                     </h2>
 
@@ -1052,16 +1078,34 @@ body {
                     <button
                         type="button"
                         class="search-chat-btn"
+                        id="toggleChatSearch"
                     >
 
-                        <i class='bx bx-search'></i>
+                        <i class='bx bx-search' id="chatSearchIcon"></i>
 
                     </button>
 
                 </div>
 
 
-                <div class="conversation-list">
+                <div class="chat-search-bar" id="chatSearchBar" style="display:none;">
+
+                    <input
+                        type="text"
+                        id="chatSearchInput"
+                        placeholder="Search chats..."
+                    >
+
+                </div>
+                
+                
+                 <div class="no-chat-results" id="noChatResults">
+                    No chats match your search.
+                </div>
+
+
+                <div class="conversation-list" id="conversationList">
+                
 
 
                     <% if (messages && messages.length > 0) { %>
@@ -1619,6 +1663,69 @@ confirmDeleteChat.addEventListener("click", async () => {
 
     }
 
+});
+
+
+const toggleChatSearch = document.getElementById("toggleChatSearch");
+const chatSearchBar = document.getElementById("chatSearchBar");
+const chatSearchInput = document.getElementById("chatSearchInput");
+const chatSearchIcon = document.getElementById("chatSearchIcon");
+const conversationList = document.getElementById("conversationList");
+const noChatResults = document.getElementById("noChatResults");
+
+let searchBarOpen = false;
+
+toggleChatSearch.addEventListener("click", () => {
+
+    searchBarOpen = !searchBarOpen;
+
+    if (searchBarOpen) {
+
+        chatSearchBar.style.display = "block";
+        chatSearchInput.focus();
+        chatSearchIcon.classList.remove("bx-search");
+        chatSearchIcon.classList.add("bx-x");
+
+    } else {
+
+        chatSearchBar.style.display = "none";
+        chatSearchInput.value = "";
+        chatSearchIcon.classList.remove("bx-x");
+        chatSearchIcon.classList.add("bx-search");
+
+        filterChats("");
+
+    }
+
+});
+
+function filterChats(query) {
+
+    const lowerQuery = query.trim().toLowerCase();
+
+    const conversations = conversationList.querySelectorAll(".conversation[data-username]");
+
+    let visibleCount = 0;
+
+    conversations.forEach((conversation) => {
+
+        const username = conversation.getAttribute("data-username").toLowerCase();
+
+        if (username.includes(lowerQuery)) {
+            conversation.style.display = "";
+            visibleCount++;
+        } else {
+            conversation.style.display = "none";
+        }
+
+    });
+
+    noChatResults.style.display = (visibleCount === 0 && lowerQuery !== "") ? "block" : "none";
+
+}
+
+chatSearchInput.addEventListener("input", () => {
+    filterChats(chatSearchInput.value);
 });
 
 
