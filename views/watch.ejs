@@ -109,6 +109,140 @@ body {
     text-overflow: ellipsis;
 }
 
+.video-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.like-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #222;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.like-btn.liked {
+    background: #4169e1;
+}
+
+.like-btn i {
+    font-size: 18px;
+}
+
+
+.comments-section {
+    padding: 16px;
+    border-bottom: 1px solid #333;
+}
+
+.comments-heading {
+    font-size: 15px;
+    color: #ccc;
+    margin-bottom: 14px;
+}
+
+.comment-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.comment-form input {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+}
+
+.comment-form button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #4169e1;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.comment-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+}
+
+.comment-header strong {
+    font-size: 13px;
+}
+
+.comment-header small {
+    font-size: 11px;
+    color: #888;
+}
+
+.comment-body p {
+    font-size: 14px;
+    color: #ddd;
+    word-wrap: break-word;
+}
+
+.delete-comment-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.delete-comment-btn:hover {
+    color: #dc2626;
+}
+
+
+
 </style>
 
 </head>
@@ -125,9 +259,70 @@ body {
 </video>
 
 <div class="video-details">
+
     <h1><%= video.title %></h1>
-    <p>Uploaded <%= new Date(video.createdAt).toLocaleDateString() %></p>
+
+    <div class="video-meta-row">
+
+        <p><%= video.views.length %> view<%= video.views.length !== 1 ? "s" : "" %> · <%= new Date(video.createdAt).toLocaleDateString() %></p>
+
+        <button type="button" class="like-btn <%= hasLiked ? 'liked' : '' %>" id="likeBtn" data-video-id="<%= video._id %>">
+            <i class='bx <%= hasLiked ? "bxs-like" : "bx-like" %>' id="likeIcon"></i>
+            <span id="likeCount"><%= video.likes.length %></span>
+        </button>
+
+    </div>
+
 </div>
+
+<div class="comments-section">
+
+    <h3 class="comments-heading">
+        Comments (<span id="commentCount"><%= video.comments.length %></span>)
+    </h3>
+
+    <form id="commentForm" class="comment-form">
+        <input type="text" id="commentInput" placeholder="Add a comment..." required>
+        <button type="submit">
+            <i class='bx bx-send'></i>
+        </button>
+    </form>
+
+    <div id="commentsList">
+
+        <% video.comments.slice().reverse().forEach(comment => { %>
+
+            <div class="comment-row" data-comment-id="<%= comment._id %>">
+
+                <div class="comment-avatar"><i class='bx bx-user'></i></div>
+
+                <div class="comment-body">
+
+                    <div class="comment-header">
+                        <strong><%= comment.username %></strong>
+                        <small><%= new Date(comment.createdAt).toLocaleDateString() %></small>
+                    </div>
+
+                    <p><%= comment.text %></p>
+
+                </div>
+
+                <% if (comment.username === currentUser) { %>
+
+                    <button type="button" class="delete-comment-btn" data-comment-id="<%= comment._id %>">
+                        <i class='bx bx-trash'></i>
+                    </button>
+
+                <% } %>
+
+            </div>
+
+        <% }) %>
+
+    </div>
+
+</div>
+
 
 <% if (suggestions.length > 0) { %>
 
@@ -152,6 +347,178 @@ body {
     <% }) %>
 
 <% } %>
+
+
+<script>
+
+const likeBtn = document.getElementById("likeBtn");
+const likeIcon = document.getElementById("likeIcon");
+const likeCount = document.getElementById("likeCount");
+
+likeBtn.addEventListener("click", async () => {
+
+    const videoId = likeBtn.getAttribute("data-video-id");
+
+    try {
+
+        const response = await fetch(`/video/${videoId}/like`, {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            likeCount.textContent = result.likeCount;
+
+            if (result.liked) {
+
+                likeBtn.classList.add("liked");
+                likeIcon.classList.remove("bx-like");
+                likeIcon.classList.add("bxs-like");
+
+            } else {
+
+                likeBtn.classList.remove("liked");
+                likeIcon.classList.remove("bxs-like");
+                likeIcon.classList.add("bx-like");
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error("Like error:", error);
+
+    }
+
+});
+
+
+const commentForm = document.getElementById("commentForm");
+const commentInput = document.getElementById("commentInput");
+const commentsList = document.getElementById("commentsList");
+const commentCount = document.getElementById("commentCount");
+
+const currentVideoId = "<%= video._id %>";
+const currentUsername = "<%= currentUser %>";
+
+function buildCommentHtml(comment) {
+
+    const dateStr = new Date(comment.createdAt).toLocaleDateString();
+
+    const deleteBtn = comment.username === currentUsername
+        ? `<button type="button" class="delete-comment-btn" data-comment-id="${comment._id}"><i class='bx bx-trash'></i></button>`
+        : "";
+
+    return `
+        <div class="comment-row" data-comment-id="${comment._id}">
+            <div class="comment-avatar"><i class='bx bx-user'></i></div>
+            <div class="comment-body">
+                <div class="comment-header">
+                    <strong>${comment.username}</strong>
+                    <small>${dateStr}</small>
+                </div>
+                <p>${comment.text}</p>
+            </div>
+            ${deleteBtn}
+        </div>
+    `;
+
+}
+
+commentForm.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const text = commentInput.value.trim();
+
+    if (!text) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/video/${currentVideoId}/comment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            commentsList.insertAdjacentHTML("afterbegin", buildCommentHtml(result.comment));
+            commentCount.textContent = result.commentCount;
+            commentInput.value = "";
+
+        } else {
+
+            alert(result.message || "Unable to post comment.");
+
+        }
+
+    } catch (error) {
+
+        console.error("Add comment error:", error);
+
+    }
+
+});
+
+commentsList.addEventListener("click", async (e) => {
+
+    const deleteBtn = e.target.closest(".delete-comment-btn");
+
+    if (!deleteBtn) {
+        return;
+    }
+
+    const commentId = deleteBtn.getAttribute("data-comment-id");
+
+    const confirmed = confirm("Delete this comment?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/video/${currentVideoId}/comment/${commentId}/delete`, {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            const commentRow = commentsList.querySelector(`[data-comment-id="${commentId}"]`);
+
+            if (commentRow) {
+                commentRow.remove();
+            }
+
+            commentCount.textContent = result.commentCount;
+
+        } else {
+
+            alert(result.message || "Unable to delete comment.");
+
+        }
+
+    } catch (error) {
+
+        console.error("Delete comment error:", error);
+
+    }
+
+});
+
+
+</script>
+
 
 </body>
 </html>

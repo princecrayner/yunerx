@@ -287,6 +287,44 @@ video{
 
 }
 
+
+
+.video-card-wrapper,
+.short-card-wrapper {
+    position: relative;
+}
+
+.delete-video-form {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+}
+
+.short-delete-form {
+    top: 6px;
+    right: 6px;
+}
+
+.delete-video-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.delete-video-btn:hover {
+    background: #dc2626;
+}
+
+
 </style>
 
 
@@ -406,17 +444,27 @@ video{
 
         <% longVideos.forEach(video => { %>
 
-            <a href="/watch/<%= video._id %>" class="video-card">
+<div class="video-card-wrapper">
 
-                <video muted>
-                    <source src="<%= video.videoUrl %>">
-                </video>
+    <a href="/watch/<%= video._id %>" class="video-card">
 
-                <p><%= video.title %></p>
+        <video muted>
+            <source src="<%= video.videoUrl %>">
+        </video>
 
-            </a>
+        <p><%= video.title %></p>
 
-        <% }) %>
+    </a>
+
+    <form action="/video/<%= video._id %>/delete" method="POST" class="delete-video-form" onsubmit="return confirm('Delete this video? This cannot be undone.');">
+        <button type="submit" class="delete-video-btn">
+            <i class='bx bx-trash'></i>
+        </button>
+    </form>
+
+</div>
+
+<% }) %>
 
     </div>
 
@@ -439,17 +487,27 @@ video{
 
         <% shorts.forEach(video => { %>
 
-            <a href="/shorts/<%= video._id %>" class="short-grid-card">
+    <div class="short-card-wrapper">
 
-                <video muted>
-                    <source src="<%= video.videoUrl %>">
-                </video>
+        <a href="/shorts/<%= video._id %>" class="short-grid-card">
 
-                <p><%= video.title %></p>
+            <video muted>
+                <source src="<%= video.videoUrl %>">
+            </video>
 
-            </a>
+            <p><%= video.title %></p>
 
-        <% }) %>
+        </a>
+
+        <form action="/video/<%= video._id %>/delete" method="POST" class="delete-video-form short-delete-form" onsubmit="return confirm('Delete this short? This cannot be undone.');">
+            <button type="submit" class="delete-video-btn">
+                <i class='bx bx-trash'></i>
+            </button>
+        </form>
+
+    </div>
+
+<% }) %>
 
     </div>
 

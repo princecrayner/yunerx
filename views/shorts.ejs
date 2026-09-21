@@ -118,14 +118,27 @@ if (startingSlide) {
 }
 
 // Auto play/pause based on which short is currently visible
+const viewedShorts = new Set();
+
 const observer = new IntersectionObserver((entries) => {
 
     entries.forEach((entry) => {
 
         const video = entry.target.querySelector("video");
+        const shortId = entry.target.getAttribute("data-id");
 
         if (entry.isIntersecting) {
+
             video.play().catch(() => {});
+
+            if (!viewedShorts.has(shortId)) {
+
+                viewedShorts.add(shortId);
+
+                fetch(`/shorts/${shortId}/view`, { method: "POST" }).catch(() => {});
+
+            }
+
         } else {
             video.pause();
         }
