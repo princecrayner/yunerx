@@ -105,26 +105,50 @@ router.get("/chats", async (req, res) => {
             _id: -1
         });
 
-        // Get list of contact usernames (people the user has messaged)
+               // Get list of contact usernames (people the user has messaged)
         const contactUsernames = conversations.map(
             convo => convo.username
         );
 
-        // Fetch stories from contacts, newest first
+        // Load the current user's own hide/mute preferences
+        const currentUserDoc = await User.findOne({ username: currentUser });
+        const mutedStoryUsers = currentUserDoc?.mutedStoryUsers || [];
+
+        // Fetch stories from contacts, newest first —
+        // excluding anyone the current user has muted,
+        // and excluding anyone who has hidden their story from the current user
         const contactStories = await Story.find({
-            username: { $in: contactUsernames }
+            username: {
+                $in: contactUsernames,
+                $nin: mutedStoryUsers
+            }
         }).sort({ createdAt: -1 });
+
+        // Also filter out stories from users who've hidden their story specifically from this viewer
+        const visibleContactStories = [];
+
+        for (const story of contactStories) {
+
+            const storyOwner = await User.findOne({ username: story.username });
+
+            if (storyOwner && storyOwner.hiddenStoryFrom.includes(currentUser)) {
+                continue;
+            }
+
+            visibleContactStories.push(story);
+
+        }
 
         // Fetch the current user's own story (if any)
         const myStory = await Story.findOne({
             username: currentUser
         }).sort({ createdAt: -1 });
 
-        // Keep only the newest story per contact (one circle per person)
+                // Keep only the newest story per contact (one circle per person)
         const seenStoryUsers = new Set();
         const stories = [];
 
-        for (const story of contactStories) {
+        for (const story of visibleContactStories) {
 
             if (seenStoryUsers.has(story.username)) {
                 continue;
@@ -300,6 +324,145 @@ router.get("/users", async (req, res) => {
 
     }
 });
+
+
+
+// STORY PRIVACY SETTINGS PAGE
+router.get("/story-privacy", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = req.session.user.username;
+
+        const userDoc = await User.findOne({ username: currentUser });
+
+        // Contacts = people this user has messaged (same logic as /chats)
+        const messages = await Message.find({
+            $or: [
+                { sender: currentUser },
+                { receiver: currentUser }
+            ]
+        }).lean();
+
+        const contactUsernames = new Set();
+
+        for (const message of messages) {
+
+            const otherUser =
+                message.sender === currentUser ? message.receiver : message.sender;
+
+            if (otherUser) {
+                contactUsernames.add(otherUser);
+            }
+
+        }
+
+        res.render("storyprivacy", {
+            contacts: Array.from(contactUsernames),
+            hiddenStoryFrom: userDoc.hiddenStoryFrom || [],
+            mutedStoryUsers: userDoc.mutedStoryUsers || []
+        });
+
+    } catch (error) {
+
+        console.error("Story privacy page error:", error);
+
+        res.status(500).send("Unable to load story privacy settings.");
+
+    }
+
+});
+
+
+// TOGGLE: hide my story from a specific contact
+router.post("/story-privacy/hide-from/:username", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const currentUser = req.session.user.username;
+        const targetUsername = req.params.username;
+
+        const userDoc = await User.findOne({ username: currentUser });
+
+        const isHidden = userDoc.hiddenStoryFrom.includes(targetUsername);
+
+        if (isHidden) {
+
+            userDoc.hiddenStoryFrom = userDoc.hiddenStoryFrom.filter(
+                username => username !== targetUsername
+            );
+
+        } else {
+
+            userDoc.hiddenStoryFrom.push(targetUsername);
+
+        }
+
+        await userDoc.save();
+
+        res.json({ success: true, hidden: !isHidden });
+
+    } catch (error) {
+
+        console.error("Toggle hide-from error:", error);
+
+        res.status(500).json({ success: false });
+
+    }
+
+});
+
+
+// TOGGLE: mute a specific user's stories from my own feed
+router.post("/story-privacy/mute/:username", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const currentUser = req.session.user.username;
+        const targetUsername = req.params.username;
+
+        const userDoc = await User.findOne({ username: currentUser });
+
+        const isMuted = userDoc.mutedStoryUsers.includes(targetUsername);
+
+        if (isMuted) {
+
+            userDoc.mutedStoryUsers = userDoc.mutedStoryUsers.filter(
+                username => username !== targetUsername
+            );
+
+        } else {
+
+            userDoc.mutedStoryUsers.push(targetUsername);
+
+        }
+
+        await userDoc.save();
+
+        res.json({ success: true, muted: !isMuted });
+
+    } catch (error) {
+
+        console.error("Toggle mute error:", error);
+
+        res.status(500).json({ success: false });
+
+    }
+
+});
+
 
 
 

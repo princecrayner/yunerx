@@ -35,6 +35,16 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "/profile.png"
     },
+    
+        hiddenStoryFrom: {
+        type: [String],
+        default: []
+    },
+
+    mutedStoryUsers: {
+        type: [String],
+        default: []
+    },
 
     videos: [
         {
