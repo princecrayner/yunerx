@@ -874,12 +874,35 @@ router.get("/story/:username", async (req, res) => {
                 return res.status(403).send("You can't view this story.");
             }
 
+            // Record the view, but only once per viewer per story,
+            // and never record the owner viewing their own story
+            const alreadyViewed = story.views.some(
+                view => view.username === currentUser
+            );
+
+            if (!alreadyViewed) {
+
+                story.views.push({ username: currentUser });
+
+                await story.save();
+
+            }
+
+        }
+
+        // If this is the owner looking at their own story, load who viewed it
+        let viewers = [];
+
+        if (storyUsername === currentUser) {
+            viewers = story.views.slice().reverse();
         }
 
         res.render("story", {
             story,
             storyUsername,
-            currentUser
+            currentUser,
+            viewers,
+            viewCount: story.views.length
         });
 
     } catch (error) {

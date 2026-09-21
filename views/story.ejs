@@ -117,6 +117,76 @@ body {
     line-height: 1.5;
 }
 
+
+.story-views {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    font-size: 13px;
+    background: rgba(0,0,0,0.4);
+    padding: 6px 10px;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.viewers-panel {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 50%;
+    background: #1a1a1a;
+    border-radius: 16px 16px 0 0;
+    z-index: 30;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.viewers-panel.show {
+    display: block;
+}
+
+.viewers-panel h3 {
+    color: white;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.viewer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    color: white;
+    font-size: 14px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.viewer-row:last-child {
+    border-bottom: none;
+}
+
+.viewer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #4169e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.no-viewers {
+    color: #888;
+    font-size: 13px;
+    text-align: center;
+    padding: 20px 0;
+}
+
 </style>
 
 </head>
@@ -134,6 +204,15 @@ body {
             </div>
             <%= storyUsername %>
         </div>
+        
+        <% if (storyUsername === currentUser) { %>
+
+        <div class="story-views" id="storyViewsBtn">
+          <i class='bx bx-show'></i>
+           <%= viewCount %>
+        </div>
+
+       <% } %>
 
         <a  href="javascript:history.back()" class="close-btn">
             <i class='bx bx-x'></i>
@@ -160,6 +239,36 @@ body {
         <% } %>
 
     </div>
+
+
+<% if (storyUsername === currentUser) { %>
+
+    <div class="viewers-panel" id="viewersPanel">
+
+        <h3>Viewed by <%= viewCount %></h3>
+
+        <% if (viewers.length === 0) { %>
+
+            <div class="no-viewers">No one has viewed this story yet.</div>
+
+        <% } else { %>
+
+            <% viewers.forEach(viewer => { %>
+
+                <div class="viewer-row">
+                    <div class="viewer-avatar">
+                        <i class='bx bx-user'></i>
+                    </div>
+                    <%= viewer.username %>
+                </div>
+
+            <% }) %>
+
+        <% } %>
+
+    </div>
+
+<% } %>
 
 </div>
 
@@ -301,6 +410,23 @@ document.getElementById("storyContent").addEventListener("click", function(e) {
     }
 
 });
+
+
+const storyViewsBtn = document.getElementById("storyViewsBtn");
+const viewersPanel = document.getElementById("viewersPanel");
+
+if (storyViewsBtn && viewersPanel) {
+
+    storyViewsBtn.addEventListener("click", function(e) {
+
+        e.stopPropagation();
+
+        viewersPanel.classList.toggle("show");
+
+    });
+
+}
+
 
 </script>
 
