@@ -498,9 +498,16 @@ socket.on("groupMessage", async (data) => {
 
     await message.save();
 
-io.to(`group:${data.groupId}`).emit("receiveGroupMessage", data);
+    io.to(`group:${data.groupId}`).emit("receiveGroupMessage", {
+        _id: message._id,
+        groupId: message.groupId,
+        sender: message.sender,
+        message: message.message,
+        date: message.date,
+        time: message.time
+    });
 
-   });
+});
 
 });
 

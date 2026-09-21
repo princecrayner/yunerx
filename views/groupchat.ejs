@@ -234,6 +234,69 @@ body {
 
 }
 
+
+.delete-message-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.delete-message-overlay.show {
+    display: flex;
+}
+
+.delete-message-modal {
+    background: white;
+    color: #1a1a1a;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+}
+
+.delete-message-modal h3 {
+    margin-bottom: 10px;
+    color: #dc2626;
+}
+
+.delete-message-modal p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.delete-message-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.delete-message-buttons button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-message-buttons .cancel-btn {
+    background: #f1f3f5;
+    color: #1a1a1a;
+}
+
+.delete-message-buttons .confirm-btn {
+    background: #dc2626;
+    color: white;
+}
+
+
 </style>
 
 
@@ -289,7 +352,7 @@ body {
 
 <% messages.forEach(msg => { %>
 
-<div class="message">
+<div class="message" data-id="<%= msg._id %>" data-sender="<%= msg.sender %>">
 
 <p>
 <strong><%= msg.sender %></strong>
@@ -320,6 +383,23 @@ required>
 </button>
 
 </form>
+
+<div class="delete-message-overlay" id="deleteMessageOverlay">
+
+    <div class="delete-message-modal">
+
+        <h3>Delete message?</h3>
+        <p>This will delete the message for everyone in this group.</p>
+
+        <div class="delete-message-buttons">
+            <button class="cancel-btn" id="cancelDeleteMessage">Cancel</button>
+            <button class="confirm-btn" id="confirmDeleteMessage">Delete</button>
+        </div>
+
+    </div>
+
+</div>
+
 
 </div>
 
@@ -371,20 +451,20 @@ socket.on("receiveGroupMessage", (data) => {
     const div = document.createElement("div");
 
     div.classList.add("message");
+    div.setAttribute("data-id", data._id || "");
+    div.setAttribute("data-sender", data.sender);
 
     div.innerHTML = `
-
         <p><strong>${data.sender}</strong></p>
-
         <p>${data.message}</p>
-
         <small>${data.date} - ${data.time}</small>
-
     `;
 
     chatBox.appendChild(div);
 
     chatBox.scrollTop = chatBox.scrollHeight;
+
+    attachLongPress(div);
 
 });
 
@@ -469,6 +549,109 @@ document.querySelectorAll(".remove-member-btn").forEach(function(button) {
 
 });
 
+
+let longPressTimer;
+let targetMessageId = null;
+
+const deleteMessageOverlay = document.getElementById("deleteMessageOverlay");
+const cancelDeleteMessage = document.getElementById("cancelDeleteMessage");
+const confirmDeleteMessage = document.getElementById("confirmDeleteMessage");
+
+function attachLongPress(messageEl) {
+
+    const start = () => {
+
+        longPressTimer = setTimeout(() => {
+
+            const sender = messageEl.getAttribute("data-sender");
+
+            // Only allow deleting your own messages
+            if (sender !== currentUser) {
+                return;
+            }
+
+            targetMessageId = messageEl.getAttribute("data-id");
+
+            deleteMessageOverlay.classList.add("show");
+
+        }, 500);
+
+    };
+
+    const cancel = () => {
+        clearTimeout(longPressTimer);
+    };
+
+    messageEl.addEventListener("touchstart", start, { passive: true });
+    messageEl.addEventListener("touchend", cancel);
+    messageEl.addEventListener("touchmove", cancel);
+
+    messageEl.addEventListener("mousedown", start);
+    messageEl.addEventListener("mouseup", cancel);
+    messageEl.addEventListener("mouseleave", cancel);
+
+}
+
+document.querySelectorAll(".message[data-id]").forEach(attachLongPress);
+
+cancelDeleteMessage.addEventListener("click", () => {
+    deleteMessageOverlay.classList.remove("show");
+    targetMessageId = null;
+});
+
+confirmDeleteMessage.addEventListener("click", async () => {
+
+    if (!targetMessageId) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/groupmessage/${targetMessageId}/delete`, {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            const messageEl = document.querySelector(`.message[data-id="${targetMessageId}"]`);
+
+            if (messageEl) {
+                messageEl.remove();
+            }
+
+        } else {
+
+            alert(result.message || "Unable to delete message.");
+
+        }
+
+    } catch (error) {
+
+        console.error("Delete message error:", error);
+
+        alert("Something went wrong.");
+
+    } finally {
+
+        deleteMessageOverlay.classList.remove("show");
+        targetMessageId = null;
+
+    }
+
+});
+
+// Listen for deletions broadcast by other members (or your own, on other devices)
+socket.on("groupMessageDeleted", (data) => {
+
+    const messageEl = document.querySelector(`.message[data-id="${data.messageId}"]`);
+
+    if (messageEl) {
+        messageEl.remove();
+    }
+
+});
 
 
 </script>

@@ -1149,4 +1149,51 @@ router.post("/chat/:username/delete", async (req, res) => {
 });
 
 
+
+// DELETE A SINGLE GROUP MESSAGE
+router.post("/groupmessage/:id/delete", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const currentUser = req.session.user.username;
+
+        const message = await GroupMessage.findById(req.params.id);
+
+        if (!message) {
+            return res.status(404).json({ success: false, message: "Message not found." });
+        }
+
+        // Only the sender can delete their own message
+        if (message.sender !== currentUser) {
+            return res.status(403).json({ success: false, message: "You can only delete your own messages." });
+        }
+
+        await GroupMessage.findByIdAndDelete(req.params.id);
+
+        // Notify everyone else in the group room so it disappears live for them too
+        if (io) {
+
+            io.to(`group:${message.groupId}`).emit("groupMessageDeleted", {
+                messageId: message._id.toString()
+            });
+
+        }
+
+        res.json({ success: true });
+
+    } catch (error) {
+
+        console.error("Delete group message error:", error);
+
+        res.status(500).json({ success: false });
+
+    }
+
+});
+
+
 module.exports = router;
