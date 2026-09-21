@@ -1079,4 +1079,74 @@ router.get("/story/:username", async (req, res) => {
 });
 
 
+
+// DELETE A SINGLE PRIVATE MESSAGE
+router.post("/message/:id/delete", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const currentUser = req.session.user.username;
+
+        const message = await Message.findById(req.params.id);
+
+        if (!message) {
+            return res.status(404).json({ success: false, message: "Message not found." });
+        }
+
+        // Only the sender can delete their own message
+        if (message.sender !== currentUser) {
+            return res.status(403).json({ success: false, message: "You can only delete your own messages." });
+        }
+
+        await Message.findByIdAndDelete(req.params.id);
+
+        res.json({ success: true });
+
+    } catch (error) {
+
+        console.error("Delete message error:", error);
+
+        res.status(500).json({ success: false });
+
+    }
+
+});
+
+
+// DELETE AN ENTIRE PRIVATE CONVERSATION
+router.post("/chat/:username/delete", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const currentUser = req.session.user.username;
+        const otherUser = req.params.username;
+
+        await Message.deleteMany({
+            $or: [
+                { sender: currentUser, receiver: otherUser },
+                { sender: otherUser, receiver: currentUser }
+            ]
+        });
+
+        res.json({ success: true });
+
+    } catch (error) {
+
+        console.error("Delete conversation error:", error);
+
+        res.status(500).json({ success: false });
+
+    }
+
+});
+
+
 module.exports = router;
