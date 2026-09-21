@@ -199,4 +199,61 @@ router.get("/profile", async (req, res) => {
 
 });
 
+
+// DELETE ACCOUNT
+router.post("/delete-account", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUserId = req.session.user._id;
+        const currentUsername = req.session.user.username;
+
+        const user = await User.findById(currentUserId);
+
+        if (!user) {
+
+            req.session.destroy(() => {
+                res.redirect("/login");
+            });
+
+            return;
+
+        }
+
+        const validPassword = await bcrypt.compare(req.body.password, user.password);
+
+        if (!validPassword) {
+            return res.redirect("/settings?error=" + encodeURIComponent("Incorrect password."));
+        }
+
+        // Clean up content owned by this user
+        const Video = require("../models/Video");
+        const { Story } = require("../models/Message");
+
+        await Video.deleteMany({ userId: currentUserId });
+        await Story.deleteMany({ username: currentUsername });
+
+        // Finally, delete the user account itself
+        await User.findByIdAndDelete(currentUserId);
+
+        // Destroy the session and log them out
+        req.session.destroy(() => {
+            res.redirect("/goodbye");
+        });
+
+    } catch (error) {
+
+        console.error("Delete account error:", error);
+
+        res.redirect("/settings?error=" + encodeURIComponent("Unable to delete account. Please try again."));
+
+    }
+
+});
+
+
 module.exports = router;

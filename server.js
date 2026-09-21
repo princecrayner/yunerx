@@ -255,6 +255,39 @@ app.post(
 );
 
 
+// =========================
+// REMOVE PROFILE IMAGE
+// =========================
+
+app.post("/remove-profile-picture", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).send("You must be logged in.");
+        }
+
+        await User.findByIdAndUpdate(
+            req.session.user._id,
+            { profileImage: "/profile.png" }
+        );
+
+        req.session.user.profileImage = "/profile.png";
+
+        res.redirect("/settings");
+
+    } catch (error) {
+
+        console.error("Remove profile picture error:", error);
+
+        res.status(500).send("Unable to remove profile picture.");
+
+    }
+
+});
+
+
+
 // ABOUT PAGE
 app.get("/about", (req, res) => {
     res.render("about");

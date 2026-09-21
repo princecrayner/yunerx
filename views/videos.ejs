@@ -213,6 +213,81 @@ button{
     display: block;
 }
 
+.feed-loading {
+    display: none;
+    justify-content: center;
+    padding: 30px;
+}
+
+.loading-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #444;
+    border-top: 3px solid red;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+
+.file-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 30px 15px;
+    border: 2px dashed #555;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: #ccc;
+    text-align: center;
+    transition: 0.2s ease;
+}
+
+.file-picker:hover {
+    border-color: red;
+    color: white;
+}
+
+.file-picker i {
+    font-size: 32px;
+}
+
+.file-picker span {
+    font-size: 14px;
+}
+
+.video-preview-box {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.video-preview-box video {
+    width: 100%;
+    border-radius: 10px;
+    max-height: 300px;
+    background: black;
+}
+
+.remove-video-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: auto;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,0,0,0.7);
+    font-size: 13px;
+    border-radius: 20px;
+}
+
 </style>
 
 </head>
@@ -245,10 +320,34 @@ button{
 
 </div>
 
-<input type="file" name="video" accept="video/mp4" required>
+<div class="file-picker" id="videoFilePicker">
+
+    <i class='bx bx-cloud-upload'></i>
+    <span id="videoFileLabel">Choose a video file</span>
+
+</div>
+
+<input
+    type="file"
+    name="video"
+    id="videoFileInput"
+    accept="video/mp4"
+    required
+    style="display:none;"
+>
+
+<div class="video-preview-box" id="videoPreviewBox" style="display:none;">
+
+    <video id="videoPreviewPlayer" muted controls></video>
+
+    <button type="button" class="remove-video-btn" id="removeVideoBtn">
+        <i class='bx bx-x'></i>
+        Remove
+    </button>
+
+</div>
 
 <button type="submit">Upload</button>
-
 </form>
 
 </div>
@@ -261,60 +360,74 @@ button{
       <i class='bx bx-plus'></i>
     </div>
 
+
 <!-- =========================
-     SHORTS ROW
+     FEED (long videos + shorts, repeating, infinite scroll)
 ========================= -->
 
-<% if (shorts.length > 0) { %>
+<div id="feedContainer">
 
-<h1 style="padding-left:20px;">Shorts</h1>
+    <% if (!hasContent) { %>
 
-<div class="shorts-row">
+        <p style="padding:40px 20px; color:#888; text-align:center;">No videos yet.</p>
 
-    <% shorts.forEach((video, index) => { %>
+    <% } else { %>
 
-        <a href="/shorts/<%= video._id %>" class="short-card">
+        <div class="feed-block">
 
-            <video muted>
-                <source src="<%= video.videoUrl %>">
-            </video>
+            <% if (longVideos.length > 0) { %>
 
-            <p><%= video.title %></p>
+                <h1 style="padding-left:20px;">Videos</h1>
 
-        </a>
+                <div class="video-grid">
 
-    <% }) %>
+                    <% longVideos.forEach(video => { %>
+
+                        <a href="/watch/<%= video._id %>" class="video-card">
+                            <video muted>
+                                <source src="<%= video.videoUrl %>">
+                            </video>
+                            <p><%= video.title %></p>
+                        </a>
+
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+            <% if (shorts.length > 0) { %>
+
+                <h1 style="padding-left:20px;">Shorts</h1>
+
+                <div class="shorts-row">
+
+                    <% shorts.forEach(video => { %>
+
+                        <a href="/shorts/<%= video._id %>" class="short-card">
+                            <video muted>
+                                <source src="<%= video.videoUrl %>">
+                            </video>
+                            <p><%= video.title %></p>
+                        </a>
+
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    <% } %>
 
 </div>
 
-<% } %>
-
-
-<!-- =========================
-     LONG VIDEOS
-========================= -->
-
-<h1 style="padding-left:20px;">Videos</h1>
-
-<div class="video-grid">
-
-<% longVideos.forEach(video => { %>
-
-<a href="/watch/<%= video._id %>" class="video-card">
-
-<video muted>
-<source src="<%= video.videoUrl %>">
-</video>
-
-<p><%= video.title %></p>
-
-</a>
-
-<% }) %>
-
+<div id="feedLoading" class="feed-loading">
+    <div class="loading-spinner"></div>
 </div>
 
-
+<div id="feedSentinel"></div>
 
 
 <script src="/script.js"></script>
@@ -347,6 +460,174 @@ if (closeUpload && uploadContainer) {
     });
 
 }
+
+
+// =========================
+// INFINITE SCROLL FEED
+// =========================
+
+let currentOffset = <%- nextOffset %>;
+let isLoading = false;
+let feedHasContent = <%- hasContent %>;
+
+const feedContainer = document.getElementById("feedContainer");
+const feedLoading = document.getElementById("feedLoading");
+const feedSentinel = document.getElementById("feedSentinel");
+
+function buildLongVideoHtml(video) {
+
+    return `
+        <a href="/watch/${video._id}" class="video-card">
+            <video muted>
+                <source src="${video.videoUrl}">
+            </video>
+            <p>${video.title}</p>
+        </a>
+    `;
+
+}
+
+function buildShortHtml(video) {
+
+    return `
+        <a href="/shorts/${video._id}" class="short-card">
+            <video muted>
+                <source src="${video.videoUrl}">
+            </video>
+            <p>${video.title}</p>
+        </a>
+    `;
+
+}
+
+async function loadNextBlock() {
+
+    if (isLoading || !feedHasContent) {
+        return;
+    }
+
+    isLoading = true;
+    feedLoading.style.display = "flex";
+
+    try {
+
+        const response = await fetch(`/videos/feed?offset=${currentOffset}`);
+
+        if (!response.ok) {
+            throw new Error("Feed request failed");
+        }
+
+        const data = await response.json();
+
+        if (!data.hasContent) {
+            feedHasContent = false;
+            return;
+        }
+
+        const block = document.createElement("div");
+        block.className = "feed-block";
+
+        if (data.longVideos.length > 0) {
+
+            const heading = document.createElement("h1");
+            heading.style.paddingLeft = "20px";
+            heading.textContent = "Videos";
+            block.appendChild(heading);
+
+            const videoGrid = document.createElement("div");
+            videoGrid.className = "video-grid";
+            videoGrid.innerHTML = data.longVideos.map(buildLongVideoHtml).join("");
+            block.appendChild(videoGrid);
+
+        }
+
+        if (data.shorts.length > 0) {
+
+            const heading = document.createElement("h1");
+            heading.style.paddingLeft = "20px";
+            heading.textContent = "Shorts";
+            block.appendChild(heading);
+
+            const shortsRow = document.createElement("div");
+            shortsRow.className = "shorts-row";
+            shortsRow.innerHTML = data.shorts.map(buildShortHtml).join("");
+            block.appendChild(shortsRow);
+
+        }
+
+        feedContainer.appendChild(block);
+
+        currentOffset = data.nextOffset;
+
+    } catch (error) {
+
+        console.error("Error loading more videos:", error);
+
+    } finally {
+
+        isLoading = false;
+        feedLoading.style.display = "none";
+
+    }
+
+}
+
+const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach((entry) => {
+
+        if (entry.isIntersecting) {
+            loadNextBlock();
+        }
+
+    });
+
+}, {
+    rootMargin: "400px"
+});
+
+observer.observe(feedSentinel);
+
+
+
+const videoFilePicker = document.getElementById("videoFilePicker");
+const videoFileInput = document.getElementById("videoFileInput");
+const videoFileLabel = document.getElementById("videoFileLabel");
+const videoPreviewBox = document.getElementById("videoPreviewBox");
+const videoPreviewPlayer = document.getElementById("videoPreviewPlayer");
+const removeVideoBtn = document.getElementById("removeVideoBtn");
+
+videoFilePicker.addEventListener("click", () => {
+    videoFileInput.click();
+});
+
+videoFileInput.addEventListener("change", () => {
+
+    const file = videoFileInput.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const videoUrl = URL.createObjectURL(file);
+
+    videoPreviewPlayer.src = videoUrl;
+    videoPreviewBox.style.display = "block";
+    videoFilePicker.style.display = "none";
+
+    videoFileLabel.textContent = file.name;
+
+});
+
+removeVideoBtn.addEventListener("click", () => {
+
+    videoFileInput.value = "";
+    videoPreviewPlayer.src = "";
+    videoPreviewBox.style.display = "none";
+    videoFilePicker.style.display = "flex";
+    videoFileLabel.textContent = "Choose a video file";
+
+});
 
 
 </script>
