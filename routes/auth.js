@@ -5,6 +5,19 @@ const User = require("../models/User");
 
 const router = express.Router();
 
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+function getRecentChangeCount(changeDates) {
+
+    const cutoff = Date.now() - THIRTY_DAYS_MS;
+
+    return changeDates.filter(date => date.getTime() > cutoff).length;
+
+}
+
+
+
 router.get("/register", (req, res) => {
     res.render("register");
 });
@@ -198,6 +211,238 @@ router.get("/profile", async (req, res) => {
     }
 
 });
+
+
+
+// =====================================================
+// CHANGE USERNAME
+// =====================================================
+
+router.post("/change-username", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = await User.findById(req.session.user._id);
+
+        if (!currentUser) {
+            return res.redirect("/login");
+        }
+
+        const recentChanges = getRecentChangeCount(currentUser.usernameChanges);
+
+        if (recentChanges >= 2) {
+            return res.redirect("/settings?error=" + encodeURIComponent("You can only change your username 2 times per month."));
+        }
+
+        const newUsername = req.body.username?.trim();
+
+        if (!newUsername || newUsername.length < 4 || newUsername.length > 20) {
+            return res.redirect("/settings?error=" + encodeURIComponent("Username must be between 4 and 20 characters."));
+        }
+
+        if (newUsername === currentUser.username) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That's already your username."));
+        }
+
+        currentUser.username = newUsername;
+        currentUser.usernameChanges.push(new Date());
+
+        await currentUser.save();
+
+        // Keep session in sync
+        req.session.user.username = newUsername;
+
+        res.redirect("/settings?success=" + encodeURIComponent("Username updated successfully."));
+
+    } catch (error) {
+
+        console.error("Change username error:", error);
+
+        if (error.code === 11000) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That username is already taken."));
+        }
+
+        res.redirect("/settings?error=" + encodeURIComponent("Unable to update username."));
+
+    }
+
+});
+
+
+// =====================================================
+// CHANGE EMAIL
+// =====================================================
+
+router.post("/change-email", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = await User.findById(req.session.user._id);
+
+        if (!currentUser) {
+            return res.redirect("/login");
+        }
+
+        const recentChanges = getRecentChangeCount(currentUser.emailChanges);
+
+        if (recentChanges >= 2) {
+            return res.redirect("/settings?error=" + encodeURIComponent("You can only change your email 2 times per month."));
+        }
+
+        const newEmail = req.body.email?.trim().toLowerCase();
+
+        if (!newEmail) {
+            return res.redirect("/settings?error=" + encodeURIComponent("Email is required."));
+        }
+
+        if (newEmail === currentUser.email) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That's already your email."));
+        }
+
+        currentUser.email = newEmail;
+        currentUser.emailChanges.push(new Date());
+
+        await currentUser.save();
+
+        req.session.user.email = newEmail;
+
+        res.redirect("/settings?success=" + encodeURIComponent("Email updated successfully."));
+
+    } catch (error) {
+
+        console.error("Change email error:", error);
+
+        if (error.code === 11000) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That email is already registered."));
+        }
+
+        res.redirect("/settings?error=" + encodeURIComponent("Unable to update email."));
+
+    }
+
+});
+
+
+// =====================================================
+// CHANGE PHONE
+// =====================================================
+
+router.post("/change-phone", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = await User.findById(req.session.user._id);
+
+        if (!currentUser) {
+            return res.redirect("/login");
+        }
+
+        const recentChanges = getRecentChangeCount(currentUser.phoneChanges);
+
+        if (recentChanges >= 2) {
+            return res.redirect("/settings?error=" + encodeURIComponent("You can only change your phone number 2 times per month."));
+        }
+
+        const newPhone = req.body.phone?.trim();
+
+        if (!newPhone) {
+            return res.redirect("/settings?error=" + encodeURIComponent("Phone number is required."));
+        }
+
+        if (newPhone === currentUser.phone) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That's already your phone number."));
+        }
+
+        currentUser.phone = newPhone;
+        currentUser.phoneChanges.push(new Date());
+
+        await currentUser.save();
+
+        req.session.user.phone = newPhone;
+
+        res.redirect("/settings?success=" + encodeURIComponent("Phone number updated successfully."));
+
+    } catch (error) {
+
+        console.error("Change phone error:", error);
+
+        if (error.code === 11000) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That phone number is already registered."));
+        }
+
+        res.redirect("/settings?error=" + encodeURIComponent("Unable to update phone number."));
+
+    }
+
+});
+
+
+// =====================================================
+// CHANGE PASSWORD
+// =====================================================
+
+router.post("/change-password", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login");
+        }
+
+        const currentUser = await User.findById(req.session.user._id);
+
+        if (!currentUser) {
+            return res.redirect("/login");
+        }
+
+        const recentChanges = getRecentChangeCount(currentUser.passwordChanges);
+
+        if (recentChanges >= 2) {
+            return res.redirect("/settings?error=" + encodeURIComponent("You can only change your password 2 times per month."));
+        }
+
+        const { currentPassword, newPassword } = req.body;
+
+        const validPassword = await bcrypt.compare(currentPassword, currentUser.password);
+
+        if (!validPassword) {
+            return res.redirect("/settings?error=" + encodeURIComponent("Current password is incorrect."));
+        }
+
+        if (!newPassword || newPassword.length < 8 || newPassword.length > 20) {
+            return res.redirect("/settings?error=" + encodeURIComponent("New password must be between 8 and 20 characters."));
+        }
+
+        currentUser.password = await bcrypt.hash(newPassword, 10);
+        currentUser.passwordChanges.push(new Date());
+
+        await currentUser.save();
+
+        res.redirect("/settings?success=" + encodeURIComponent("Password updated successfully."));
+
+    } catch (error) {
+
+        console.error("Change password error:", error);
+
+        res.redirect("/settings?error=" + encodeURIComponent("Unable to update password."));
+
+    }
+
+});
+
+
 
 
 // DELETE ACCOUNT

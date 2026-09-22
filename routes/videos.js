@@ -211,7 +211,16 @@ router.get("/shorts/:id", async (req, res) => {
             return res.status(404).send("Short not found.");
         }
 
-        const allShorts = await Video.find({ type: "short" }).sort({ createdAt: -1 });
+        const allShortsRaw = await Video.find({ type: "short" }).sort({ createdAt: -1 });
+
+        const allShorts = allShortsRaw.map(short => ({
+            _id: short._id,
+            title: short.title,
+            videoUrl: short.videoUrl,
+            likeCount: short.likes.length,
+            hasLiked: short.likes.includes(currentUser),
+            commentCount: short.comments.length
+        }));
 
         res.render("shorts", {
             allShorts,
@@ -228,8 +237,6 @@ router.get("/shorts/:id", async (req, res) => {
     }
 
 });
-
-
 
 
 // RECORD A SHORT VIEW (called via fetch as user scrolls to it)
@@ -549,6 +556,39 @@ router.post("/video/:id/delete", async (req, res) => {
     }
 
 });
+
+
+
+// GET COMMENTS FOR A VIDEO (used by the shorts feed to load on demand)
+router.get("/video/:id/comments", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.status(401).json({ success: false });
+        }
+
+        const video = await Video.findById(req.params.id);
+
+        if (!video) {
+            return res.status(404).json({ success: false });
+        }
+
+        const comments = video.comments.slice().reverse();
+
+        res.json({ success: true, comments, commentCount: comments.length });
+
+    } catch (error) {
+
+        console.error("Get comments error:", error);
+
+        res.status(500).json({ success: false });
+
+    }
+
+});
+
+
 
 
 module.exports = router;

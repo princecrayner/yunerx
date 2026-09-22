@@ -258,6 +258,25 @@
     flex: 1;
 }
 
+.settings-alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.settings-alert.error {
+    background: #fbeceb;
+    color: #c0392b;
+}
+
+.settings-alert.success {
+    background: #eafaf1;
+    color: #1e8449;
+}
+
+
     </style>
 
 </head>
@@ -265,6 +284,16 @@
 <body>
 
 <div class="settings-container">
+
+
+<% if (typeof error !== "undefined" && error) { %>
+    <div class="settings-alert error"><%= error %></div>
+<% } %>
+
+<% if (typeof success !== "undefined" && success) { %>
+    <div class="settings-alert success"><%= success %></div>
+<% } %>
+
 
    <div onclick="history.back()" class="back-btn">
     <i class='bx bx-arrow-back'></i>
@@ -275,7 +304,7 @@
         Settings
     </h1>
 
-    <!-- PROFILE -->
+       <!-- PROFILE SETTINGS -->
 
     <div class="setting-card">
 
@@ -285,20 +314,150 @@
 
             <div class="setting-text">
 
-                <h3>Profile Settings</h3>
+                <h3>Username</h3>
 
-                <p>Edit your username and profile details</p>
+                <p>Current: <%= user.username %></p>
 
             </div>
 
         </div>
 
-        <button class="setting-btn">
+        <button type="button" class="setting-btn" id="editUsernameBtn">
             Edit
         </button>
 
     </div>
 
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-envelope'></i>
+
+            <div class="setting-text">
+
+                <h3>Email</h3>
+
+                <p>Current: <%= user.email %></p>
+
+            </div>
+
+        </div>
+
+        <button type="button" class="setting-btn" id="editEmailBtn">
+            Edit
+        </button>
+
+    </div>
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-phone'></i>
+
+            <div class="setting-text">
+
+                <h3>Phone Number</h3>
+
+                <p>Current: <%= user.phone %></p>
+
+            </div>
+
+        </div>
+
+        <button type="button" class="setting-btn" id="editPhoneBtn">
+            Edit
+        </button>
+
+    </div>
+
+    <div class="setting-card">
+
+        <div class="setting-left">
+
+            <i class='bx bx-lock'></i>
+
+            <div class="setting-text">
+
+                <h3>Password</h3>
+
+                <p>Change your account password</p>
+
+            </div>
+
+        </div>
+
+        <button type="button" class="setting-btn" id="editPasswordBtn">
+            Edit
+        </button>
+
+    </div>
+
+
+    <!-- EDIT USERNAME MODAL -->
+    <div class="delete-modal-overlay" id="usernameModalOverlay">
+        <div class="delete-modal">
+            <h3 style="color:#2563eb;">Change Username</h3>
+            <p>You can change this up to 2 times per month.</p>
+            <form action="/change-username" method="POST">
+                <input type="text" name="username" placeholder="New username" minlength="4" maxlength="20" required>
+                <div class="delete-modal-buttons">
+                    <button type="button" class="setting-btn" id="cancelUsernameBtn">Cancel</button>
+                    <button type="submit" class="setting-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT EMAIL MODAL -->
+    <div class="delete-modal-overlay" id="emailModalOverlay">
+        <div class="delete-modal">
+            <h3 style="color:#2563eb;">Change Email</h3>
+            <p>You can change this up to 2 times per month.</p>
+            <form action="/change-email" method="POST">
+                <input type="email" name="email" placeholder="New email" required>
+                <div class="delete-modal-buttons">
+                    <button type="button" class="setting-btn" id="cancelEmailBtn">Cancel</button>
+                    <button type="submit" class="setting-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT PHONE MODAL -->
+    <div class="delete-modal-overlay" id="phoneModalOverlay">
+        <div class="delete-modal">
+            <h3 style="color:#2563eb;">Change Phone Number</h3>
+            <p>You can change this up to 2 times per month.</p>
+            <form action="/change-phone" method="POST">
+                <input type="text" name="phone" placeholder="New phone number" required>
+                <div class="delete-modal-buttons">
+                    <button type="button" class="setting-btn" id="cancelPhoneBtn">Cancel</button>
+                    <button type="submit" class="setting-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT PASSWORD MODAL -->
+    <div class="delete-modal-overlay" id="passwordModalOverlay">
+        <div class="delete-modal">
+            <h3 style="color:#2563eb;">Change Password</h3>
+            <p>You can change this up to 2 times per month.</p>
+            <form action="/change-password" method="POST">
+                <input type="password" name="currentPassword" placeholder="Current password" required>
+                <input type="password" name="newPassword" placeholder="New password" minlength="8" maxlength="20" required>
+                <div class="delete-modal-buttons">
+                    <button type="button" class="setting-btn" id="cancelPasswordBtn">Cancel</button>
+                    <button type="submit" class="setting-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    
+    
             <!-- PROFILE PHOTO -->
 
     <div class="setting-card">
@@ -726,6 +885,29 @@ if (cancelRemovePhotoBtn) {
     });
 
 }
+
+
+
+function setupEditModal(btnId, overlayId, cancelId) {
+
+    const btn = document.getElementById(btnId);
+    const overlay = document.getElementById(overlayId);
+    const cancelBtn = document.getElementById(cancelId);
+
+    btn.addEventListener("click", () => {
+        overlay.classList.add("show");
+    });
+
+    cancelBtn.addEventListener("click", () => {
+        overlay.classList.remove("show");
+    });
+
+}
+
+setupEditModal("editUsernameBtn", "usernameModalOverlay", "cancelUsernameBtn");
+setupEditModal("editEmailBtn", "emailModalOverlay", "cancelEmailBtn");
+setupEditModal("editPhoneBtn", "phoneModalOverlay", "cancelPhoneBtn");
+setupEditModal("editPasswordBtn", "passwordModalOverlay", "cancelPasswordBtn");
 
 
 </script>

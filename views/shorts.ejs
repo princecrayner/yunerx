@@ -71,6 +71,194 @@ html, body {
     text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 
+
+.short-actions {
+    position: absolute;
+    right: 12px;
+    bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 20;
+}
+
+.short-action-btn {
+    background: none;
+    border: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.short-action-btn i {
+    font-size: 30px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+.short-action-btn.liked i {
+    color: #ff3b5c;
+}
+
+.short-action-count {
+    font-size: 12px;
+    font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+
+.comment-sheet-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.comment-sheet-overlay.show {
+    display: flex;
+}
+
+.comment-sheet {
+    background: #1a1a1a;
+    width: 100%;
+    max-width: 500px;
+    max-height: 65%;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.comment-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #333;
+}
+
+.comment-sheet-header h3 {
+    color: white;
+    font-size: 15px;
+}
+
+.close-comment-sheet {
+    background: #2a2a2a;
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.comment-sheet-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+}
+
+.comment-sheet-form {
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    border-top: 1px solid #333;
+}
+
+.comment-sheet-form input {
+    flex: 1;
+    background: #2a2a2a;
+    border: none;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+}
+
+.comment-sheet-form button {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #4169e1;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.sheet-comment-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.sheet-comment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.sheet-comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.sheet-comment-header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.sheet-comment-header strong {
+    color: white;
+    font-size: 13px;
+}
+
+.sheet-comment-header small {
+    color: #888;
+    font-size: 11px;
+}
+
+.sheet-comment-body p {
+    color: #ddd;
+    font-size: 14px;
+}
+
+.sheet-delete-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.no-comments-msg {
+    color: #888;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 13px;
+}
+
 </style>
 
 </head>
@@ -82,7 +270,7 @@ html, body {
 
 <div class="shorts-feed" id="shortsFeed">
 
-    <% allShorts.forEach(short => { %>
+        <% allShorts.forEach(short => { %>
 
         <div class="short-slide" data-id="<%= short._id %>">
 
@@ -98,11 +286,61 @@ html, body {
 
             <div class="short-title"><%= short.title %></div>
 
+            <div class="short-actions">
+
+                <button
+                    type="button"
+                    class="short-action-btn like-action-btn <%= short.hasLiked ? 'liked' : '' %>"
+                    data-video-id="<%= short._id %>"
+                >
+                    <i class='bx <%= short.hasLiked ? "bxs-like" : "bx-like" %>'></i>
+                    <span class="short-action-count"><%= short.likeCount %></span>
+                </button>
+
+                <button
+                    type="button"
+                    class="short-action-btn comment-action-btn"
+                    data-video-id="<%= short._id %>"
+                >
+                    <i class='bx bx-comment'></i>
+                    <span class="short-action-count"><%= short.commentCount %></span>
+                </button>
+
+            </div>
+
         </div>
 
     <% }) %>
 
 </div>
+
+
+<div class="comment-sheet-overlay" id="commentSheetOverlay">
+
+    <div class="comment-sheet">
+
+        <div class="comment-sheet-header">
+            <h3>Comments</h3>
+            <button type="button" class="close-comment-sheet" id="closeCommentSheet">
+                <i class='bx bx-x'></i>
+            </button>
+        </div>
+
+        <div class="comment-sheet-body" id="commentSheetBody">
+            <!-- populated dynamically -->
+        </div>
+
+        <form class="comment-sheet-form" id="commentSheetForm">
+            <input type="text" id="commentSheetInput" placeholder="Add a comment..." required>
+            <button type="submit">
+                <i class='bx bx-send'></i>
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
 
 <script>
 
@@ -152,6 +390,242 @@ const observer = new IntersectionObserver((entries) => {
 slides.forEach((slide) => {
     observer.observe(slide);
 });
+
+
+
+const currentUsername = "<%= currentUser %>";
+
+// =========================
+// LIKES
+// =========================
+
+document.querySelectorAll(".like-action-btn").forEach(btn => {
+
+    btn.addEventListener("click", async () => {
+
+        const videoId = btn.getAttribute("data-video-id");
+
+        try {
+
+            const response = await fetch(`/video/${videoId}/like`, { method: "POST" });
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                const icon = btn.querySelector("i");
+                const count = btn.querySelector(".short-action-count");
+
+                count.textContent = result.likeCount;
+
+                if (result.liked) {
+
+                    btn.classList.add("liked");
+                    icon.classList.remove("bx-like");
+                    icon.classList.add("bxs-like");
+
+                } else {
+
+                    btn.classList.remove("liked");
+                    icon.classList.remove("bxs-like");
+                    icon.classList.add("bx-like");
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.error("Like error:", error);
+
+        }
+
+    });
+
+});
+
+
+// =========================
+// COMMENTS
+// =========================
+
+const commentSheetOverlay = document.getElementById("commentSheetOverlay");
+const commentSheetBody = document.getElementById("commentSheetBody");
+const commentSheetForm = document.getElementById("commentSheetForm");
+const commentSheetInput = document.getElementById("commentSheetInput");
+const closeCommentSheet = document.getElementById("closeCommentSheet");
+
+let activeVideoId = null;
+
+function buildSheetCommentHtml(comment) {
+
+    const dateStr = new Date(comment.createdAt).toLocaleDateString();
+
+    const deleteBtn = comment.username === currentUsername
+        ? `<button type="button" class="sheet-delete-btn" data-comment-id="${comment._id}"><i class='bx bx-trash'></i></button>`
+        : "";
+
+    return `
+        <div class="sheet-comment-row" data-comment-id="${comment._id}">
+            <div class="sheet-comment-avatar"><i class='bx bx-user'></i></div>
+            <div class="sheet-comment-body">
+                <div class="sheet-comment-header">
+                    <strong>${comment.username}</strong>
+                    <small>${dateStr}</small>
+                </div>
+                <p>${comment.text}</p>
+            </div>
+            ${deleteBtn}
+        </div>
+    `;
+
+}
+
+async function loadComments(videoId) {
+
+    commentSheetBody.innerHTML = `<p class="no-comments-msg">Loading...</p>`;
+
+    try {
+
+        const response = await fetch(`/video/${videoId}/comments`);
+        const result = await response.json();
+
+        if (!result.success || result.comments.length === 0) {
+
+            commentSheetBody.innerHTML = `<p class="no-comments-msg">No comments yet. Be the first!</p>`;
+
+            return;
+
+        }
+
+        commentSheetBody.innerHTML = result.comments.map(buildSheetCommentHtml).join("");
+
+    } catch (error) {
+
+        console.error("Load comments error:", error);
+
+        commentSheetBody.innerHTML = `<p class="no-comments-msg">Unable to load comments.</p>`;
+
+    }
+
+}
+
+document.querySelectorAll(".comment-action-btn").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        activeVideoId = btn.getAttribute("data-video-id");
+
+        commentSheetOverlay.classList.add("show");
+
+        loadComments(activeVideoId);
+
+    });
+
+});
+
+closeCommentSheet.addEventListener("click", () => {
+    commentSheetOverlay.classList.remove("show");
+    activeVideoId = null;
+});
+
+commentSheetForm.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const text = commentSheetInput.value.trim();
+
+    if (!text || !activeVideoId) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/video/${activeVideoId}/comment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            const emptyMsg = commentSheetBody.querySelector(".no-comments-msg");
+
+            if (emptyMsg) {
+                emptyMsg.remove();
+            }
+
+            commentSheetBody.insertAdjacentHTML("afterbegin", buildSheetCommentHtml(result.comment));
+            commentSheetInput.value = "";
+
+            // Update the comment count badge on that short's action bar
+            const commentBtn = document.querySelector(`.comment-action-btn[data-video-id="${activeVideoId}"]`);
+
+            if (commentBtn) {
+                commentBtn.querySelector(".short-action-count").textContent = result.commentCount;
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error("Add comment error:", error);
+
+    }
+
+});
+
+commentSheetBody.addEventListener("click", async (e) => {
+
+    const deleteBtn = e.target.closest(".sheet-delete-btn");
+
+    if (!deleteBtn || !activeVideoId) {
+        return;
+    }
+
+    const commentId = deleteBtn.getAttribute("data-comment-id");
+
+    const confirmed = confirm("Delete this comment?");
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`/video/${activeVideoId}/comment/${commentId}/delete`, {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            const row = commentSheetBody.querySelector(`[data-comment-id="${commentId}"]`);
+
+            if (row) {
+                row.remove();
+            }
+
+            const commentBtn = document.querySelector(`.comment-action-btn[data-video-id="${activeVideoId}"]`);
+
+            if (commentBtn) {
+                commentBtn.querySelector(".short-action-count").textContent = result.commentCount;
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error("Delete comment error:", error);
+
+    }
+
+});
+
+
 
 </script>
 

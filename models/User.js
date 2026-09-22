@@ -45,6 +45,26 @@ const UserSchema = new mongoose.Schema({
         type: [String],
         default: []
     },
+    
+        usernameChanges: {
+        type: [Date],
+        default: []
+    },
+
+    emailChanges: {
+        type: [Date],
+        default: []
+    },
+
+    phoneChanges: {
+        type: [Date],
+        default: []
+    },
+
+    passwordChanges: {
+        type: [Date],
+        default: []
+    },
 
     videos: [
         {
