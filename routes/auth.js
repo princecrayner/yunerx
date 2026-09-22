@@ -244,14 +244,90 @@ router.post("/change-username", async (req, res) => {
             return res.redirect("/settings?error=" + encodeURIComponent("Username must be between 4 and 20 characters."));
         }
 
-        if (newUsername === currentUser.username) {
+        const oldUsername = currentUser.username;
+
+        if (newUsername === oldUsername) {
             return res.redirect("/settings?error=" + encodeURIComponent("That's already your username."));
+        }
+
+        // Make sure the new username isn't already taken before touching anything
+        const existing = await User.findOne({ username: newUsername });
+
+        if (existing) {
+            return res.redirect("/settings?error=" + encodeURIComponent("That username is already taken."));
         }
 
         currentUser.username = newUsername;
         currentUser.usernameChanges.push(new Date());
 
         await currentUser.save();
+
+        // ============================================
+        // CASCADE: update every other collection that
+        // stores this user's OLD username as a string
+        // ============================================
+
+        const Group = require("../models/Group");
+        const GroupMessage = require("../models/GroupMessage");
+        const Video = require("../models/Video");
+        const { Message, Story } = require("../models/Message");
+
+        // Private messages
+        await Message.updateMany({ sender: oldUsername }, { $set: { sender: newUsername } });
+        await Message.updateMany({ receiver: oldUsername }, { $set: { receiver: newUsername } });
+
+        // Group membership + admin
+        await Group.updateMany(
+            { members: oldUsername },
+            { $set: { "members.$[elem]": newUsername } },
+            { arrayFilters: [{ elem: oldUsername }] }
+        );
+
+        await Group.updateMany({ admin: oldUsername }, { $set: { admin: newUsername } });
+
+        // Group messages
+        await GroupMessage.updateMany({ sender: oldUsername }, { $set: { sender: newUsername } });
+
+        // Stories (ownership + who viewed them)
+        await Story.updateMany({ username: oldUsername }, { $set: { username: newUsername } });
+
+        await Story.updateMany(
+            { "views.username": oldUsername },
+            { $set: { "views.$[elem].username": newUsername } },
+            { arrayFilters: [{ "elem.username": oldUsername }] }
+        );
+
+        // Other users' hide/mute lists that reference this username
+        await User.updateMany(
+            { hiddenStoryFrom: oldUsername },
+            { $set: { "hiddenStoryFrom.$[elem]": newUsername } },
+            { arrayFilters: [{ elem: oldUsername }] }
+        );
+
+        await User.updateMany(
+            { mutedStoryUsers: oldUsername },
+            { $set: { "mutedStoryUsers.$[elem]": newUsername } },
+            { arrayFilters: [{ elem: oldUsername }] }
+        );
+
+        // Video likes, views, comments
+        await Video.updateMany(
+            { likes: oldUsername },
+            { $set: { "likes.$[elem]": newUsername } },
+            { arrayFilters: [{ elem: oldUsername }] }
+        );
+
+        await Video.updateMany(
+            { views: oldUsername },
+            { $set: { "views.$[elem]": newUsername } },
+            { arrayFilters: [{ elem: oldUsername }] }
+        );
+
+        await Video.updateMany(
+            { "comments.username": oldUsername },
+            { $set: { "comments.$[elem].username": newUsername } },
+            { arrayFilters: [{ "elem.username": oldUsername }] }
+        );
 
         // Keep session in sync
         req.session.user.username = newUsername;
@@ -262,16 +338,11 @@ router.post("/change-username", async (req, res) => {
 
         console.error("Change username error:", error);
 
-        if (error.code === 11000) {
-            return res.redirect("/settings?error=" + encodeURIComponent("That username is already taken."));
-        }
-
         res.redirect("/settings?error=" + encodeURIComponent("Unable to update username."));
 
     }
 
 });
-
 
 // =====================================================
 // CHANGE EMAIL
