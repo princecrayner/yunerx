@@ -1,4 +1,4 @@
-const CACHE_NAME = "yunerx-cache-v2";
+const CACHE_NAME = "yunerx-cache-v3";
 
 const urlsToCache = [
     "/",
@@ -9,7 +9,8 @@ const urlsToCache = [
     "/css/chats.css"
 ];
 
-// Install: cache the app shell (static assets + offline page)
+// INSTALL: runs once when the service worker is first set up.
+// We pre-cache a small set of essential files here.
 self.addEventListener("install", (event) => {
 
     event.waitUntil(
@@ -25,7 +26,8 @@ self.addEventListener("install", (event) => {
 });
 
 
-// Activate: clean up old caches
+// ACTIVATE: runs after install. We use this moment to delete
+// any OLD cache versions, so nothing stale lingers forever.
 self.addEventListener("activate", (event) => {
 
     event.waitUntil(
@@ -47,10 +49,11 @@ self.addEventListener("activate", (event) => {
 });
 
 
-// Fetch: network first, cache fallback, offline page as last resort for navigation
+// FETCH: runs for EVERY network request the page makes.
+// Strategy: try the real network first (so data is always fresh).
+// If that fails (offline), fall back to whatever we have cached.
 self.addEventListener("fetch", (event) => {
 
-    // Only handle GET requests
     if (event.request.method !== "GET") {
         return;
     }
@@ -68,7 +71,8 @@ self.addEventListener("fetch", (event) => {
                     event.request.destination === "image" ||
                     event.request.destination === "font";
 
-                // Cache static assets AND successful page navigations
+                // Save a copy of static files AND full page loads,
+                // so they're available next time if offline.
                 if ((isStaticAsset || isNavigation) && response.ok) {
 
                     const responseClone = response.clone();
@@ -84,14 +88,14 @@ self.addEventListener("fetch", (event) => {
             })
             .catch(() => {
 
-                // Network failed — try to serve this exact page from cache
+                // Network failed. Do we have this exact page cached?
                 return caches.match(event.request).then((cachedResponse) => {
 
                     if (cachedResponse) {
                         return cachedResponse;
                     }
 
-                    // Never visited this page before while online — show offline page
+                    // Never seen this page before — show the offline page.
                     if (isNavigation) {
                         return caches.match("/offline.html");
                     }
