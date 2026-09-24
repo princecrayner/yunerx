@@ -63,20 +63,20 @@ function searchSubjects() {
 }
 
 
-// SPLASH SCREEN ONLY ON FIRST VISIT
+// SPLASH SCREEN ONLY ON FIRST VISIT EVER
 
 const splash =
     document.getElementById("splash");
 
 if (splash) {
 
-    if (sessionStorage.getItem("splashShown")) {
+    if (localStorage.getItem("splashShown")) {
 
         splash.style.display = "none";
 
     } else {
 
-        sessionStorage.setItem(
+        localStorage.setItem(
             "splashShown",
             "true"
         );
