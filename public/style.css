@@ -426,10 +426,17 @@ a:focus-visible, button:focus-visible {
     font-weight: 500;
 }
 
-.footer-icon:hover{
+.footer-icon:active {
     transform: translateY(-5px);
     background: #2563eb;
 }
+
+@media (hover: hover) and (pointer: fine) {
+    .footer-icon:hover {
+       transform: translateY(-5px);
+       background: #2563eb;
+    }
+}       
 
 .footer-item{
     display: flex;
