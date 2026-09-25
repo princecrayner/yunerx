@@ -180,6 +180,7 @@ a:focus-visible, button:focus-visible {
   z-index: 1;
   transition: color 0.5s;
 }
+
 .objective-btn a::before {
   content: "";
   position: absolute;
@@ -192,18 +193,33 @@ a:focus-visible, button:focus-visible {
   left: 100%;
   transition: all 0.7s;
 }
-.objective-btn a:hover {
+
+/* TOUCH / TAP feedback — fires immediately on press, any device */
+.objective-btn a:active {
   color: white;
-}
-.objective-btn a:hover::before {
-  top: -30px;
-  left: -30px;
-}
-.objective-btn a:active::before {
-  background: #1d4bb0;
-  transition: background 0s;
+  transform: scale(0.97);
 }
 
+.objective-btn a:active::before {
+  top: -30px;
+  left: -30px;
+  background: #1d4bb0;
+  transition: background 0s, top 0s, left 0s;
+}
+
+/* HOVER — only on devices with real hover + precise pointer (mouse/trackpad) */
+@media (hover: hover) and (pointer: fine) {
+
+  .objective-btn a:hover {
+    color: white;
+  }
+
+  .objective-btn a:hover::before {
+    top: -30px;
+    left: -30px;
+  }
+
+}
 
 .objective-hdr {
   display: grid;
@@ -214,7 +230,6 @@ a:focus-visible, button:focus-visible {
   color: black;
   font-size: 15px;
 }
-
 
 /* LEVEL SECTION */
 
