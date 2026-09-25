@@ -24,17 +24,7 @@ body{
 .profile-header{
     text-align:center;
     padding:20px;
-}
-
-/* PROFILE IMAGE */
-
-.profile-image-container{
-
-    width: 50px;
-    height: 50px;
-    position: relative;
-    justify-content: center;
-    align-items: center;
+    margin: 25px 0 0 0;
 }
 
 
@@ -55,6 +45,25 @@ body{
     object-fit:cover;
 }
 
+.default-user-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid royalblue;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.default-user-icon i {
+    font-size: 146px;
+    color: #888;
+    line-height: 1;
+}
+
+
 /* NAV ITEMS */
 .nav-item {
   position: fixed;
@@ -71,7 +80,6 @@ body{
   color: white;
   font-size: 30px;
 }
-
 
 /* SIDEBAR */
 .sidebar{
@@ -368,7 +376,6 @@ video{
 
 
 
-<div class="profile-header">
 
 
         <!-- DEFAULT ICON -->
@@ -379,13 +386,18 @@ video{
         <img
             src="<%= user.profileImage %>"
             class="profile-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
         >
+        
+        <div class="default-user-icon" style="display:none;">
+            <i class='bx bxs-user-circle'></i>
+        </div>
 
     <% } else { %>
 
         <div class="default-user-icon">
 
-            <i class='bx bx-user'></i>
+            <i class='bx bxs-user-circle'></i>
 
         </div>
 
