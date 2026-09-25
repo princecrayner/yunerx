@@ -8,6 +8,15 @@ body{
     -webkit-tap-highlight-color: transparent;
 }
 
+a, button {
+    outline: none;
+}
+
+a:focus-visible, button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
 
 /* Splash Screen */
 .splash-screen{
