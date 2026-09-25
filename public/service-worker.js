@@ -1,4 +1,4 @@
-const CACHE_NAME = "yunerx-cache-v3";
+const CACHE_NAME = "yunerx-cache-v4";
 
 const urlsToCache = [
     "/",
@@ -15,8 +15,20 @@ self.addEventListener("install", (event) => {
 
     event.waitUntil(
 
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(urlsToCache);
+        caches.open(CACHE_NAME).then(async (cache) => {
+
+            // Cache each file individually so one missing/broken file
+            // doesn't cause the ENTIRE installation to fail silently.
+            for (const url of urlsToCache) {
+
+                try {
+                    await cache.add(url);
+                } catch (error) {
+                    console.error("Failed to cache:", url, error);
+                }
+
+            }
+
         })
 
     );
