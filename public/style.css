@@ -4,6 +4,10 @@ body{
     font-family: Arial, sans-serif;
 }
 
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
 
 /* Splash Screen */
 .splash-screen{
