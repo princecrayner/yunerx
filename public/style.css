@@ -258,7 +258,6 @@ a:focus-visible, button:focus-visible {
   font-weight: bold;
   padding: 25px 15px;
   border-radius: 10px;
-  background: ;
   box-shadow: 0 3px 12px rgba(0,0,0,.2);
   border: 1px solid var(--color);
   color: white;
@@ -279,19 +278,33 @@ a:focus-visible, button:focus-visible {
   transition: all 0.7s;
 }
 
-.level-btn a:hover {
+/* TOUCH / TAP feedback — fires immediately on press, any device */
+.level-btn a:active {
   color: black;
-}
-
-.level-btn a:hover::before {
-  top: -30px;
-  left: -30px;
+  transform: scale(0.97);
 }
 
 .level-btn a:active::before {
+  top: -30px;
+  left: -30px;
   background: #e6d9a3;
-  transition: background 0s;
+  transition: background 0s, top 0s, left 0s;
 }
+
+/* HOVER — only on devices with real hover + precise pointer (mouse/trackpad) */
+@media (hover: hover) and (pointer: fine) {
+
+  .level-btn a:hover {
+    color: black;
+  }
+
+  .level-btn a:hover::before {
+    top: -30px;
+    left: -30px;
+  }
+
+}
+
 
 
 /* BUTTONS */
