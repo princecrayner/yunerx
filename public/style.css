@@ -16,6 +16,13 @@ body{
     outline: none;
 }
 
+a {
+   -webkit-touch-callout: none !important;
+   -webkit-user-select: none !important;
+   user-select: none !important;
+   }
+   
+
 *:focus-visible {
     outline: 2px solid #2563eb;
     outline-offset: 2px;
@@ -353,8 +360,6 @@ input, textarea {
     background: #2563eb;
     transform: translateY(-2px);
 }
-
-
 
 /* IMAGE CONTAINER */
 .imgContainer {
