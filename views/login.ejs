@@ -156,6 +156,23 @@ body {
 
 </style>
 
+<script>
+
+(function() {
+
+    var navEntries = performance.getEntriesByType("navigation");
+    var navType = navEntries.length ? navEntries[0].type : null;
+
+    if (navType === "back_forward") {
+
+        window.location.replace("/");
+
+    }
+
+})();
+
+</script>
+
 
 </head>
 <body>
