@@ -89,10 +89,17 @@
 
 }
 
-.default-user-icon:hover {
-     border:3px solid #1f2937;
-     transform: scale(1.05);
+.default-user-icon:active {
+    border:3px solid #1f2937;
+    transform: scale(1.05);
 }
+
+@media (hover: hover) and (pointer: fine) {
+    .default-user-icon:hover {
+      border:3px solid #1f2937;
+      transform: scale(1.05);
+    }
+}       
 
 
 .profile-pic-top{
@@ -113,10 +120,18 @@
 
 }
 
-.profile-pic-top:hover {
+.profile-pic-top:active {
     border:3px solid #1f2937;
     transform: scale(1.05);
-}    
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .profile-pic-top:hover {
+      border:3px solid #1f2937;
+      transform: scale(1.05);
+    }
+}   
+
 
 .profile-link {
 
@@ -153,8 +168,6 @@
 
     border-radius:50%;
 
-
-
     display:flex;
 
     justify-content:center;
@@ -173,8 +186,6 @@
 .default-user-icon i{
 
     font-size:28px;
-
-
 
     color:royalblue;
 

@@ -149,9 +149,15 @@ input, textarea {
     transition: 0.3s ease;
 }
 
-.logo img:hover{
-    transform: scale(1.05);
+.logo img:active {
+     transform: scale(1.05);
 }
+
+@media (hover: hover) and (pointer: fine) {
+      .logo img:hover {
+      transform: scale(1.05);
+    }
+}   
 
 
 /* OBJETIVE SECTION */
