@@ -18,12 +18,68 @@
     >
 
     <style>
-    
-        body {
-            margin: 0;
-            padding: 0;
-            align-items: center;
+ 
+        
+        .admin-main {
+
+            min-height: 100vh;
+
+            padding: 90px 20px 60px;
+
         }
+        
+        .admin-section {
+
+             width: 100%;
+
+             max-width: 650px;
+  
+             margin: auto;
+
+             background: white;
+
+             padding: 30px;
+
+             border-radius: 10px;
+             
+             box-sizing: border-box;
+
+             box-shadow:
+                 0 2px 10px rgba(0,0,0,0.10);
+
+         }
+         
+         label {
+
+            display: block;
+  
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+      }
+
+
+        input,
+        textarea,
+        select {
+
+           width: 100%;
+
+           padding: 12px;
+
+           border: 1px solid #ccc;
+
+           border-radius: 6px;
+
+           font-size: 15px;
+           
+           box-sizing: border-box;
+
+           font-family: Arial, sans-serif;
+
+      }    
+        
 
         .pdf-card {
 
@@ -112,13 +168,15 @@
      ADMIN HEADER
 ===================================================== -->
 
-<div class="container">
+<div class="admin-main">
+
+
+<div class="admin-section">
 
     <h1>
          Admin Dashboard
     </h1>
 
-</div>
 
 
 
@@ -479,6 +537,8 @@
         placeholder="Level"
         required
     >
+    
+    <br><br>
 
     <input
         type="text"
@@ -486,6 +546,8 @@
         placeholder="Semester"
         required
     >
+    
+    <br><br>
 
     <input
         type="text"
@@ -493,6 +555,8 @@
         placeholder="Subject"
         required
     >
+    
+    <br><br>
 
     <input
         type="file"
@@ -500,6 +564,8 @@
         accept=".pdf,application/pdf"
         required
     >
+    
+    <br><br>
 
     <button type="submit">
         Upload Theory PDF
@@ -781,8 +847,11 @@
 
     <% } %>
 
-</div>
+    </div>
 
+  </div>
+
+</div>
 
 
 <!-- =====================================================
