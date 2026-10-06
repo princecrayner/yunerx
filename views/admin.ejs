@@ -26,7 +26,28 @@
 body {
     margin: 0;
     padding: 0;
-}         
+}      
+   
+
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+
+    outline: none;
+}
+
+
+input, textarea {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
 
 
         .admin-main {
@@ -93,6 +114,8 @@ body {
             background: #fff;
 
             border-radius: 10px;
+            
+            border: 1px solid #ddd;
 
             padding: 15px;
 
