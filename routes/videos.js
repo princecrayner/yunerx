@@ -151,7 +151,7 @@ router.get("/watch/:id", async (req, res) => {
 
         const currentUser = req.session.user.username;
 
-        const video = await Video.findById(req.params.id);
+        const video = await Video.findById(req.params.id).populate("userId", "username");
 
         if (!video) {
             return res.status(404).send("Video not found.");
@@ -211,7 +211,9 @@ router.get("/shorts/:id", async (req, res) => {
             return res.status(404).send("Short not found.");
         }
 
-        const allShortsRaw = await Video.find({ type: "short" }).sort({ createdAt: -1 });
+        const allShortsRaw = await Video.find({ type: "short" })
+            .sort({ createdAt: -1 })
+            .populate("userId", "username");
 
         const allShorts = allShortsRaw.map(short => ({
             _id: short._id,
@@ -219,7 +221,8 @@ router.get("/shorts/:id", async (req, res) => {
             videoUrl: short.videoUrl,
             likeCount: short.likes.length,
             hasLiked: short.likes.includes(currentUser),
-            commentCount: short.comments.length
+            commentCount: short.comments.length,
+            ownerUsername: short.userId ? short.userId.username : null
         }));
 
         res.render("shorts", {
@@ -588,6 +591,50 @@ router.get("/video/:id/comments", async (req, res) => {
 
 });
 
+
+
+// PUBLIC PROFILE — restricted view of another user's videos/shorts
+router.get("/user/:username", async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+            return res.redirect("/login?redirect=/user/" + req.params.username);
+        }
+
+        const User = require("../models/User");
+
+        const profileUser = await User.findOne({ username: req.params.username });
+
+        if (!profileUser) {
+            return res.status(404).send("User not found.");
+        }
+
+        const longVideos = await Video.find({
+            userId: profileUser._id,
+            type: "long"
+        }).sort({ createdAt: -1 });
+
+        const shorts = await Video.find({
+            userId: profileUser._id,
+            type: "short"
+        }).sort({ createdAt: -1 });
+
+        res.render("publicprofile", {
+            profileUser,
+            longVideos,
+            shorts
+        });
+
+    } catch (error) {
+
+        console.error("Public profile error:", error);
+
+        res.status(500).send("Unable to load profile.");
+
+    }
+
+});
 
 
 

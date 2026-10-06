@@ -84,6 +84,7 @@ html, body {
 
 .short-action-btn {
     background: none;
+    text-decoration: none;
     border: none;
     color: white;
     display: flex;
@@ -285,7 +286,7 @@ html, body {
 
             <div class="short-title"><%= short.title %></div>
 
-            <div class="short-actions">
+                <div class="short-actions">
 
                 <button
                     type="button"
@@ -304,6 +305,14 @@ html, body {
                     <i class='bx bx-comment'></i>
                     <span class="short-action-count"><%= short.commentCount %></span>
                 </button>
+
+                <% if (short.ownerUsername) { %>
+
+                    <a href="/user/<%= short.ownerUsername %>" class="short-action-btn">
+                        <i class='bx bxs-user-circle'></i>
+                    </a>
+
+                <% } %>
 
             </div>
 

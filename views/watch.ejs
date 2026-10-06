@@ -262,14 +262,26 @@ body {
 
     <h1><%= video.title %></h1>
 
-    <div class="video-meta-row">
+       <div class="video-meta-row">
 
         <p><%= video.views.length %> view<%= video.views.length !== 1 ? "s" : "" %> · <%= new Date(video.createdAt).toLocaleDateString() %></p>
 
-        <button type="button" class="like-btn <%= hasLiked ? 'liked' : '' %>" id="likeBtn" data-video-id="<%= video._id %>">
-            <i class='bx <%= hasLiked ? "bxs-like" : "bx-like" %>' id="likeIcon"></i>
-            <span id="likeCount"><%= video.likes.length %></span>
-        </button>
+        <div style="display:flex; gap:10px;">
+
+            <button type="button" class="like-btn <%= hasLiked ? 'liked' : '' %>" id="likeBtn" data-video-id="<%= video._id %>">
+                <i class='bx <%= hasLiked ? "bxs-like" : "bx-like" %>' id="likeIcon"></i>
+                <span id="likeCount"><%= video.likes.length %></span>
+            </button>
+
+            <% if (video.userId && video.userId.username) { %>
+
+                <a href="/user/<%= video.userId.username %>" class="like-btn" style="text-decoration:none;">
+                    <i class='bx bxs-user-circle'></i>
+                </a>
+
+            <% } %>
+
+        </div>
 
     </div>
 

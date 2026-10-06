@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title><%= profileUser.username %> - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    margin: 0;
+    padding: 0;
+}
+
+.back-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 20px;
+    z-index: 10;
+}
+
+.profile-header{
+    text-align:center;
+    padding:20px;
+    margin: 60px 0 0 0;
+}
+
+.profile-image{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid royalblue;
+}
+
+.default-user-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid royalblue;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.default-user-icon i {
+    font-size: 146px;
+    color: #888;
+    line-height: 1;
+}
+
+.profile-info{
+    text-align:center;
+    margin-top:10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+}
+
+.profile-tabs {
+    display: flex;
+    border-bottom: 1px solid #333;
+    margin: 10px 0;
+}
+
+.tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #888;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn.active {
+    color: white;
+    border-bottom-color: royalblue;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.empty-tab-message {
+    padding: 20px;
+    color: #888;
+    text-align: center;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 16px 20px;
+}
+
+.video-card {
+    text-decoration: none;
+    color: white;
+    display: block;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.video-card video {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+}
+
+.video-card p {
+    padding: 10px;
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shorts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 16px 20px;
+}
+
+.short-grid-card {
+    text-decoration: none;
+    color: white;
+    display: block;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.short-grid-card video {
+    width: 100%;
+    aspect-ratio: 9/16;
+    object-fit: cover;
+    display: block;
+}
+
+.short-grid-card p {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 6px 8px;
+    margin: 0;
+    font-size: 11px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 500px) {
+
+    .shorts-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 12px;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="javascript:history.back()" class="back-btn">
+    <i class='bx bx-arrow-back'></i>
+</a>
+
+<div class="profile-header">
+
+    <% if (profileUser.profileImage) { %>
+
+        <img
+            src="<%= profileUser.profileImage %>"
+            class="profile-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        >
+
+        <div class="default-user-icon" style="display:none;">
+            <i class='bx bxs-user-circle'></i>
+        </div>
+
+    <% } else { %>
+
+        <div class="default-user-icon">
+            <i class='bx bxs-user-circle'></i>
+        </div>
+
+    <% } %>
+
+</div>
+
+<div class="profile-info">
+    <h1><%= profileUser.username %></h1>
+</div>
+
+
+<div class="profile-tabs">
+
+    <button type="button" class="tab-btn active" id="videosTab">
+        <i class='bx bx-play-circle'></i>
+        Videos
+    </button>
+
+    <button type="button" class="tab-btn" id="shortsTab">
+        <i class='bx bx-video'></i>
+        Shorts
+    </button>
+
+</div>
+
+
+<div class="tab-panel active" id="videosPanel">
+
+    <div class="video-grid">
+
+        <% if (longVideos.length === 0) { %>
+
+            <p class="empty-tab-message">No videos uploaded yet.</p>
+
+        <% } %>
+
+        <% longVideos.forEach(video => { %>
+
+            <a href="/watch/<%= video._id %>" class="video-card">
+
+                <video muted>
+                    <source src="<%= video.videoUrl %>">
+                </video>
+
+                <p><%= video.title %></p>
+
+            </a>
+
+        <% }) %>
+
+    </div>
+
+</div>
+
+
+<div class="tab-panel" id="shortsPanel">
+
+    <div class="shorts-grid">
+
+        <% if (shorts.length === 0) { %>
+
+            <p class="empty-tab-message">No shorts uploaded yet.</p>
+
+        <% } %>
+
+        <% shorts.forEach(video => { %>
+
+            <a href="/shorts/<%= video._id %>" class="short-grid-card">
+
+                <video muted>
+                    <source src="<%= video.videoUrl %>">
+                </video>
+
+                <p><%= video.title %></p>
+
+            </a>
+
+        <% }) %>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const videosTab = document.getElementById("videosTab");
+const shortsTab = document.getElementById("shortsTab");
+const videosPanel = document.getElementById("videosPanel");
+const shortsPanel = document.getElementById("shortsPanel");
+
+videosTab.addEventListener("click", () => {
+    videosTab.classList.add("active");
+    shortsTab.classList.remove("active");
+    videosPanel.classList.add("active");
+    shortsPanel.classList.remove("active");
+});
+
+shortsTab.addEventListener("click", () => {
+    shortsTab.classList.add("active");
+    videosTab.classList.remove("active");
+    shortsPanel.classList.add("active");
+    videosPanel.classList.remove("active");
+});
+
+</script>
+
+<%- include('partials/serviceworker') %>
+
+</body>
+</html>
