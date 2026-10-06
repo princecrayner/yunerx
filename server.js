@@ -137,125 +137,82 @@ app.post(
 
         try {
 
-            console.log("===== PROFILE UPLOAD START =====");
-
-            console.log("Session user:", req.session.user);
-
-            console.log("File:", req.file);
-
-
             if (!req.file) {
-
-                return res.status(400).send(
-                    "Please select a profile picture."
-                );
-
+                return res.status(400).send("Please select a profile picture.");
             }
-
 
             if (!req.session.user) {
-
-                return res.status(401).send(
-                    "You must be logged in to upload a profile picture."
-                );
-
+                return res.status(401).send("You must be logged in to upload a profile picture.");
             }
 
+            // Look up the user's CURRENT image before replacing it,
+            // so we know what to delete from Cloudinary afterward
+            const existingUser = await User.findById(req.session.user._id);
+            const oldImageUrl = existingUser ? existingUser.profileImage : null;
 
-            // Upload image to Cloudinary
-            const result =
-                await new Promise((resolve, reject) => {
+            // Upload the new image to Cloudinary
+            const result = await new Promise((resolve, reject) => {
 
-                    const stream =
-                        cloudinary.uploader.upload_stream(
-                            {
-                                folder: "yunerx/profile-pictures",
-                                resource_type: "image"
-                            },
-                            (error, result) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: "yunerx/profile-pictures",
+                        resource_type: "image"
+                    },
+                    (error, result) => {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(result);
+                        }
+                    }
+                );
 
-                                if (error) {
+                stream.end(req.file.buffer);
 
-                                    reject(error);
+            });
 
-                                } else {
-
-                                    resolve(result);
-
-                                }
-
-                            }
-                        );
-
-
-                    stream.end(req.file.buffer);
-
-                });
-
-
-            console.log(
-                "Cloudinary upload successful:",
-                result.secure_url
-            );
-
-
-            // Save Cloudinary URL in MongoDB
+            // Save the new Cloudinary URL in MongoDB
             await User.findByIdAndUpdate(
                 req.session.user._id,
-                {
-                    profileImage: result.secure_url
+                { profileImage: result.secure_url }
+            );
+
+            req.session.user.profileImage = result.secure_url;
+
+            // Now that the new image is safely saved, delete the OLD one
+            // from Cloudinary — but only if it was actually a Cloudinary
+            // upload, not the default local "/profile.png" image
+            if (oldImageUrl && oldImageUrl.includes("res.cloudinary.com")) {
+
+                try {
+
+                    const urlParts = oldImageUrl.split("/");
+                    const fileWithExtension = urlParts[urlParts.length - 1];
+                    const publicId = "yunerx/profile-pictures/" + fileWithExtension.split(".")[0];
+
+                    await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+
+                } catch (cleanupError) {
+
+                    console.error("Old profile picture cleanup error:", cleanupError);
+
                 }
-            );
 
-
-            // Update current session
-            req.session.user.profileImage =
-                result.secure_url;
-
-
-            console.log(
-                "PROFILE IMAGE SAVED:",
-                result.secure_url
-            );
-
-            console.log("===== PROFILE UPLOAD SUCCESS =====");
-
+            }
 
             res.redirect("/settings");
 
-
         } catch (error) {
 
-            console.error(
-                "===== PROFILE UPLOAD ERROR ====="
-            );
+            console.error("Profile upload error:", error);
 
-            console.error(error);
-
-            console.error(
-                "Error message:",
-                error.message
-            );
-
-            console.error(
-                "Error stack:",
-                error.stack
-            );
-
-            console.error(
-                "================================="
-            );
-
-
-            res.status(500).send(
-                "Profile picture upload failed: " +
-                error.message
-            );
+            res.status(500).send("Profile picture upload failed: " + error.message);
 
         }
 
     }
 );
+
 
 
 // =========================
@@ -270,12 +227,34 @@ app.post("/remove-profile-picture", async (req, res) => {
             return res.status(401).send("You must be logged in.");
         }
 
+        const existingUser = await User.findById(req.session.user._id);
+        const oldImageUrl = existingUser ? existingUser.profileImage : null;
+
         await User.findByIdAndUpdate(
             req.session.user._id,
             { profileImage: "/profile.png" }
         );
 
         req.session.user.profileImage = "/profile.png";
+
+        // Delete the old image from Cloudinary, if it was actually stored there
+        if (oldImageUrl && oldImageUrl.includes("res.cloudinary.com")) {
+
+            try {
+
+                const urlParts = oldImageUrl.split("/");
+                const fileWithExtension = urlParts[urlParts.length - 1];
+                const publicId = "yunerx/profile-pictures/" + fileWithExtension.split(".")[0];
+
+                await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+
+            } catch (cleanupError) {
+
+                console.error("Profile picture cleanup error:", cleanupError);
+
+            }
+
+        }
 
         res.redirect("/settings");
 
@@ -288,7 +267,6 @@ app.post("/remove-profile-picture", async (req, res) => {
     }
 
 });
-
 
 
 // ABOUT PAGE
