@@ -125,11 +125,203 @@ input, textarea {
 }
 
 
+/* PROFILE AREA */
+.profile-area{
+
+    display:flex;
+    
+    position: relative;
+    
+    top: 20px;
+  
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.welcome-text{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+    
+}
+
+.welcome-text span{
+
+    font-size:15px;
+
+    color:#777;
+
+    font-weight:500;
+
+}
+
+.welcome-text h3{
+
+    margin:0;
+
+    font-size:24px;
+
+    color:#111;
+
+    font-weight:700;
+
+}
+  
+.default-user-icon{
+
+    width:45px;
+
+    height:45px;
+
+    border:3px solid royalblue;
+
+    border-radius:50%;
+    
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#fff;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+    
+    margin-left: 25px;
+
+}
+
+.default-user-icon i{
+
+    font-size:56px;
+
+    
+
+    color:royalblue;
+
+}
+
+.default-user-icon:active {
+    border:3px solid #1f2937;
+    transform: scale(1.05);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .default-user-icon:hover {
+      border:3px solid #1f2937;
+      transform: scale(1.05);
+    }
+}       
+
+
+.profile-pic-top{
+
+    width:45px;
+  
+    height:45px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid royalblue;
+
+    display:block;
+    
+    margin-left: 25px;
+
+}
+
+.profile-pic-top:active {
+    border:3px solid #1f2937;
+    transform: scale(1.05);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .profile-pic-top:hover {
+      border:3px solid #1f2937;
+      transform: scale(1.05);
+    }
+}   
+
+
+.profile-link {
+
+    text-decoration: none;
+    display: inline-block;
+}
+
+.profile-link:hover{
+    text-decoration: none;
+}
+
+@media (min-width: 768px) {
+
+.profile-area{
+
+        top: 0px;
+}
+
+.welcome-text h3{
+
+    margin:0;
+
+    font-size:18px;
+
+    color:#111;
+
+    font-weight:700;
+
+}
+
+
+.default-user-icon{
+
+    width:35px;
+
+    height:35px;
+
+    border:3px solid royalblue;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#fff;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+
+    margin-left: 25px;
+
+}
+
+
+.default-user-icon i{
+
+    font-size:28px;
+
+    color:royalblue;
+
+  }
+
+}
+
+
+
 /* LOGO */
 .logo img{
     position: fixed;
     right: 15px;
-    top: 38px;
+    top: 55px;
     height: 45px;
     width: 45px;
     object-fit: cover;
