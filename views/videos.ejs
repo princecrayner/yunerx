@@ -353,12 +353,6 @@ button{
 </div>
   
   
-  
-  
-    <!-- UPLOAD -->
-    <div class="upload-btn" id="uploadBtn">
-      <i class='bx bx-plus'></i>
-    </div>
 
 
 <!-- =========================
@@ -433,33 +427,27 @@ button{
 <script src="/script.js"></script>
 
 
+
 <script>
 
-const uploadBtn = document.getElementById("uploadBtn");
 const uploadContainer = document.getElementById("uploadContainer");
-
 const closeUpload = document.getElementById("closeUpload");
-
-if (uploadBtn && uploadContainer) {
-
-    uploadBtn.addEventListener("click", () => {
-
-        uploadContainer.classList.add("active");
-
-    });
-
-}
-
 
 if (closeUpload && uploadContainer) {
 
     closeUpload.addEventListener("click", () => {
-
         uploadContainer.classList.remove("active");
-
     });
 
 }
+
+// Auto-open the upload modal if we were sent here from another page's "+" button
+const urlParams = new URLSearchParams(window.location.search);
+
+if (urlParams.get("openUpload") === "1" && uploadContainer) {
+    uploadContainer.classList.add("active");
+}
+
 
 
 // =========================
@@ -632,6 +620,7 @@ removeVideoBtn.addEventListener("click", () => {
 
 </script>
 
+<%- include('partials/footer') %>
 
 <%- include('partials/serviceworker') %>
 

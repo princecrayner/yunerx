@@ -1,0 +1,287 @@
+<style>
+
+.yt-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 68px;
+    background: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    z-index: 999;
+    transition: transform 0.25s ease;
+}
+
+.yt-footer.hide-on-scroll {
+    transform: translateY(100%);
+}
+
+.yt-footer-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: #9aa0ab;
+    flex: 1;
+    height: 100%;
+}
+
+.yt-footer-item i {
+    font-size: 24px;
+}
+
+.yt-footer-item span {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.yt-footer-item.active {
+    color: #4169e1;
+}
+
+.yt-upload-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #4169e1;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(65,105,225,0.5);
+    transform: translateY(-10px);
+}
+
+.yt-upload-btn:active {
+    transform: translateY(-10px) scale(0.95);
+}
+
+
+/* =========================================
+   DESKTOP — sidebar instead of bottom bar
+========================================= */
+
+@media (min-width: 768px) {
+
+    .yt-footer {
+        top: 65px;
+        left: 0;
+        bottom: 0;
+        width: 220px;
+        height: calc(100vh - 65px);
+        background: white;
+        border-right: 1px solid #e5e7eb;
+        box-shadow: none;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 20px;
+        gap: 10px;
+    }
+
+    .yt-footer.hide-on-scroll {
+        /* Hide-on-scroll is a mobile-only behavior — never hide the desktop sidebar */
+        transform: none;
+    }
+
+    .yt-footer-item {
+        flex-direction: row;
+        justify-content: flex-start;
+        height: 44px;
+        width: 85%;
+        gap: 12px;
+        padding: 0 14px;
+        background: #1f2937;
+        color: #cbd5e1;
+        border-radius: 10px;
+        transition: 0.25s ease;
+        flex: none;
+    }
+
+    .yt-footer-item:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .yt-footer-item.active {
+        background: #2563eb;
+        color: white;
+    }
+
+    .yt-footer-item i {
+        font-size: 22px;
+    }
+
+    .yt-footer-item span {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .yt-upload-btn {
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 85%;
+        height: 44px;
+        border-radius: 10px;
+        gap: 12px;
+        padding: 0 14px;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .yt-upload-btn:active {
+        transform: scale(0.98);
+    }
+
+    .yt-upload-btn::after {
+        content: "Upload";
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+}
+
+</style>
+
+<nav class="yt-footer" id="ytFooter">
+
+    <a href="/" class="yt-footer-item" data-path="/">
+        <i class='bx bx-home-alt'></i>
+        <span>Home</span>
+    </a>
+
+    <a href="/chats" class="yt-footer-item" data-path="/chats">
+        <i class='bx bx-message-rounded-dots'></i>
+        <span>Chats</span>
+    </a>
+
+    <button type="button" class="yt-upload-btn" id="footerUploadBtn">
+        <i class='bx bx-plus'></i>
+    </button>
+
+    <a href="/videos" class="yt-footer-item" data-path="/videos">
+        <i class='bx bx-play-circle'></i>
+        <span>Videos</span>
+    </a>
+
+    <a href="/docs" class="yt-footer-item" data-path="/docs">
+        <i class='bx bx-file'></i>
+        <span>Docs</span>
+    </a>
+
+</nav>
+
+<script>
+
+(function() {
+
+    const footer = document.getElementById("ytFooter");
+    const items = document.querySelectorAll(".yt-footer-item");
+    const path = window.location.pathname;
+
+    // =========================
+    // ACTIVE TAB HIGHLIGHTING
+    // =========================
+
+    items.forEach((item) => {
+
+        const dataPath = item.getAttribute("data-path");
+
+        let isActive = false;
+
+        if (dataPath === "/") {
+
+            isActive = path === "/";
+
+        } else if (dataPath === "/videos") {
+
+            isActive = path.startsWith("/videos") || path.startsWith("/watch") || path.startsWith("/shorts");
+
+        } else if (dataPath === "/chats") {
+
+            isActive = path.startsWith("/chats") || path.startsWith("/chat/") ||
+                       path.startsWith("/group") || path.startsWith("/story") ||
+                       path.startsWith("/creategroup");
+
+        } else {
+
+            isActive = path.startsWith(dataPath);
+
+        }
+
+        if (isActive) {
+            item.classList.add("active");
+        }
+
+        // Tapping Home while already on Home scrolls to top instead of reloading
+        if (dataPath === "/" && isActive) {
+
+            item.addEventListener("click", (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+        }
+
+    });
+
+
+    // =========================
+    // HIDE ON SCROLL DOWN, SHOW ON SCROLL UP (mobile only — desktop sidebar ignores this via CSS)
+    // =========================
+
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener("scroll", () => {
+
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > lastScrollY && currentScrollY > 80) {
+
+            footer.classList.add("hide-on-scroll");
+
+        } else {
+
+            footer.classList.remove("hide-on-scroll");
+
+        }
+
+        lastScrollY = currentScrollY;
+
+    }, { passive: true });
+
+
+    // =========================
+    // "+" UPLOAD BUTTON
+    // =========================
+
+    const footerUploadBtn = document.getElementById("footerUploadBtn");
+
+    footerUploadBtn.addEventListener("click", () => {
+
+        const existingUploadContainer = document.getElementById("uploadContainer");
+
+        if (existingUploadContainer) {
+
+            existingUploadContainer.classList.add("active");
+
+        } else {
+
+            window.location.href = "/videos?openUpload=1";
+
+        }
+
+    });
+
+})();
+
+</script>
