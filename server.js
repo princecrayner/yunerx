@@ -98,16 +98,21 @@ function loadQuestions() {
 // home page
 app.get("/", (req, res) => {
 
-    console.log(req.session.user);
-
     res.render("index", {
-
-        user: req.session.user
-
+        user: req.session.user,
     });
 
 });
 
+app.get("/uploadvideos", (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/login?redirect=/uploadvideos");
+    }
+
+    res.render("uploadvideos");
+
+});
 
 
 
@@ -289,11 +294,6 @@ app.get("/logout", (req, res) => {
 
 app.get("/download", (req, res) => {
     res.render("download");
-});
-
-
-app.get("/videos", (req, res) => {
-    res.render("videos");
 });
 
 

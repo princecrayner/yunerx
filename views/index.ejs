@@ -2,221 +2,28 @@
 <html lang="en">
 
 <head>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yunerx</title>
 
     <link rel="stylesheet" href="/style.css">
-    
+
     <link rel="manifest" href="/manifest.json">
 
-
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    
-    
-<style>
-    
-.profile-area{
-
-    display:flex;
-    
-    position: relative;
-    
-    top: 20px;
-  
-    align-items:center;
-
-    gap:15px;
-
-}
-
-.welcome-text{
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-    
-}
-
-.welcome-text span{
-
-    font-size:15px;
-
-    color:#777;
-
-    font-weight:500;
-
-}
-
-.welcome-text h3{
-
-    margin:0;
-
-    font-size:24px;
-
-    color:#111;
-
-    font-weight:700;
-
-}
-  
-.default-user-icon{
-
-    width:45px;
-
-    height:45px;
-
-    border:3px solid royalblue;
-
-    border-radius:50%;
-    
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:#fff;
-
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
-    
-    margin-left: 25px;
-
-}
-
-.default-user-icon i{
-
-    font-size:56px;
-
-    
-
-    color:royalblue;
-
-}
-
-.default-user-icon:active {
-    border:3px solid #1f2937;
-    transform: scale(1.05);
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .default-user-icon:hover {
-      border:3px solid #1f2937;
-      transform: scale(1.05);
-    }
-}       
-
-
-.profile-pic-top{
-
-    width:45px;
-  
-    height:45px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    border:3px solid royalblue;
-
-    display:block;
-    
-    margin-left: 25px;
-
-}
-
-.profile-pic-top:active {
-    border:3px solid #1f2937;
-    transform: scale(1.05);
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .profile-pic-top:hover {
-      border:3px solid #1f2937;
-      transform: scale(1.05);
-    }
-}   
-
-
-.profile-link {
-
-    text-decoration: none;
-    display: inline-block;
-}
-
-.profile-link:hover{
-    text-decoration: none;
-}
-
-@media (min-width: 768px) {
-
-.profile-area{
-
-        top: 0px;
-}
-
-.welcome-text h3{
-
-    margin:0;
-
-    font-size:18px;
-
-    color:#111;
-
-    font-weight:700;
-
-}
-
-
-.default-user-icon{
-
-    width:35px;
-
-    height:35px;
-
-    border:3px solid royalblue;
-
-    border-radius:50%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:#fff;
-
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
-
-    margin-left: 25px;
-
-}
-
-
-.default-user-icon i{
-
-    font-size:28px;
-
-    color:royalblue;
-
-  }
-
-}
-
-</style>
 
 </head>
 
 <body>
+
 
 <!-- Splash Screen -->
 <div class="splash-screen" id="splash">
 
     <img src="/images/logo.png" alt="Logo">
     <p>Connect • Learn • Share</p>
-    
 
 </div>
 
@@ -269,40 +76,40 @@
 
 </div>
 
-
     <!-- LOGO -->
     <div class="logo">
         <img src="/images/logo.png" alt="Logo">
     </div>
 
-
 </div>
 
+
+<!-- =========================================
+     MAIN PAGE (home)
+========================================= -->
+
+<main id="homePage">
 
 <!-- SLIDER -->
 <div class="imgContainer">
 
     <div class="wrapper">
 
-        <img src="images/image1.png" alt="image">
-        <img src="images/image2.png" alt="image">
-        <img src="images/image3.png" alt="image">
-        <img src="images/image4.png" alt="image">
-        <img src="images/image5.png" alt="image">
+        <img src="/images/image1.png" alt="image">
+        <img src="/images/image2.png" alt="image">
+        <img src="/images/image3.png" alt="image">
+        <img src="/images/image4.png" alt="image">
+        <img src="/images/image5.png" alt="image">
 
-
-
-        <img src="images/image1.png" aria-hidden="true">
-        <img src="images/image2.png" aria-hidden="true">
-        <img src="images/image3.png" aria-hidden="true">
-        <img src="images/image4.png" aria-hidden="true">
-        <img src="images/image5.png" aria-hidden="true">
+        <img src="/images/image1.png" aria-hidden="true">
+        <img src="/images/image2.png" aria-hidden="true">
+        <img src="/images/image3.png" aria-hidden="true">
+        <img src="/images/image4.png" aria-hidden="true">
+        <img src="/images/image5.png" aria-hidden="true">
 
     </div>
 
 </div>
-
-  
 
 <!-- MAIN CONTENT -->
 
@@ -313,7 +120,7 @@
     <h1>📚 Yunerx Learning</h1>
 
 <div class="objective-btn">
-  
+
     <a href="/objectivequizes">
         OBJ Quiz
     </a>
@@ -321,16 +128,15 @@
     <a href="/objective-pdfs">
         OBJ Past Questions
     </a>
-    
-</div>    
-    
+
+</div>
+
 <div class="objective-hdr">
     <h6>Practice random questions by topic</h6>
-    
+
     <h6>Past questions from previous exams</h6>
 </div>
 </div>
-
 
 <!-- LEVELS -->
 
@@ -343,37 +149,22 @@
 
 <div class="level-btn">
 
-    <a
-        href="/theory-pdfs/level/100"
-        class="levelBtn"
-    >
-        LEVEL 100
-    </a>
+    <a href="/theory-pdfs/level/100" class="levelBtn">LEVEL 100</a>
 
-    <a
-        href="/theory-pdfs/level/200"
-        class="levelBtn"
-    >
-        LEVEL 200
-    </a>
+    <a href="/theory-pdfs/level/200" class="levelBtn">LEVEL 200</a>
 
-    <a
-        href="/theory-pdfs/level/300"
-        class="levelBtn"
-    >
-        LEVEL 300
-    </a>
-
-</div>
-
+    <a href="/theory-pdfs/level/300" class="levelBtn">LEVEL 300</a>
 
 </div>
 
 </div>
 
+</div>
 
-<%- include('partials/footer') %>
+</main>
 
+
+<%- include('partials/footer') %> 
 
 <script src="/script.js"></script>
 

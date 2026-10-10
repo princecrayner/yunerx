@@ -28,143 +28,108 @@ const { Message, Story } = require("../models/Message");
 const User = require("../models/User");
 
 
+// =========================================
+// CHATS DATA (used by the /chats/fragment route)
+// =========================================
 
-router.get("/chats", async (req, res) => {
-    try {
+async function loadChatsData(currentUser) {
 
-        if (!req.session.user) {
-            return res.redirect("/login?redirect=/chats");
+    const messages = await Message.find({
+        $or: [{ sender: currentUser }, { receiver: currentUser }]
+    }).sort({ _id: -1 }).lean();
+
+    // Unread = messages sent to me that I haven't seen
+    const unreadCounts = {};
+
+    for (const m of messages) {
+
+        if (m.receiver === currentUser && !m.seen && m.sender) {
+            unreadCounts[m.sender] = (unreadCounts[m.sender] || 0) + 1;
         }
+
+    }
+
+    // One row per person: their newest message
+    const conversations = [];
+    const seenUsers = new Set();
+
+    for (const message of messages) {
+
+        const otherUser = message.sender === currentUser ? message.receiver : message.sender;
+
+        if (!otherUser || seenUsers.has(otherUser)) continue;
+
+        seenUsers.add(otherUser);
+
+        conversations.push({
+            username: otherUser,
+            message: message.message,
+            time: message.time,
+            date: message.date,
+            seen: message.seen,
+            sender: message.sender,
+            unreadCount: unreadCounts[otherUser] || 0
+        });
+
+    }
+
+    const groups = await Group.find({ members: currentUser }).sort({ _id: -1 }).lean();
+
+    // Stories from contacts, minus anyone I muted or who hid their story from me
+    const contactUsernames = conversations.map(c => c.username);
+
+    const me = await User.findOne({ username: currentUser }).select("mutedStoryUsers").lean();
+    const muted = (me && me.mutedStoryUsers) || [];
+
+    const contactStories = await Story.find({
+        username: { $in: contactUsernames, $nin: muted }
+    }).sort({ createdAt: -1 }).lean();
+
+    const owners = await User.find({
+        username: { $in: [...new Set(contactStories.map(s => s.username))] }
+    }).select("username hiddenStoryFrom").lean();
+
+    const hiddenFrom = new Map(owners.map(u => [u.username, u.hiddenStoryFrom || []]));
+
+    const seenStoryUsers = new Set();
+    const stories = [];
+
+    for (const story of contactStories) {
+
+        if ((hiddenFrom.get(story.username) || []).includes(currentUser)) continue;
+        if (seenStoryUsers.has(story.username)) continue;
+
+        seenStoryUsers.add(story.username);
+        stories.push(story);
+
+    }
+
+    const myStory = await Story.findOne({ username: currentUser }).sort({ createdAt: -1 }).lean();
+
+    return { conversations, groups, stories, myStory };
+
+}
+
+
+// /chats is its own page again
+router.get("/chats", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/login?redirect=/chats");
+    }
+
+    try {
 
         const currentUser = req.session.user.username;
 
-        // Get all private messages involving the current user
-        const messages = await Message.find({
-            $or: [
-                { sender: currentUser },
-                { receiver: currentUser }
-            ]
-        })
-        .sort({ _id: -1 })
-        .lean();
-
-        const unreadMessages = await Message.find({
-            receiver: currentUser,
-            seen: false
-        })
-        .select("sender")
-        .lean();
-
-        const unreadCounts = {};
-
-        for (const unreadMessage of unreadMessages) {
-            if (!unreadMessage.sender) {
-                continue;
-            }
-            unreadCounts[unreadMessage.sender] =
-                (unreadCounts[unreadMessage.sender] || 0) + 1;
-        }
-
-        const conversations = [];
-        const seenUsers = new Set();
-
-        for (const message of messages) {
-
-            const otherUser =
-                message.sender === currentUser
-                    ? message.receiver
-                    : message.sender;
-
-            if (!otherUser) {
-                continue;
-            }
-
-            if (seenUsers.has(otherUser)) {
-                continue;
-            }
-
-            seenUsers.add(otherUser);
-
-            const unreadCount = unreadCounts[otherUser] || 0;
-
-            conversations.push({
-                username: otherUser,
-                message: message.message,
-                time: message.time,
-                date: message.date,
-                seen: message.seen,
-                sender: message.sender,
-                unreadCount
-            });
-        }
-
-               // NEW: load the user's real groups, same as /groups does
-        const groups = await Group.find({
-            members: currentUser
-        }).sort({
-            _id: -1
-        });
-
-               // Get list of contact usernames (people the user has messaged)
-        const contactUsernames = conversations.map(
-            convo => convo.username
-        );
-
-        // Load the current user's own hide/mute preferences
-        const currentUserDoc = await User.findOne({ username: currentUser });
-        const mutedStoryUsers = currentUserDoc?.mutedStoryUsers || [];
-
-        // Fetch stories from contacts, newest first —
-        // excluding anyone the current user has muted,
-        // and excluding anyone who has hidden their story from the current user
-        const contactStories = await Story.find({
-            username: {
-                $in: contactUsernames,
-                $nin: mutedStoryUsers
-            }
-        }).sort({ createdAt: -1 });
-
-        // Also filter out stories from users who've hidden their story specifically from this viewer
-        const visibleContactStories = [];
-
-        for (const story of contactStories) {
-
-            const storyOwner = await User.findOne({ username: story.username });
-
-            if (storyOwner && storyOwner.hiddenStoryFrom.includes(currentUser)) {
-                continue;
-            }
-
-            visibleContactStories.push(story);
-
-        }
-
-        // Fetch the current user's own story (if any)
-        const myStory = await Story.findOne({
-            username: currentUser
-        }).sort({ createdAt: -1 });
-
-                // Keep only the newest story per contact (one circle per person)
-        const seenStoryUsers = new Set();
-        const stories = [];
-
-        for (const story of visibleContactStories) {
-
-            if (seenStoryUsers.has(story.username)) {
-                continue;
-            }
-
-            seenStoryUsers.add(story.username);
-            stories.push(story);
-
-        }
+        const data = await loadChatsData(currentUser);
 
         res.render("chats", {
-            messages: conversations,
-            groups,
+            messages: data.conversations,
+            groups: data.groups,
             currentUser,
-            stories,
-            myStory
+            stories: data.stories,
+            myStory: data.myStory
         });
 
     } catch (error) {
@@ -172,7 +137,9 @@ router.get("/chats", async (req, res) => {
         console.error("Chats page error:", error);
 
         res.status(500).send("Unable to load chats.");
+
     }
+
 });
 
 

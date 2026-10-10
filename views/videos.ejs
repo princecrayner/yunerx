@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Videos</title>
+
+<title>Videos-Page</title>
 
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -17,26 +18,6 @@ body{
     padding-bottom:100px;
 }
 
-.upload-btn {
-   position: absolute;
-   top: 15px;
-   right: 15px;
-
-   width: 40px;
-   height: 40px;
-
-   padding: 0;
-   background: #555;
-   border-radius: 50%;
-   cursor:pointer;
-
-   display: flex;
-   align-items: center;
-   justify-content: center;
-}
-.upload-btn i {
-  font-size: 28px;
-}
 
 .video-grid{
     display:grid;
@@ -56,116 +37,6 @@ video{
     aspect-ratio:16/9;
     object-fit:cover;
     border-radius:10px;
-}
-
-.upload-container {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-
-    width: 100%;
-    height: 70%;
-    border-radius: 15px 15px 0 0;
-
-    background: #333;
-    box-sizing: border-box;
-    padding: 50px;
-    padding-bottom: none;
-
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-
-    z-index: 3000;
-}
-
-.upload-container.active {
-    transform: translateY(0);
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin-bottom:15px;
-    box-sizing: border-box;
-}
-
-
-
-button{
-    width:100%;
-    padding:12px;
-    border:none;
-    background:red;
-    color:white;
-    font-size:18px;
-    cursor:pointer;
-}
-
-.footer{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    background:#000;
-    display:flex;
-    justify-content:space-around;
-    padding:15px 0;
-}
-
-.footer-icon{
-    color:white;
-    font-size:28px;
-    cursor:pointer;
-}
-
-.close-upload {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-
-    width: 40px;
-    height: 40px;
-
-    padding: 0;
-
-    background: #555;
-    border-radius: 50%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.close-upload i {
-    font-size: 28px;
-}
-
-
-.type-toggle {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.type-option {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    background: #444;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.type-option input {
-    display: none;
-}
-
-.type-option:has(input:checked) {
-    background: red;
-    font-weight: bold;
 }
 
 
@@ -232,127 +103,11 @@ button{
     to { transform: rotate(360deg); }
 }
 
-
-.file-picker {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 30px 15px;
-    border: 2px dashed #555;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    color: #ccc;
-    text-align: center;
-    transition: 0.2s ease;
-}
-
-.file-picker:hover {
-    border-color: red;
-    color: white;
-}
-
-.file-picker i {
-    font-size: 32px;
-}
-
-.file-picker span {
-    font-size: 14px;
-}
-
-.video-preview-box {
-    position: relative;
-    margin-bottom: 15px;
-}
-
-.video-preview-box video {
-    width: 100%;
-    border-radius: 10px;
-    max-height: 300px;
-    background: black;
-}
-
-.remove-video-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: auto;
-    padding: 6px 12px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(0,0,0,0.7);
-    font-size: 13px;
-    border-radius: 20px;
-}
-
 </style>
 
 </head>
 <body>
 
-  
-  <div class="upload-container" id="uploadContainer">
-  
-  <button type="button" class="close-upload" id="closeUpload">
-    <i class='bx bx-x'></i>
-</button>
-
-<h1>Upload Video</h1>
-
-<form action="/uploadvideo" method="POST" enctype="multipart/form-data">
-
-<input type="text" name="title" placeholder="Video Title" required>
-
-<div class="type-toggle">
-
-    <label class="type-option">
-        <input type="radio" name="type" value="long" checked>
-        <span>📹 Long Video</span>
-    </label>
-
-    <label class="type-option">
-        <input type="radio" name="type" value="short">
-        <span>⚡ Short</span>
-    </label>
-
-</div>
-
-<div class="file-picker" id="videoFilePicker">
-
-    <i class='bx bx-cloud-upload'></i>
-    <span id="videoFileLabel">Choose a video file</span>
-
-</div>
-
-<input
-    type="file"
-    name="video"
-    id="videoFileInput"
-    accept="video/mp4"
-    required
-    style="display:none;"
->
-
-<div class="video-preview-box" id="videoPreviewBox" style="display:none;">
-
-    <video id="videoPreviewPlayer" muted controls></video>
-
-    <button type="button" class="remove-video-btn" id="removeVideoBtn">
-        <i class='bx bx-x'></i>
-        Remove
-    </button>
-
-</div>
-
-<button type="submit">Upload</button>
-</form>
-
-</div>
-  
-  
 
 
 <!-- =========================
@@ -429,26 +184,6 @@ button{
 
 
 <script>
-
-const uploadContainer = document.getElementById("uploadContainer");
-const closeUpload = document.getElementById("closeUpload");
-
-if (closeUpload && uploadContainer) {
-
-    closeUpload.addEventListener("click", () => {
-        uploadContainer.classList.remove("active");
-    });
-
-}
-
-// Auto-open the upload modal if we were sent here from another page's "+" button
-const urlParams = new URLSearchParams(window.location.search);
-
-if (urlParams.get("openUpload") === "1" && uploadContainer) {
-    uploadContainer.classList.add("active");
-}
-
-
 
 // =========================
 // INFINITE SCROLL FEED
@@ -575,47 +310,6 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 observer.observe(feedSentinel);
-
-
-
-const videoFilePicker = document.getElementById("videoFilePicker");
-const videoFileInput = document.getElementById("videoFileInput");
-const videoFileLabel = document.getElementById("videoFileLabel");
-const videoPreviewBox = document.getElementById("videoPreviewBox");
-const videoPreviewPlayer = document.getElementById("videoPreviewPlayer");
-const removeVideoBtn = document.getElementById("removeVideoBtn");
-
-videoFilePicker.addEventListener("click", () => {
-    videoFileInput.click();
-});
-
-videoFileInput.addEventListener("change", () => {
-
-    const file = videoFileInput.files[0];
-
-    if (!file) {
-        return;
-    }
-
-    const videoUrl = URL.createObjectURL(file);
-
-    videoPreviewPlayer.src = videoUrl;
-    videoPreviewBox.style.display = "block";
-    videoFilePicker.style.display = "none";
-
-    videoFileLabel.textContent = file.name;
-
-});
-
-removeVideoBtn.addEventListener("click", () => {
-
-    videoFileInput.value = "";
-    videoPreviewPlayer.src = "";
-    videoPreviewBox.style.display = "none";
-    videoFilePicker.style.display = "flex";
-    videoFileLabel.textContent = "Choose a video file";
-
-});
 
 
 </script>

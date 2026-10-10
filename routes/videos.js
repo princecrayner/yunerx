@@ -70,15 +70,6 @@ router.get("/videos", async (req, res) => {
 });
 
 // UPLOAD PAGE
-router.get("/uploadvideo", (req, res) => {
-
-    if (!req.session.user) {
-        return res.redirect("/login");
-    }
-
-    res.render("uploadvideo");
-
-});
 
 // UPLOAD VIDEO
 router.post("/uploadvideo", upload.single("video"), async (req, res) => {

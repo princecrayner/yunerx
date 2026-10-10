@@ -1,4 +1,4 @@
-const CACHE_NAME = "yunerx-cache-v4";
+const CACHE_NAME = "yunerx-cache-v9";
 
 const urlsToCache = [
     "/",

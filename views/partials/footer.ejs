@@ -1,5 +1,10 @@
 <style>
 
+.yt-footer,
+.yt-footer * {
+    box-sizing: border-box;
+}
+
 .yt-footer {
     position: fixed;
     bottom: 0;
@@ -12,6 +17,7 @@
     justify-content: space-around;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
     z-index: 999;
+    font-family: Arial, Helvetica, sans-serif;
     transition: transform 0.25s ease;
 }
 
@@ -19,16 +25,23 @@
     transform: translateY(100%);
 }
 
+/* ---------- tabs ---------- */
+
 .yt-footer-item {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 3px;
-    text-decoration: none;
-    color: #9aa0ab;
     flex: 1;
     height: 100%;
+    text-decoration: none;
+    color: #9aa0ab;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .yt-footer-item i {
@@ -44,31 +57,65 @@
     color: #4169e1;
 }
 
+/* keep icon and label above the ripple */
+.yt-footer-item i,
+.yt-footer-item span {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- grey ripple (tabs only, never the upload button) ---------- */
+
+.yt-footer .yt-footer-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(190,195,205,0.45);
+    transform: scale(0);
+    animation: yt-footer-ripple 600ms ease-out forwards;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes yt-footer-ripple {
+    from { transform: scale(0); opacity: 0.8; }
+    to   { transform: scale(1); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .yt-footer .yt-footer-ripple { animation-duration: 200ms; }
+}
+
+/* ---------- upload button ---------- */
+
 .yt-upload-btn {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: #4169e1;
     color: white;
-    border: none;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 26px;
-    cursor: pointer;
     flex-shrink: 0;
+    cursor: pointer;
     box-shadow: 0 4px 12px rgba(65,105,225,0.5);
     transform: translateY(-10px);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .yt-upload-btn:active {
     transform: translateY(-10px) scale(0.95);
 }
 
+.yt-upload-btn.active {
+    background: #dbeafe;
+    color: #2563eb;
+    box-shadow: 0 4px 12px rgba(65,105,225,0.25);
+}
 
-/* =========================================
-   DESKTOP — sidebar instead of bottom bar
-========================================= */
+/* ---------- desktop: left sidebar ---------- */
 
 @media (min-width: 768px) {
 
@@ -89,27 +136,21 @@
     }
 
     .yt-footer.hide-on-scroll {
-        /* Hide-on-scroll is a mobile-only behavior — never hide the desktop sidebar */
         transform: none;
     }
 
     .yt-footer-item {
         flex-direction: row;
         justify-content: flex-start;
-        height: 44px;
+        flex: none;
         width: 85%;
+        height: 44px;
         gap: 12px;
         padding: 0 14px;
         background: #1f2937;
         color: #cbd5e1;
         border-radius: 10px;
         transition: 0.25s ease;
-        flex: none;
-    }
-
-    .yt-footer-item:hover {
-        background: #2563eb;
-        color: white;
     }
 
     .yt-footer-item.active {
@@ -123,17 +164,15 @@
 
     .yt-footer-item span {
         font-size: 15px;
-        font-weight: 500;
     }
 
     .yt-upload-btn {
-        flex-direction: row;
-        justify-content: flex-start;
         width: 85%;
         height: 44px;
         border-radius: 10px;
         gap: 12px;
         padding: 0 14px;
+        justify-content: flex-start;
         transform: none;
         box-shadow: none;
     }
@@ -150,31 +189,41 @@
 
 }
 
+/* hover only on mouse devices, so it doesn't stick after a tap on touch screens */
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+
+    .yt-footer-item:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+}
+
 </style>
 
 <nav class="yt-footer" id="ytFooter">
 
     <a href="/" class="yt-footer-item" data-path="/">
-        <i class='bx bx-home-alt'></i>
+        <i class="bx bx-home-alt"></i>
         <span>Home</span>
     </a>
 
     <a href="/chats" class="yt-footer-item" data-path="/chats">
-        <i class='bx bx-message-rounded-dots'></i>
+        <i class="bx bx-message-rounded-dots"></i>
         <span>Chats</span>
     </a>
 
-    <button type="button" class="yt-upload-btn" id="footerUploadBtn">
-        <i class='bx bx-plus'></i>
-    </button>
+    <a href="/uploadvideos" class="yt-upload-btn" id="footerUploadBtn" data-path="/uploadvideos" aria-label="Upload video">
+        <i class="bx bx-plus"></i>
+    </a>
 
     <a href="/videos" class="yt-footer-item" data-path="/videos">
-        <i class='bx bx-play-circle'></i>
+        <i class="bx bx-play-circle"></i>
         <span>Videos</span>
     </a>
 
     <a href="/docs" class="yt-footer-item" data-path="/docs">
-        <i class='bx bx-file'></i>
+        <i class="bx bx-file"></i>
         <span>Docs</span>
     </a>
 
@@ -182,62 +231,130 @@
 
 <script>
 
-(function() {
+(function () {
+
+    const RIPPLE_DELAY = 150;   // ms the ripple plays before the next page starts loading
 
     const footer = document.getElementById("ytFooter");
-    const items = document.querySelectorAll(".yt-footer-item");
+
+    if (!footer) {
+        return;
+    }
+
+    const items = footer.querySelectorAll(".yt-footer-item");
+    const uploadBtn = document.getElementById("footerUploadBtn");
     const path = window.location.pathname;
 
-    // =========================
-    // ACTIVE TAB HIGHLIGHTING
-    // =========================
+    // ---------- which tab is active ----------
 
-    items.forEach((item) => {
-
-        const dataPath = item.getAttribute("data-path");
-
-        let isActive = false;
+    function isActivePath(dataPath) {
 
         if (dataPath === "/") {
-
-            isActive = path === "/";
-
-        } else if (dataPath === "/videos") {
-
-            isActive = path.startsWith("/videos") || path.startsWith("/watch") || path.startsWith("/shorts");
-
-        } else if (dataPath === "/chats") {
-
-            isActive = path.startsWith("/chats") || path.startsWith("/chat/") ||
-                       path.startsWith("/group") || path.startsWith("/story") ||
-                       path.startsWith("/creategroup");
-
-        } else {
-
-            isActive = path.startsWith(dataPath);
-
+            return path === "/";
         }
 
-        if (isActive) {
-            item.classList.add("active");
+        if (dataPath === "/videos") {
+            return path.startsWith("/videos") || path.startsWith("/watch") || path.startsWith("/shorts");
         }
 
-        // Tapping Home while already on Home scrolls to top instead of reloading
-        if (dataPath === "/" && isActive) {
+        if (dataPath === "/chats") {
+            return path.startsWith("/chats") || path.startsWith("/chat/") ||
+                   path.startsWith("/group") || path.startsWith("/story") ||
+                   path.startsWith("/creategroup");
+        }
 
-            item.addEventListener("click", (e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-            });
+        return path === dataPath || path.startsWith(dataPath + "/");
+
+    }
+
+    items.forEach((item) => {
+        item.classList.toggle("active", isActivePath(item.getAttribute("data-path")));
+    });
+
+    if (uploadBtn) {
+        uploadBtn.classList.toggle("active", path === "/uploadvideos");
+    }
+
+    // ---------- ripple: starts where the finger touched ----------
+
+    function createRipple(element, event) {
+
+        const rect = element.getBoundingClientRect();
+        const diameter = Math.max(rect.width, rect.height) * 2;
+
+        const ripple = document.createElement("span");
+
+        ripple.className = "yt-footer-ripple";
+        ripple.style.width = diameter + "px";
+        ripple.style.height = diameter + "px";
+
+        // keyboard "clicks" have no position, so use the center
+        const fromKeyboard = event.detail === 0;
+
+        const x = fromKeyboard ? rect.width / 2 : event.clientX - rect.left;
+        const y = fromKeyboard ? rect.height / 2 : event.clientY - rect.top;
+
+        ripple.style.left = (x - diameter / 2) + "px";
+        ripple.style.top = (y - diameter / 2) + "px";
+
+        element.appendChild(ripple);
+
+        ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+
+        // cleanup in case the animation event never fires
+        setTimeout(() => ripple.remove(), 800);
+
+    }
+
+    footer.addEventListener("click", (event) => {
+
+        const link = event.target.closest("a");
+
+        // The upload button (and anything else) is a plain link: no ripple, no delay
+        if (!link || !link.classList.contains("yt-footer-item")) {
+            return;
+        }
+
+        // let ctrl/cmd/shift clicks (open in new tab) behave normally
+        if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+            return;
+        }
+
+        createRipple(link, event);
+
+        const href = link.getAttribute("href");
+
+        if (!href) {
+            return;
+        }
+
+        // Tapping Home while already on Home scrolls to the top
+        if (href === "/" && path === "/") {
+            event.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            return;
+        }
+
+        const destination = new URL(href, window.location.href);
+
+        if (destination.origin === window.location.origin) {
+
+            event.preventDefault();
+
+            setTimeout(() => {
+                window.location.href = destination.href;
+            }, RIPPLE_DELAY);
 
         }
 
     });
 
+    // Coming back with the browser's back button can restore a half-played ripple
+    window.addEventListener("pageshow", () => {
+        footer.querySelectorAll(".yt-footer-ripple").forEach((ripple) => ripple.remove());
+    });
 
-    // =========================
-    // HIDE ON SCROLL DOWN, SHOW ON SCROLL UP (mobile only — desktop sidebar ignores this via CSS)
-    // =========================
+    // ---------- hide on scroll down, show on scroll up (mobile only) ----------
 
     let lastScrollY = window.scrollY;
 
@@ -245,42 +362,15 @@
 
         const currentScrollY = window.scrollY;
 
-        if (currentScrollY > lastScrollY && currentScrollY > 80) {
-
-            footer.classList.add("hide-on-scroll");
-
-        } else {
-
+        if (window.innerWidth >= 768) {
             footer.classList.remove("hide-on-scroll");
-
+        } else {
+            footer.classList.toggle("hide-on-scroll", currentScrollY > lastScrollY && currentScrollY > 80);
         }
 
         lastScrollY = currentScrollY;
 
     }, { passive: true });
-
-
-    // =========================
-    // "+" UPLOAD BUTTON
-    // =========================
-
-    const footerUploadBtn = document.getElementById("footerUploadBtn");
-
-    footerUploadBtn.addEventListener("click", () => {
-
-        const existingUploadContainer = document.getElementById("uploadContainer");
-
-        if (existingUploadContainer) {
-
-            existingUploadContainer.classList.add("active");
-
-        } else {
-
-            window.location.href = "/videos?openUpload=1";
-
-        }
-
-    });
 
 })();
 
