@@ -543,9 +543,16 @@ input, textarea {
     transition: 0.3s ease;
 }
 
-.btn:hover{
+.btn:active {
     background: #2563eb;
     transform: translateY(-2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+.btn:hover {
+    background: #2563eb;
+    transform: translateY(-2);
+    }
 }
 
 /* IMAGE CONTAINER */
