@@ -1,44 +1,104 @@
+<% function fmt(n) {
+    n = Number(n) || 0;
+    if (n < 1000) return String(n);
+    if (n < 1000000) return (Math.floor(n / 100) / 10) + "K";
+    return (Math.floor(n / 100000) / 10) + "M";
+} -%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Videos-Page</title>
-
+<title>Videos - Yunerx</title>
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <style>
 
-body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    margin:0;
-    padding-bottom:100px;
+body.page-videos {
+    margin: 0;
+    padding: 0 0 100px;          /* room for the mobile footer */
+    background: white;
+    color: #111;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-
-.video-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:20px;
-    padding:20px;
+/* the top bar only exists on desktop */
+.page-top {
+    display: none;
 }
 
-.video-card{
-    background:#222;
-    padding:10px;
-    border-radius:10px;
+.feed-empty {
+    padding: 40px 20px;
+    color: #888;
+    text-align: center;
 }
 
-video{
-    width:100%;
-    aspect-ratio:16/9;
-    object-fit:cover;
-    border-radius:10px;
+.feed-heading {
+    margin: 0;
+    padding: 14px 20px 10px;
+    font-size: 20px;
 }
 
+/* ---------- long videos ---------- */
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3px;
+    border-top: 4px solid grey;
+    border-bottom: 4px solid grey;
+}
+
+.video-card {
+    display: block;
+    background: white;
+    color: #111;
+    text-decoration: none;
+}
+
+.video-card video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: #000;
+}
+
+/* title, likes and views in one row under the video */
+.video-meta {
+    display: flex;
+    flex-wrap: wrap;                 /* on a very narrow screen the numbers drop below the title */
+    align-items: baseline;
+    gap: 4px 12px;
+    padding: 10px 12px 14px;
+}
+
+.video-title {
+    flex: 1 1 140px;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-stats {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: #606060;
+}
+
+.video-stats b {
+    color: #111;
+    font-weight: 600;
+}
+
+/* ---------- shorts ---------- */
 
 .shorts-row {
     display: flex;
@@ -62,27 +122,23 @@ video{
 }
 
 .short-card video {
+    display: block;
     width: 140px;
     height: 220px;
     object-fit: cover;
-    border-radius: 12px 12px 0 0;
-    aspect-ratio: unset;
+    background: #000;
 }
 
 .short-card p {
+    margin: 0;
     padding: 8px;
     font-size: 12px;
-    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.video-card {
-    text-decoration: none;
-    color: white;
-    display: block;
-}
+/* ---------- loading spinner ---------- */
 
 .feed-loading {
     display: none;
@@ -93,7 +149,7 @@ video{
 .loading-spinner {
     width: 30px;
     height: 30px;
-    border: 3px solid #444;
+    border: 3px solid #ddd;
     border-top: 3px solid red;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
@@ -103,22 +159,96 @@ video{
     to { transform: rotate(360deg); }
 }
 
+
+/* =========================================
+   DESKTOP: footer becomes a 220px sidebar on the left
+========================================= */
+
+@media (min-width: 768px) {
+
+    body.page-videos {
+        padding: 90px 28px 40px 248px;    /* top bar 65px + gap, sidebar 220px + gap */
+    }
+
+    .page-top {
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        padding: 0 24px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        z-index: 1000;
+    }
+
+    .page-top h1 {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .feed {
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .feed-block + .feed-block {
+        margin-top: 36px;
+    }
+
+    .feed-heading {
+        padding: 8px 0 14px;
+    }
+
+    .video-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 28px 18px;
+        border: none;
+    }
+
+    .video-card video {
+        border-radius: 12px;
+    }
+
+    .video-meta {
+        padding: 10px 2px 0;
+    }
+
+    .shorts-row {
+        gap: 14px;
+        padding: 14px 0 22px;
+        scrollbar-width: thin;           /* mouse users can see and drag it */
+    }
+
+    .short-card {
+        flex: 0 0 180px;
+    }
+
+    .short-card video {
+        width: 180px;
+        height: 300px;
+    }
+
+}
+
 </style>
 
 </head>
-<body>
+
+<body class="page-videos">
+
+<header class="page-top">
+    <h1>Videos</h1>
+</header>
 
 
-
-<!-- =========================
-     FEED (long videos + shorts, repeating, infinite scroll)
-========================= -->
-
-<div id="feedContainer">
+<div class="feed" id="feedContainer">
 
     <% if (!hasContent) { %>
 
-        <p style="padding:40px 20px; color:#888; text-align:center;">No videos yet,be the first.</p>
+        <p class="feed-empty">No videos yet, be the first.</p>
 
     <% } else { %>
 
@@ -126,17 +256,29 @@ video{
 
             <% if (longVideos.length > 0) { %>
 
-                <h1 style="padding-left:20px;">Videos</h1>
+                <h2 class="feed-heading">Videos</h2>
 
                 <div class="video-grid">
 
                     <% longVideos.forEach(video => { %>
 
                         <a href="/watch/<%= video._id %>" class="video-card">
-                            <video muted>
-                                <source src="<%= video.videoUrl %>">
+
+                            <video muted playsinline preload="metadata">
+                                <source src="<%= video.videoUrl %>#t=0.1" type="video/mp4">
                             </video>
-                            <p><%= video.title %></p>
+
+                            <div class="video-meta">
+
+                                <span class="video-title"><%= video.title %></span>
+
+                                <span class="video-stats">
+                                    <span>Likes: <b><%= fmt(video.likeCount) %></b></span>
+                                    <span>Views: <b><%= fmt(video.viewCount) %></b></span>
+                                </span>
+
+                            </div>
+
                         </a>
 
                     <% }) %>
@@ -147,17 +289,20 @@ video{
 
             <% if (shorts.length > 0) { %>
 
-                <h1 style="padding-left:20px;">Shorts</h1>
+                <h2 class="feed-heading">Shorts</h2>
 
                 <div class="shorts-row">
 
                     <% shorts.forEach(video => { %>
 
                         <a href="/shorts/<%= video._id %>" class="short-card">
-                            <video muted>
-                                <source src="<%= video.videoUrl %>">
+
+                            <video muted playsinline preload="metadata">
+                                <source src="<%= video.videoUrl %>#t=0.1" type="video/mp4">
                             </video>
+
                             <p><%= video.title %></p>
+
                         </a>
 
                     <% }) %>
@@ -179,142 +324,181 @@ video{
 <div id="feedSentinel"></div>
 
 
-<script src="/script.js"></script>
-
-
+<%- include('partials/footer') %>
 
 <script>
 
-// =========================
-// INFINITE SCROLL FEED
-// =========================
+(function () {
 
-let currentOffset = <%- nextOffset %>;
-let isLoading = false;
-let feedHasContent = <%- hasContent %>;
+    // =========================
+    // INFINITE SCROLL FEED
+    // =========================
 
-const feedContainer = document.getElementById("feedContainer");
-const feedLoading = document.getElementById("feedLoading");
-const feedSentinel = document.getElementById("feedSentinel");
+    let currentOffset = <%- nextOffset %>;
+    let currentShortOffset = <%- nextShortOffset %>;
+    let isLoading = false;
+    let feedHasContent = <%- hasContent %>;
 
-function buildLongVideoHtml(video) {
+    const feedContainer = document.getElementById("feedContainer");
+    const feedLoading = document.getElementById("feedLoading");
+    const feedSentinel = document.getElementById("feedSentinel");
 
-    return `
-        <a href="/watch/${video._id}" class="video-card">
-            <video muted>
-                <source src="${video.videoUrl}">
-            </video>
-            <p>${video.title}</p>
-        </a>
-    `;
+    // Titles are typed by users: never put them into the page unescaped
+    function escapeHtml(value) {
 
-}
+        return String(value == null ? "" : value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
 
-function buildShortHtml(video) {
-
-    return `
-        <a href="/shorts/${video._id}" class="short-card">
-            <video muted>
-                <source src="${video.videoUrl}">
-            </video>
-            <p>${video.title}</p>
-        </a>
-    `;
-
-}
-
-async function loadNextBlock() {
-
-    if (isLoading || !feedHasContent) {
-        return;
     }
 
-    isLoading = true;
-    feedLoading.style.display = "flex";
+    // 1200 -> 1.2K, 3400000 -> 3.4M (same as the server version above)
+    function fmt(n) {
 
-    try {
+        n = Number(n) || 0;
 
-        const response = await fetch(`/videos/feed?offset=${currentOffset}`);
+        if (n < 1000) return String(n);
+        if (n < 1000000) return (Math.floor(n / 100) / 10) + "K";
 
-        if (!response.ok) {
-            throw new Error("Feed request failed");
-        }
+        return (Math.floor(n / 100000) / 10) + "M";
 
-        const data = await response.json();
+    }
 
-        if (!data.hasContent) {
-            feedHasContent = false;
+    function buildLongVideoHtml(video) {
+
+        return `
+            <a href="/watch/${escapeHtml(video._id)}" class="video-card">
+                <video muted playsinline preload="metadata">
+                    <source src="${escapeHtml(video.videoUrl)}#t=0.1" type="video/mp4">
+                </video>
+                <div class="video-meta">
+                    <span class="video-title">${escapeHtml(video.title)}</span>
+                    <span class="video-stats">
+                        <span>Likes: <b>${fmt(video.likeCount)}</b></span>
+                        <span>Views: <b>${fmt(video.viewCount)}</b></span>
+                    </span>
+                </div>
+            </a>
+        `;
+
+    }
+
+    function buildShortHtml(video) {
+
+        return `
+            <a href="/shorts/${escapeHtml(video._id)}" class="short-card">
+                <video muted playsinline preload="metadata">
+                    <source src="${escapeHtml(video.videoUrl)}#t=0.1" type="video/mp4">
+                </video>
+                <p>${escapeHtml(video.title)}</p>
+            </a>
+        `;
+
+    }
+
+    function buildHeading(text) {
+
+        const heading = document.createElement("h2");
+
+        heading.className = "feed-heading";
+        heading.textContent = text;
+
+        return heading;
+
+    }
+
+    async function loadNextBlock() {
+
+        if (isLoading || !feedHasContent) {
             return;
         }
 
-        const block = document.createElement("div");
-        block.className = "feed-block";
+        isLoading = true;
+        feedLoading.style.display = "flex";
 
-        if (data.longVideos.length > 0) {
+        try {
 
-            const heading = document.createElement("h1");
-            heading.style.paddingLeft = "20px";
-            heading.textContent = "Videos";
-            block.appendChild(heading);
+            const response = await fetch(
+                 "/videos/feed?offset=" + currentOffset +
+                 "&shortOffset=" + currentShortOffset
+            );
 
-            const videoGrid = document.createElement("div");
-            videoGrid.className = "video-grid";
-            videoGrid.innerHTML = data.longVideos.map(buildLongVideoHtml).join("");
-            block.appendChild(videoGrid);
+            if (!response.ok) {
+                throw new Error("Feed request failed");
+            }
+
+            const data = await response.json();
+
+            if (!data.hasContent) {
+                feedHasContent = false;
+                return;
+            }
+
+            const block = document.createElement("div");
+            block.className = "feed-block";
+
+            if (data.longVideos.length > 0) {
+
+                block.appendChild(buildHeading("Videos"));
+
+                const videoGrid = document.createElement("div");
+                videoGrid.className = "video-grid";
+                videoGrid.innerHTML = data.longVideos.map(buildLongVideoHtml).join("");
+                block.appendChild(videoGrid);
+
+            }
+
+            if (data.shorts.length > 0) {
+
+                block.appendChild(buildHeading("Shorts"));
+
+                const shortsRow = document.createElement("div");
+                shortsRow.className = "shorts-row";
+                shortsRow.innerHTML = data.shorts.map(buildShortHtml).join("");
+                block.appendChild(shortsRow);
+
+            }
+
+            feedContainer.appendChild(block);
+
+            currentOffset = data.nextOffset;
+            currentShortOffset = data.nextShortOffset;
+
+        } catch (error) {
+
+            console.error("Error loading more videos:", error);
+
+        } finally {
+
+            isLoading = false;
+            feedLoading.style.display = "none";
 
         }
-
-        if (data.shorts.length > 0) {
-
-            const heading = document.createElement("h1");
-            heading.style.paddingLeft = "20px";
-            heading.textContent = "Shorts";
-            block.appendChild(heading);
-
-            const shortsRow = document.createElement("div");
-            shortsRow.className = "shorts-row";
-            shortsRow.innerHTML = data.shorts.map(buildShortHtml).join("");
-            block.appendChild(shortsRow);
-
-        }
-
-        feedContainer.appendChild(block);
-
-        currentOffset = data.nextOffset;
-
-    } catch (error) {
-
-        console.error("Error loading more videos:", error);
-
-    } finally {
-
-        isLoading = false;
-        feedLoading.style.display = "none";
 
     }
 
-}
+    const observer = new IntersectionObserver((entries) => {
 
-const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
 
-    entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                loadNextBlock();
+            }
 
-        if (entry.isIntersecting) {
-            loadNextBlock();
-        }
+        });
 
+    }, {
+        rootMargin: "400px"
     });
 
-}, {
-    rootMargin: "400px"
-});
+    observer.observe(feedSentinel);
 
-observer.observe(feedSentinel);
-
+})();
 
 </script>
-
-<%- include('partials/footer') %>
 
 <%- include('partials/serviceworker') %>
 

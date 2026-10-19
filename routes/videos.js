@@ -26,47 +26,47 @@ const upload = multer({
     }
 });
 
-// VIDEOS PAGE (renders the first block, rest loads via infinite scroll)
+// What the videos page needs from a video: counts only, never the lists of usernames
+function toCard(video) {
+
+    return {
+        _id: video._id,
+        title: video.title,
+        videoUrl: video.videoUrl,
+        viewCount: (video.views || []).length,
+        likeCount: (video.likes || []).length
+    };
+
+}
+
+
+// VIDEOS PAGE — first batch of unique videos and Shorts
 router.get("/videos", async (req, res) => {
-
     try {
-
         if (!req.session.user) {
             return res.redirect("/login?redirect=/videos");
         }
 
-        const totalLong = await Video.countDocuments({ type: "long" });
+        const longVideos = await Video.find({ type: "long" })
+            .sort({ createdAt: -1, _id: -1 })
+            .limit(BLOCK_SIZE);
 
-        let longVideos = [];
-
-        if (totalLong > 0) {
-            longVideos = await Video.find({ type: "long" })
-                .sort({ createdAt: -1 })
-                .limit(BLOCK_SIZE);
-        }
-
-        const shorts = await Video.aggregate([
-            { $match: { type: "short" } },
-            { $sample: { size: BLOCK_SIZE } }
-        ]);
-
-        const nextOffset = totalLong > 0 ? BLOCK_SIZE % totalLong : 0;
+        const shorts = await Video.find({ type: "short" })
+            .sort({ createdAt: -1, _id: -1 })
+            .limit(BLOCK_SIZE);
 
         res.render("videos", {
-            longVideos,
-            shorts,
-            nextOffset,
+            longVideos: longVideos.map(toCard),
+            shorts: shorts.map(toCard),
+            nextOffset: longVideos.length,
+            nextShortOffset: shorts.length,
             hasContent: longVideos.length > 0 || shorts.length > 0
         });
 
     } catch (error) {
-
         console.error("Videos page error:", error);
-
         res.status(500).send("Unable to load videos.");
-
     }
-
 });
 
 // UPLOAD PAGE
@@ -274,77 +274,58 @@ router.post("/shorts/:id/view", async (req, res) => {
 
 const BLOCK_SIZE = 7;
 
-// FEED — returns one block of long videos + one block of random shorts
+
+// FEED — load the next videos without looping
 router.get("/videos/feed", async (req, res) => {
-
     try {
-
         if (!req.session.user) {
-            return res.status(401).json({ message: "Please login first." });
+            return res.status(401).json({
+                message: "Please login first."
+            });
         }
 
-        const offset = parseInt(req.query.offset) || 0;
+        const offset = Math.max(
+            0,
+            parseInt(req.query.offset, 10) || 0
+        );
 
-        const totalLong = await Video.countDocuments({ type: "long" });
+        const shortOffset = Math.max(
+            0,
+            parseInt(req.query.shortOffset, 10) || 0
+        );
 
-        let longVideos = [];
+        const [longVideos, shorts] = await Promise.all([
+            Video.find({ type: "long" })
+                .sort({ createdAt: -1, _id: -1 })
+                .skip(offset)
+                .limit(BLOCK_SIZE),
 
-        if (totalLong > 0) {
-
-            if (offset + BLOCK_SIZE <= totalLong) {
-
-                longVideos = await Video.find({ type: "long" })
-                    .sort({ createdAt: -1 })
-                    .skip(offset)
-                    .limit(BLOCK_SIZE);
-
-            } else {
-
-                // Wrap around to the beginning once we reach the end,
-                // so the feed never runs dry — same idea as social apps looping content
-                const firstPart = await Video.find({ type: "long" })
-                    .sort({ createdAt: -1 })
-                    .skip(offset)
-                    .limit(totalLong - offset);
-
-                const remaining = BLOCK_SIZE - firstPart.length;
-
-                const secondPart = remaining > 0
-                    ? await Video.find({ type: "long" })
-                        .sort({ createdAt: -1 })
-                        .skip(0)
-                        .limit(remaining)
-                    : [];
-
-                longVideos = [...firstPart, ...secondPart];
-
-            }
-
-        }
-
-        // Random shorts — different suggestions every time, repeats allowed (like a real shorts feed)
-        const shorts = await Video.aggregate([
-            { $match: { type: "short" } },
-            { $sample: { size: BLOCK_SIZE } }
+            Video.find({ type: "short" })
+                .sort({ createdAt: -1, _id: -1 })
+                .skip(shortOffset)
+                .limit(BLOCK_SIZE)
         ]);
 
-        const nextOffset = totalLong > 0 ? (offset + BLOCK_SIZE) % totalLong : 0;
+        const nextOffset = offset + longVideos.length;
+        const nextShortOffset = shortOffset + shorts.length;
 
         res.json({
-            longVideos,
-            shorts,
+            longVideos: longVideos.map(toCard),
+            shorts: shorts.map(toCard),
             nextOffset,
-            hasContent: longVideos.length > 0 || shorts.length > 0
+            nextShortOffset,
+            hasContent:
+                longVideos.length > 0 ||
+                shorts.length > 0
         });
 
     } catch (error) {
-
         console.error("Video feed error:", error);
 
-        res.status(500).json({ message: "Unable to load feed." });
-
+        res.status(500).json({
+            message: "Unable to load feed."
+        });
     }
-
 });
 
 
