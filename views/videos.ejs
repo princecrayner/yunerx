@@ -26,8 +26,23 @@ body.page-videos {
 
 /* the top bar only exists on desktop */
 .page-top {
-    display: none;
-}
+        display: flex;
+        align-items: center;
+        position: static;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        padding: 0 24px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        z-index: 1000;
+    }
+
+.page-top h1 {
+        margin: 0;
+        font-size: 20px;
+    }
 
 .feed-empty {
     padding: 40px 20px;
@@ -256,7 +271,6 @@ body.page-videos {
 
             <% if (longVideos.length > 0) { %>
 
-                <h2 class="feed-heading">Videos</h2>
 
                 <div class="video-grid">
 
@@ -288,8 +302,6 @@ body.page-videos {
             <% } %>
 
             <% if (shorts.length > 0) { %>
-
-                <h2 class="feed-heading">Shorts</h2>
 
                 <div class="shorts-row">
 
