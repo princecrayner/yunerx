@@ -12,12 +12,40 @@
 
 <style>
 
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+
+    outline: none;
+}
+
+
+input, textarea {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
+
+/* ============================================
+   YUNERX — VIDEO UPLOAD PAGE
+   Responsive: Mobile / Tablet / Desktop
+   ============================================ */
+
 body.page-upload {
-    margin: 0 0 100px;
-    padding: 0;
-    background: #fff;
-    color: black;
+    margin: 0;
+    padding: 0 0 110px;
+    min-height: 100vh;
+    background: #f7f9fc;
+    color: #172033;
     font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .upload-page,
@@ -30,195 +58,566 @@ body.page-upload {
 }
 
 .upload-page {
-    max-width: 560px;
+    width: 100%;
+    max-width: 850px;
     margin: 0 auto;
+    padding: 25px 20px 50px;
 }
 
-/* header */
+/* ============================================
+   HEADER
+   ============================================ */
 
 .upload-page .upload-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-bottom: 1px solid grey;
+    gap: 15px;
+    padding: 0 0 22px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid #e5e9f0;
 }
 
 .upload-page .upload-header h1 {
     margin: 0;
-    font-size: 22px;
+    color: #172033;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .upload-page .upload-back {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
-    background: #555;
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 1px solid #e4e8ef;
+    border-radius: 13px;
+    background: #fff;
+    color: #253047;
     font-size: 24px;
     cursor: pointer;
-    flex-shrink: 0;
+    transition: 0.2s ease;
 }
 
-/* card */
+.upload-page .upload-back:hover {
+    background: #edf4ff;
+    border-color: #bdd6ff;
+    color: #0866ff;
+    transform: translateX(-2px);
+}
+
+/* ============================================
+   MAIN UPLOAD CARD
+   ============================================ */
 
 .upload-page .upload-card {
-    border-radius: 15px;
-    padding: 55px;
+    width: 100%;
+    padding: 38px;
+    border: 1px solid #e8ecf2;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow:
+        0 4px 12px rgba(20, 35, 65, 0.025),
+        0 16px 45px rgba(20, 35, 65, 0.045);
 }
+
+.upload-page #uploadForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ============================================
+   VIDEO TITLE INPUT
+   ============================================ */
 
 .upload-page input[type="text"] {
+    display: block;
     width: 100%;
-    padding: 12px;
-    margin-bottom: 50px;
-    border-top: grey;
-    border-radius: 8px;
-    font-size: 16px;
+    height: 54px;
+    margin: 0 0 28px;
+    padding: 0 17px;
+    border: 1.5px solid #dce3ed;
+    border-radius: 12px;
+    background: #fbfcfe;
+    color: #172033;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
-/* long video / short */
+.upload-page input[type="text"]::placeholder {
+    color: #939eae;
+    font-weight: 400;
+}
+
+.upload-page input[type="text"]:focus {
+    border-color: #0866ff;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(8, 102, 255, 0.09);
+}
+
+/* ============================================
+   LONG VIDEO / SHORT SELECTOR
+   ============================================ */
 
 .upload-page .type-toggle {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
 }
 
 .upload-page .type-option {
-    flex: 1;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px;
-    background: #444;
-    border-radius: 8px;
+    min-height: 62px;
+    padding: 15px 12px;
+    border: 1.5px solid #e1e6ef;
+    border-radius: 13px;
+    background: #f8fafd;
+    color: #566176;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    font-size: 14px;
+    transition: 0.2s ease;
 }
 
 .upload-page .type-option input {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.upload-page .type-option span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.upload-page .type-option:hover {
+    border-color: #8bb9ff;
+    background: #f0f6ff;
+    color: #0866ff;
 }
 
 .upload-page .type-option:has(input:checked) {
-    background: red;
-    font-weight: bold;
+    border-color: #0866ff;
+    background: #edf4ff;
+    color: #0866ff;
+    box-shadow: 0 0 0 1px rgba(8, 102, 255, 0.08);
 }
 
-/* file picker */
+.upload-page .type-option:has(input:focus-visible) {
+    outline: 3px solid rgba(8, 102, 255, 0.3);
+    outline-offset: 3px;
+}
+
+/* ============================================
+   VIDEO FILE PICKER
+   ============================================ */
 
 .upload-page .file-picker {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 30px 15px;
-    border: 2px dashed #555;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    cursor: pointer;
-    color: #ccc;
+    gap: 15px;
+    width: 100%;
+    min-height: 265px;
+    margin-bottom: 25px;
+    padding: 35px 20px;
+    border: 2px dashed #b8cbed;
+    border-radius: 18px;
+    background: #f8fbff;
+    color: #53647e;
     text-align: center;
-    transition: 0.2s ease;
-}
-
-.upload-page .file-picker.invalid {
-    border-color: red;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .upload-page .file-picker i {
-    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 78px;
+    height: 78px;
+    border-radius: 22px;
+    background: #e7f0ff;
+    color: #0866ff;
+    font-size: 43px;
+    transition: 0.2s ease;
 }
 
 .upload-page .file-picker span {
-    font-size: 14px;
+    display: block;
+    max-width: 100%;
+    color: #35435c;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 @media (hover: hover) and (pointer: fine) {
-
     .upload-page .file-picker:hover {
-        border-color: red;
-        color: white;
+        border-color: #0866ff;
+        background: #edf5ff;
+        transform: translateY(-2px);
     }
 
+    .upload-page .file-picker:hover i {
+        background: #dceaff;
+        transform: translateY(-3px);
+    }
 }
 
-/* preview */
+.upload-page .file-picker.invalid {
+    border-color: #ef4444;
+    background: #fff5f5;
+}
+
+.upload-page .file-picker.invalid i {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ============================================
+   VIDEO PREVIEW
+   ============================================ */
 
 .upload-page .video-preview-box {
     position: relative;
-    margin-bottom: 15px;
+    width: 100%;
+    margin-bottom: 25px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #f8fafc;
+    overflow: hidden;
 }
 
 .upload-page .video-preview-box video {
     display: block;
     width: 100%;
-    max-height: 300px;
-    border-radius: 10px;
-    background: black;
+    max-height: 420px;
+    border-radius: 12px;
+    background: #000;
+    object-fit: contain;
 }
 
 .upload-page .remove-video-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
+    top: 22px;
+    right: 22px;
+    z-index: 2;
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 20px;
-    background: rgba(0,0,0,0.7);
-    color: white;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 8px 13px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #fff;
     font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: 0.2s ease;
 }
 
-/* message + submit */
+.upload-page .remove-video-btn i {
+    font-size: 18px;
+}
+
+.upload-page .remove-video-btn:hover {
+    background: #dc2626;
+}
+
+/* ============================================
+   VALIDATION ERROR
+   ============================================ */
 
 .upload-page .upload-error {
-    margin: 0 0 15px;
-    color: #ff6b6b;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #dc2626;
     font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
 }
 
 .upload-page .upload-error:empty {
     display: none;
 }
 
+/* ============================================
+   UPLOAD SUBMIT BUTTON
+   ============================================ */
+
 .upload-page .submit-btn {
-    width: 50%;
-    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 20px;
     border: none;
-    border-radius: 8px;
-    background: red;
-    color: white;
-    font-size: 18px;
+    border-radius: 12px;
+    background: #0866ff;
+    color: #fff;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
     cursor: pointer;
+    box-shadow: 0 5px 15px rgba(8, 102, 255, 0.18);
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.upload-page .submit-btn:hover:not(:disabled) {
+    background: #0054db;
+    box-shadow: 0 8px 20px rgba(8, 102, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+.upload-page .submit-btn:active:not(:disabled) {
+    transform: scale(0.99);
 }
 
 .upload-page .submit-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.65;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
-/* desktop: the footer is a 220px sidebar on the left */
+/* ============================================
+   KEYBOARD ACCESSIBILITY
+   ============================================ */
+
+.upload-page button:focus-visible {
+    outline: 3px solid rgba(8, 102, 255, 0.4);
+    outline-offset: 3px;
+}
+
+/* ============================================
+   TABLET
+   ============================================ */
+
+@media (min-width: 600px) and (max-width: 767px) {
+
+    .upload-page {
+        padding: 30px 24px 60px;
+    }
+
+    .upload-page .upload-card {
+        padding: 32px;
+    }
+
+}
+
+/* ============================================
+   DESKTOP
+   Existing Yunerx sidebar: 220px
+   ============================================ */
 
 @media (min-width: 768px) {
 
     body.page-upload {
-        padding: 0 0 0 220px;
+        margin: 0;
+        padding: 0 0 40px 220px;
+        min-height: 100vh;
     }
 
     .upload-page {
-        padding-top: 40px;
+        max-width: 900px;
+        padding: 45px 35px 70px;
+    }
+
+    .upload-page .upload-header {
+        margin-bottom: 32px;
+    }
+
+    .upload-page .upload-header h1 {
+        font-size: 30px;
+    }
+
+    .upload-page .upload-card {
+        padding: 45px;
+        border-radius: 24px;
+    }
+
+    .upload-page .file-picker {
+        min-height: 300px;
+    }
+
+    .upload-page .video-preview-box video {
+        max-height: 500px;
+    }
+
+}
+
+/* ============================================
+   MOBILE
+   ============================================ */
+
+@media (max-width: 599px) {
+
+    body.page-upload {
+        padding: 0 0 100px;
+        background: #fff;
+    }
+
+    .upload-page {
+        max-width: 100%;
+        padding: 16px 16px 35px;
+    }
+
+    .upload-page .upload-header {
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+
+    .upload-page .upload-header h1 {
+        font-size: 22px;
+    }
+
+    .upload-page .upload-back {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        font-size: 22px;
+    }
+
+    .upload-page .upload-card {
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .upload-page input[type="text"] {
+        height: 52px;
+        margin-bottom: 24px;
+        font-size: 15px;
+    }
+
+    .upload-page .type-toggle {
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .upload-page .type-option {
+        min-height: 58px;
+        padding: 12px 8px;
+        font-size: 13px;
+        border-radius: 12px;
+    }
+
+    .upload-page .file-picker {
+        min-height: 235px;
+        margin-bottom: 24px;
+        padding: 28px 16px;
+        border-radius: 15px;
+    }
+
+    .upload-page .file-picker i {
+        width: 68px;
+        height: 68px;
+        font-size: 38px;
+        border-radius: 19px;
+    }
+
+    .upload-page .file-picker span {
+        font-size: 14px;
+    }
+
+    .upload-page .video-preview-box {
+        padding: 8px;
+        border-radius: 14px;
+    }
+
+    .upload-page .video-preview-box video {
+        max-height: 360px;
+        border-radius: 9px;
+    }
+
+    .upload-page .remove-video-btn {
+        top: 16px;
+        right: 16px;
+    }
+
+    .upload-page .submit-btn {
+        min-height: 52px;
+        border-radius: 11px;
+        font-size: 15px;
+    }
+
+}
+
+/* ============================================
+   VERY SMALL PHONES
+   ============================================ */
+
+@media (max-width: 360px) {
+
+    .upload-page {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .upload-page .upload-header h1 {
+        font-size: 20px;
+    }
+
+    .upload-page .type-option {
+        font-size: 12px;
+        padding: 10px 5px;
+    }
+
+    .upload-page .file-picker {
+        min-height: 210px;
+    }
+
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .upload-page *,
+    .upload-page *::before,
+    .upload-page *::after {
+        transition: none !important;
+        animation: none !important;
     }
 
 }
