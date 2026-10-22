@@ -31,6 +31,11 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     
+       level: {
+        type: String,
+        default: ""
+    },
+    
     profileImage: {
         type: String,
         default: "/profile.png"

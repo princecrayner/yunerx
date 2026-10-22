@@ -22,6 +22,7 @@ const { Server } = require("socket.io");
 const authRoutes = require("./routes/auth");
 const videoRoutes = require("./routes/videos");
 const chatRoutes = require("./routes/chats");
+const challengeRoutes = require("./routes/challenge");
 
 const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
@@ -79,6 +80,7 @@ app.use("/docs", docsRoutes);
 app.use("/", pdfRoutes);
 app.use("/", authRoutes);
 app.use("/", videoRoutes);
+app.use("/", challengeRoutes);
 app.use("/", chatRoutes);
 chatRoutes.setSocketIO(io);
 app.use('/admin', csvRoutes);

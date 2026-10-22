@@ -1,20 +1,29 @@
 const mongoose = require('mongoose');
 
+// Objective questions need options and a letter answer.
+// Fill-in questions need a list of accepted answers instead.
+const isObjective = function () {
+    return this.type === 'objective';
+};
+
+const isFill = function () {
+    return this.type === 'fill';
+};
+
 const questionSchema = new mongoose.Schema(
     {
         type: {
-           type: String,
-           required: true,
-           enum: ['objective', 'theory']
+            type: String,
+            required: true,
+            enum: ['objective', 'fill', 'theory']
         },
-
 
         subject: {
             type: String,
             required: true,
             trim: true
         },
-        
+
         quiz: {
             type: String,
             required: true,
@@ -28,28 +37,37 @@ const questionSchema = new mongoose.Schema(
         },
 
         options: {
-            A: {
-                type: String,
-                required: true
-            },
-            B: {
-                type: String,
-                required: true
-            },
-            C: {
-                type: String,
-                required: true
-            },
-            D: {
-                type: String,
-                required: true
-            }
+            A: { type: String, required: isObjective },
+            B: { type: String, required: isObjective },
+            C: { type: String, required: isObjective },
+            D: { type: String, required: isObjective }
         },
 
         answer: {
             type: String,
-            required: true,
+            required: isObjective,
             enum: ['A', 'B', 'C', 'D']
+        },
+
+        // Fill-in only. Examples: ["photosynthesis"], ["15", "fifteen"]
+        acceptedAnswers: {
+            type: [String],
+            default: undefined,
+            required: isFill,
+            validate: {
+                validator: function (list) {
+
+                    if (this.type !== 'fill') {
+                        return true;
+                    }
+
+                    return Array.isArray(list) &&
+                           list.length > 0 &&
+                           list.every((a) => String(a).trim() !== '');
+
+                },
+                message: 'A fill-in question needs at least one accepted answer.'
+            }
         },
 
         explanation: {
