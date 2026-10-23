@@ -68,7 +68,31 @@ ChallengeAttemptSchema.index({ userId: 1, dateKey: 1 }, { unique: true });
 // Makes the weekly leaderboard fast
 ChallengeAttemptSchema.index({ weekKey: 1, level: 1 });
 
+// When a person first opened today's questions. The server times the run
+// itself, so nobody can send a fake time to win a tie.
+const ChallengeStartSchema = new mongoose.Schema({
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+
+    dateKey: { type: String, required: true },
+
+    // old records delete themselves after 3 days
+    startedAt: {
+        type: Date,
+        default: Date.now,
+        expires: 60 * 60 * 24 * 3
+    }
+
+});
+
+ChallengeStartSchema.index({ userId: 1, dateKey: 1 }, { unique: true });
+
 module.exports = {
     DailyChallenge: mongoose.model("DailyChallenge", DailyChallengeSchema),
-    ChallengeAttempt: mongoose.model("ChallengeAttempt", ChallengeAttemptSchema)
+    ChallengeAttempt: mongoose.model("ChallengeAttempt", ChallengeAttemptSchema),
+    ChallengeStart: mongoose.model("ChallengeStart", ChallengeStartSchema)
 };

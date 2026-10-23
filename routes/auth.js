@@ -553,6 +553,11 @@ router.post("/delete-account", async (req, res) => {
         await Video.deleteMany({ userId: currentUserId });
         await Story.deleteMany({ username: currentUsername });
 
+        const { ChallengeAttempt, ChallengeStart } = require("../models/Challenge");
+
+        await ChallengeAttempt.deleteMany({ userId: currentUserId });
+        await ChallengeStart.deleteMany({ userId: currentUserId });
+
         // Finally, delete the user account itself
         await User.findByIdAndDelete(currentUserId);
 

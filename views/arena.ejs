@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Arena - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<style>
+
+body.page-arena {
+    margin: 0;
+    padding: 0 0 110px;                 /* room for the mobile footer */
+    background: #f5f7fb;
+    color: #1a1a1a;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.page-top { display: none; }            /* desktop only */
+
+.arena,
+.arena * { box-sizing: border-box; }
+
+.arena { max-width: 720px; margin: 0 auto; padding: 18px; }
+
+.arena [hidden] { display: none !important; }
+
+.arena-heading { margin: 4px 0 16px; font-size: 26px; }
+
+/* ---------- shared bits ---------- */
+
+.spinner-wrap { display: flex; justify-content: center; padding: 90px 0; }
+.spinner { width: 34px; height: 34px; border: 3px solid #dfe4f2; border-top-color: #4169e1; border-radius: 50%; animation: arena-spin .8s linear infinite; }
+@keyframes arena-spin { to { transform: rotate(360deg); } }
+
+.load-error { text-align: center; padding: 80px 20px; color: #777; }
+.load-error p { margin: 0 0 16px; }
+
+.btn { border: none; border-radius: 14px; padding: 14px 22px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn-primary { background: #fff; color: #3557c7; width: 100%; }
+.btn-blue { background: #4169e1; color: #fff; }
+.btn-light { background: #fff; color: #3557c7; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+
+.link-btn { background: none; border: none; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; }
+
+.pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.2); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #fff; }
+
+/* ---------- level picker ---------- */
+
+#screen-level, #screen-play, #screen-result { max-width: 720px; margin: 0 auto; }
+
+.level-card { background: #fff; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,.06); }
+.level-card h2 { margin: 0 0 8px; }
+.level-card p { color: #777; margin: 0 0 20px; font-size: 14px; line-height: 1.5; }
+.level-pick { display: grid; gap: 12px; margin-bottom: 14px; }
+.level-pick button { background: #eef2fb; color: #3557c7; border: 2px solid transparent; border-radius: 14px; padding: 16px; font-size: 18px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.level-pick button:active { border-color: #4169e1; }
+.level-error { color: #c0392b; min-height: 18px; margin: 0 0 8px; }
+.level-card .link-btn { color: #667; }
+
+@media (hover: hover) and (pointer: fine) {
+    .level-pick button:hover { border-color: #4169e1; }
+}
+
+/* ---------- home: today's card ---------- */
+
+.hero { background: linear-gradient(135deg, #3557c7, #6a8cff); color: #fff; border-radius: 20px; padding: 22px; box-shadow: 0 10px 28px rgba(65,105,225,.35); }
+.hero-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.hero h2 { margin: 0; font-size: 24px; }
+.hero > p { margin: 6px 0 0; opacity: .9; font-size: 14px; }
+.hero-actions { margin-top: 18px; }
+.hero-note { margin: 12px 0 0; font-size: 13px; opacity: .92; }
+.hero-error { margin: 10px 0 0; font-size: 13px; color: #ffd6d6; min-height: 16px; }
+.hero-result { display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,.15); border-radius: 14px; padding: 14px 16px; }
+.hero-score { font-size: 40px; font-weight: 800; line-height: 1; }
+.hero-score span { font-size: 18px; opacity: .8; }
+.hero-result small { display: block; opacity: .9; margin-top: 4px; }
+
+/* ---------- home: weekly leaderboard ---------- */
+
+.board { background: #fff; border-radius: 18px; margin-top: 18px; box-shadow: 0 3px 15px rgba(0,0,0,.06); overflow: hidden; }
+.board-head { padding: 16px 18px 4px; }
+.board-head h3 { margin: 0; font-size: 18px; }
+.board-head small { color: #888; font-size: 12px; }
+.level-tabs { display: flex; gap: 6px; padding: 10px 14px; }
+.level-tab { flex: 1; border: none; background: #eef2fb; color: #667; padding: 9px; border-radius: 10px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.level-tab.active { background: #4169e1; color: #fff; }
+.row { display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-top: 1px solid #f0f0f0; }
+.row.me { background: #eef2ff; }
+.rank { width: 30px; text-align: center; font-weight: 700; color: #667; flex-shrink: 0; }
+.avatar { position: relative; width: 38px; height: 38px; border-radius: 50%; background: #e9edf7; color: #4169e1; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; font-size: 26px; }
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.who { flex: 1; min-width: 0; }
+.who b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.who small { color: #888; font-size: 12px; }
+.points { font-weight: 800; color: #3557c7; flex-shrink: 0; }
+.board-empty { padding: 28px 18px; text-align: center; color: #888; font-size: 14px; }
+.my-rank { background: #4169e1; color: #fff; padding: 12px 18px; font-weight: 700; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+
+/* ---------- play ---------- */
+
+.play-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 700; }
+.timer { background: #fff; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.06); font-variant-numeric: tabular-nums; }
+.progress { height: 8px; background: #dfe5f5; border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
+.progress-bar { height: 100%; width: 0; background: #4169e1; transition: width .25s; }
+.q-card { background: #fff; border-radius: 18px; padding: 20px; box-shadow: 0 3px 15px rgba(0,0,0,.06); }
+.q-subject { display: inline-block; background: #eef2fb; color: #3557c7; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; margin-bottom: 12px; }
+.q-text { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0 0 16px; white-space: pre-wrap; }
+.option { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; background: #f5f7fb; border: 2px solid transparent; padding: 13px 14px; border-radius: 12px; margin-bottom: 10px; font-size: 15px; cursor: pointer; color: #1a1a1a; font-family: inherit; }
+.option .letter { width: 28px; height: 28px; border-radius: 50%; background: #fff; color: #3557c7; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.option.selected { border-color: #4169e1; background: #eef2ff; }
+.option.selected .letter { background: #4169e1; color: #fff; }
+.fill-input { width: 100%; padding: 14px; border: 2px solid #dfe5f5; border-radius: 12px; font-size: 17px; outline: none; font-family: inherit; }
+.fill-input:focus { border-color: #4169e1; }
+.fill-hint { color: #888; font-size: 13px; margin: 8px 0 0; }
+.play-nav { display: flex; gap: 10px; margin-top: 16px; }
+.play-nav .btn { flex: 1; }
+.play-msg { color: #c0392b; font-size: 14px; margin: 12px 0 0; min-height: 18px; }
+
+/* ---------- result ---------- */
+
+.score-card { background: linear-gradient(135deg, #3557c7, #6a8cff); color: #fff; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 28px rgba(65,105,225,.35); }
+.score-big { font-size: 56px; font-weight: 800; margin: 0; line-height: 1.1; }
+.score-big span { font-size: 24px; opacity: .8; }
+.score-sub { margin: 6px 0 0; opacity: .95; font-size: 16px; }
+.stats { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.review { margin-top: 18px; }
+.review h3 { margin: 0 0 10px; font-size: 18px; }
+.review-item { background: #fff; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; border-left: 5px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+.review-item.ok { border-left-color: #2ecc71; }
+.review-item.bad { border-left-color: #e74c3c; }
+.review-item h4 { margin: 0 0 8px; font-size: 15px; line-height: 1.4; }
+.review-item p { margin: 3px 0; font-size: 14px; color: #444; }
+.review-item .expl { color: #667; font-size: 13px; margin-top: 8px; }
+.result-actions { margin-top: 16px; }
+
+
+/* =========================================
+   DESKTOP: the footer is a 220px sidebar on the left
+========================================= */
+
+@media (min-width: 768px) {
+
+    body.page-arena { padding: 90px 28px 40px 248px; }
+
+    .page-top {
+        display: flex;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 65px;
+        padding: 0 24px;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,.08);
+        z-index: 1000;
+    }
+
+    .page-top h1 { margin: 0; font-size: 20px; }
+
+    .arena-heading { display: none; }
+
+    .arena { padding: 0; max-width: 760px; }
+
+}
+
+@media (min-width: 1100px) {
+
+    .arena { max-width: 1100px; }
+
+    #screen-home .home-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    #screen-home .board { margin-top: 0; }
+
+}
+
+</style>
+
+</head>
+
+<body class="page-arena" data-user="<%= currentUser %>">
+
+<header class="page-top">
+    <h1>Arena</h1>
+</header>
+
+<main class="arena">
+
+    <h1 class="arena-heading">Arena</h1>
+
+    <!-- LOADING -->
+    <section class="screen" id="screen-loading">
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+    </section>
+
+    <!-- LEVEL PICKER -->
+    <section class="screen" id="screen-level" hidden>
+
+        <div class="level-card">
+
+            <h2>Choose your level</h2>
+
+            <p>Your level decides which weekly leaderboard you compete on. Everyone answers the same 10 questions each day.</p>
+
+            <div class="level-pick">
+                <button type="button" data-level="100">Level 100</button>
+                <button type="button" data-level="200">Level 200</button>
+                <button type="button" data-level="300">Level 300</button>
+            </div>
+
+            <p class="level-error" id="levelError"></p>
+
+            <button type="button" class="link-btn" id="levelCancel" hidden>Cancel</button>
+
+        </div>
+
+    </section>
+
+    <!-- HOME -->
+    <section class="screen" id="screen-home" hidden>
+
+        <div class="home-grid">
+
+            <div class="hero" id="hero"></div>
+
+            <div class="board">
+
+                <div class="board-head">
+                    <h3>🏆 Weekly leaderboard</h3>
+                    <small id="boardWeek"></small>
+                </div>
+
+                <div class="level-tabs">
+                    <button type="button" class="level-tab" data-level="100">Level 100</button>
+                    <button type="button" class="level-tab" data-level="200">Level 200</button>
+                    <button type="button" class="level-tab" data-level="300">Level 300</button>
+                </div>
+
+                <div id="boardList"></div>
+
+                <div class="my-rank" id="myRank" hidden></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PLAY -->
+    <section class="screen" id="screen-play" hidden>
+
+        <div class="play-top">
+            <span id="playCount"></span>
+            <span class="timer" id="timer">⏱ 0:00</span>
+        </div>
+
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+        <div class="q-card" id="qCard"></div>
+
+        <p class="play-msg" id="playMsg"></p>
+
+        <div class="play-nav">
+            <button type="button" class="btn btn-light" id="prevBtn">Back</button>
+            <button type="button" class="btn btn-blue" id="nextBtn">Next</button>
+        </div>
+
+    </section>
+
+    <!-- RESULT -->
+    <section class="screen" id="screen-result" hidden>
+
+        <div class="score-card">
+            <p class="score-big" id="scoreBig"></p>
+            <p class="score-sub" id="scoreSub"></p>
+            <div class="stats" id="resultStats"></div>
+        </div>
+
+        <div class="result-actions">
+            <button type="button" class="btn btn-blue" id="backHomeBtn" style="width:100%;">See the leaderboard</button>
+        </div>
+
+        <div class="review">
+            <h3>Review your answers</h3>
+            <div id="reviewList"></div>
+        </div>
+
+    </section>
+
+</main>
+
+
+<%- include('partials/footer') %>
+
+<script>
+
+(function () {
+
+    const currentUser = document.body.dataset.user || "";
+
+    const LOADING_HTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+
+    const SCREENS = ["loading", "level", "home", "play", "result"];
+
+    const $ = (id) => document.getElementById(id);
+
+    let status = null;        // from /challenge/status
+    let myLevel = "";
+    let boardLevel = "";
+
+    let questions = [];
+    let answers = {};         // questionId -> what the student chose or typed
+    let index = 0;
+    let dateKeyPlaying = "";
+    let clockStart = 0;
+    let timerId = null;
+    let submitting = false;
+    let warned = false;
+    let stale = false;
+
+
+    // ---------- helpers ----------
+
+    function show(name) {
+
+        SCREENS.forEach((n) => {
+            $("screen-" + n).hidden = (n !== name);
+        });
+
+        window.scrollTo(0, 0);
+
+    }
+
+    // Anything that came from the database is escaped before it goes into the page
+    function escapeHtml(value) {
+
+        return String(value == null ? "" : value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+
+    }
+
+    function fmtTime(ms) {
+
+        const total = Math.max(0, Math.round(ms / 1000));
+        const minutes = Math.floor(total / 60);
+        const seconds = total % 60;
+
+        return minutes + ":" + String(seconds).padStart(2, "0");
+
+    }
+
+    function weekLabel(weekKey) {
+
+        const d = new Date(weekKey + "T00:00:00Z");
+
+        return "Week of " + d.toLocaleDateString(undefined, { month: "short", day: "numeric", timeZone: "UTC" });
+
+    }
+
+    async function api(url, options) {
+
+        const response = await fetch(url, Object.assign({ credentials: "same-origin" }, options || {}));
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch (e) {}
+
+        // Logged out: go to login and stop whatever was running
+        if (response.status === 401 || data.loginRequired) {
+            window.location.href = "/login?redirect=/arena";
+            return new Promise(function () {});
+        }
+
+        return { ok: response.ok, status: response.status, data: data };
+
+    }
+
+
+    // ---------- home ----------
+
+    function showLoadError() {
+
+        const box = $("screen-loading");
+
+        box.hidden = false;
+
+        box.innerHTML =
+            '<div class="load-error">' +
+                "<p>Could not load the Arena. Check your connection and try again.</p>" +
+                '<button type="button" class="btn btn-blue" id="retryBtn">Try again</button>' +
+            "</div>";
+
+        $("retryBtn").addEventListener("click", function () {
+
+            box.innerHTML = LOADING_HTML;
+
+            loadHome();
+
+        });
+
+    }
+
+    async function loadHome() {
+
+        $("screen-loading").innerHTML = LOADING_HTML;
+
+        show("loading");
+
+        try {
+
+            const result = await api("/challenge/status");
+
+            if (result.data.needLevel) {
+                openLevelPicker(false);
+                return;
+            }
+
+            if (!result.ok) {
+                throw new Error("status failed");
+            }
+
+            status = result.data;
+            myLevel = status.level;
+
+            renderHero();
+
+            show("home");
+
+            loadBoard(myLevel);
+
+        } catch (error) {
+
+            console.error("Arena load error:", error);
+
+            showLoadError();
+
+        }
+
+    }
+
+    function renderHero() {
+
+        const s = status;
+
+        let action;
+
+        if (s.alreadyPlayed) {
+
+            action =
+                '<div class="hero-result">' +
+                    '<div class="hero-score">' + s.result.score + "<span>/" + s.total + "</span></div>" +
+                    "<div><b>Today's score</b><small>Time " + fmtTime(s.result.timeMs) + "</small></div>" +
+                "</div>" +
+                '<p class="hero-note">You are done for today. Come back tomorrow to keep your streak alive!</p>';
+
+        } else {
+
+            action =
+                '<button type="button" class="btn btn-primary" id="startBtn">' +
+                    (s.inProgress ? "Resume challenge" : "Start today's challenge") +
+                "</button>" +
+                (s.inProgress
+                    ? '<p class="hero-note">Your timer is still running.</p>'
+                    : (s.streak > 0 ? '<p class="hero-note">Play today to keep your streak going!</p>' : "")) +
+                '<p class="hero-error" id="heroError"></p>';
+
+        }
+
+        const streakText = s.streak > 0
+            ? "🔥 " + s.streak + (s.streak === 1 ? " day" : " days") + " streak"
+            : "🔥 No streak yet";
+
+        $("hero").innerHTML =
+            '<div class="hero-top">' +
+                '<span class="pill">' + streakText + "</span>" +
+                '<span class="pill">Level ' + escapeHtml(s.level) +
+                    ' <button type="button" class="link-btn" id="changeLevelBtn">Change</button></span>' +
+            "</div>" +
+            "<h2>Daily Challenge</h2>" +
+            "<p>" + s.total + " questions · the same for everyone · a new set every day</p>" +
+            '<div class="hero-actions">' + action + "</div>";
+
+        $("changeLevelBtn").addEventListener("click", function () {
+            openLevelPicker(true);
+        });
+
+        const startBtn = $("startBtn");
+
+        if (startBtn) {
+            startBtn.addEventListener("click", startPlay);
+        }
+
+    }
+
+
+    // ---------- level picker ----------
+
+    function openLevelPicker(canCancel) {
+
+        $("levelCancel").hidden = !canCancel;
+        $("levelError").textContent = "";
+
+        show("level");
+
+    }
+
+    async function saveLevel(level) {
+
+        $("levelError").textContent = "";
+
+        try {
+
+            const result = await api("/challenge/level", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ level: level })
+            });
+
+            if (!result.ok) {
+                throw new Error(result.data.message || "Could not save");
+            }
+
+            loadHome();
+
+        } catch (error) {
+
+            console.error("Level error:", error);
+
+            $("levelError").textContent = "Could not save your level. Please try again.";
+
+        }
+
+    }
+
+
+    // ---------- leaderboard ----------
+
+    async function loadBoard(level) {
+
+        boardLevel = level;
+
+        document.querySelectorAll(".level-tab").forEach(function (tab) {
+            tab.classList.toggle("active", tab.dataset.level === level);
+        });
+
+        $("boardList").innerHTML = '<div class="board-empty">Loading…</div>';
+        $("myRank").hidden = true;
+
+        try {
+
+            const result = await api("/challenge/leaderboard?level=" + encodeURIComponent(level));
+
+            // The student already tapped a different tab
+            if (level !== boardLevel) {
+                return;
+            }
+
+            if (!result.ok) {
+                throw new Error("board failed");
+            }
+
+            renderBoard(result.data);
+
+        } catch (error) {
+
+            console.error("Leaderboard error:", error);
+
+            $("boardList").innerHTML = '<div class="board-empty">Could not load the leaderboard.</div>';
+
+        }
+
+    }
+
+    function renderBoard(data) {
+
+        $("boardWeek").textContent = weekLabel(data.weekKey) + " · resets every Monday";
+
+        const list = $("boardList");
+
+        if (!data.leaders.length) {
+
+            list.innerHTML = '<div class="board-empty">No scores yet this week for Level ' +
+                escapeHtml(data.level) + ". Be the first!</div>";
+
+        } else {
+
+            list.innerHTML = data.leaders.map(function (r) {
+
+                const medal = ["🥇", "🥈", "🥉"][r.rank - 1];
+
+                const avatar =
+                    '<span class="avatar"><i class="bx bxs-user-circle"></i>' +
+                    (r.profileImage
+                        ? '<img src="' + escapeHtml(r.profileImage) + '" alt="" onerror="this.remove()">'
+                        : "") +
+                    "</span>";
+
+                return '<div class="row' + (r.isMe ? " me" : "") + '">' +
+                    '<span class="rank">' + (medal || r.rank) + "</span>" +
+                    avatar +
+                    '<span class="who"><b>' + escapeHtml(r.username) + (r.isMe ? " (you)" : "") + "</b>" +
+                        "<small>" + r.days + (r.days === 1 ? " day" : " days") + " · " + fmtTime(r.timeMs) + "</small></span>" +
+                    '<span class="points">' + r.points + " pts</span>" +
+                "</div>";
+
+            }).join("");
+
+        }
+
+        const mine = $("myRank");
+
+        if (data.mine && data.mine.rank > data.leaders.length) {
+
+            mine.hidden = false;
+            mine.innerHTML = "<span>Your rank: #" + data.mine.rank + " of " + data.totalPlayers + "</span>" +
+                "<span>" + data.mine.points + " pts</span>";
+
+        } else if (!data.mine && data.level === myLevel) {
+
+            mine.hidden = false;
+            mine.innerHTML = "<span>Play today's challenge to get on the board</span>";
+
+        } else {
+
+            mine.hidden = true;
+
+        }
+
+    }
+
+
+    // ---------- playing ----------
+
+    function storageKey() {
+        return "arena:" + currentUser + ":" + dateKeyPlaying;
+    }
+
+    function loadSavedAnswers() {
+
+        try {
+            return JSON.parse(sessionStorage.getItem(storageKey())) || {};
+        } catch (e) {
+            return {};
+        }
+
+    }
+
+    function saveAnswers() {
+
+        try {
+            sessionStorage.setItem(storageKey(), JSON.stringify(answers));
+        } catch (e) {}
+
+    }
+
+    function clearSavedAnswers() {
+
+        try {
+            sessionStorage.removeItem(storageKey());
+        } catch (e) {}
+
+    }
+
+    function startTimer() {
+
+        clearInterval(timerId);
+
+        const tick = function () {
+            $("timer").textContent = "⏱ " + fmtTime(Date.now() - clockStart);
+        };
+
+        tick();
+
+        timerId = setInterval(tick, 1000);
+
+    }
+
+    async function startPlay() {
+
+        const startBtn = $("startBtn");
+
+        if (startBtn) {
+            startBtn.disabled = true;
+            startBtn.textContent = "Loading…";
+        }
+
+        try {
+
+            // This is the moment the clock starts
+            const result = await api("/challenge/today");
+            const data = result.data;
+
+            if (data.needLevel) {
+                openLevelPicker(false);
+                return;
+            }
+
+            if (data.alreadyPlayed) {
+                loadHome();
+                return;
+            }
+
+            if (!result.ok || !data.questions || !data.questions.length) {
+                throw new Error(data.message || "No questions");
+            }
+
+            questions = data.questions;
+            dateKeyPlaying = data.dateKey;
+            answers = loadSavedAnswers();
+            index = 0;
+            warned = false;
+            stale = false;
+            submitting = false;
+
+            clockStart = Date.now() - (data.elapsedMs || 0);
+
+            $("playMsg").textContent = "";
+
+            show("play");
+            renderQuestion();
+            startTimer();
+
+        } catch (error) {
+
+            console.error("Start error:", error);
+
+            if (startBtn) {
+                startBtn.disabled = false;
+                startBtn.textContent = "Try again";
+            }
+
+            const box = $("heroError");
+
+            if (box) {
+                box.textContent = "Could not open today's challenge. Check your connection and try again.";
+            }
+
+        }
+
+    }
+
+    function unansweredCount() {
+
+        return questions.filter(function (q) {
+            return !String(answers[q._id] || "").trim();
+        }).length;
+
+    }
+
+    function updateNav() {
+
+        const last = index === questions.length - 1;
+
+        $("prevBtn").hidden = stale || index === 0;
+
+        $("nextBtn").disabled = submitting;
+
+        if (stale) {
+            $("nextBtn").textContent = "Reload";
+        } else if (last) {
+            $("nextBtn").textContent = warned ? "Submit anyway" : "Finish";
+        } else {
+            $("nextBtn").textContent = "Next";
+        }
+
+    }
+
+    function renderQuestion() {
+
+        const q = questions[index];
+
+        $("playCount").textContent = "Question " + (index + 1) + " of " + questions.length;
+
+        $("progressBar").style.width = ((index + 1) / questions.length * 100) + "%";
+
+        const current = answers[q._id] || "";
+
+        let html =
+            '<span class="q-subject">' + escapeHtml(q.subject) + "</span>" +
+            '<p class="q-text">' + escapeHtml(q.question) + "</p>";
+
+        if (q.type === "objective") {
+
+            html += ["A", "B", "C", "D"].map(function (letter) {
+
+                return '<button type="button" class="option' + (current === letter ? " selected" : "") +
+                    '" data-letter="' + letter + '">' +
+                    '<span class="letter">' + letter + "</span>" +
+                    "<span>" + escapeHtml((q.options || {})[letter]) + "</span></button>";
+
+            }).join("");
+
+        } else {
+
+            html +=
+                '<input type="text" class="fill-input" id="fillInput" autocomplete="off" autocapitalize="off" ' +
+                'autocorrect="off" spellcheck="false" placeholder="Type your answer" value="' + escapeHtml(current) + '">' +
+                '<p class="fill-hint">Spelling counts, capital letters do not.</p>';
+
+        }
+
+        $("qCard").innerHTML = html;
+
+        updateNav();
+
+        const fill = $("fillInput");
+
+        if (fill) {
+            fill.focus();
+        }
+
+    }
+
+    function goNext() {
+
+        if (stale) {
+            window.location.reload();
+            return;
+        }
+
+        if (index < questions.length - 1) {
+            index++;
+            warned = false;
+            $("playMsg").textContent = "";
+            renderQuestion();
+            return;
+        }
+
+        finish();
+
+    }
+
+    function goPrev() {
+
+        if (index > 0) {
+            index--;
+            warned = false;
+            $("playMsg").textContent = "";
+            renderQuestion();
+        }
+
+    }
+
+    async function finish() {
+
+        if (submitting) {
+            return;
+        }
+
+        const missing = unansweredCount();
+
+        if (missing > 0 && !warned) {
+
+            warned = true;
+
+            $("playMsg").textContent = "You have " + missing + " unanswered question" +
+                (missing === 1 ? "" : "s") + ". Tap Submit anyway to finish, or go back to answer.";
+
+            updateNav();
+
+            return;
+
+        }
+
+        submitting = true;
+
+        $("playMsg").textContent = "Submitting…";
+
+        updateNav();
+
+        try {
+
+            const result = await api("/challenge/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    answers: questions.map(function (q) {
+                        return { questionId: q._id, answer: answers[q._id] || "" };
+                    })
+                })
+            });
+
+            if (result.ok) {
+
+                clearInterval(timerId);
+                clearSavedAnswers();
+
+                renderResult(result.data);
+
+                show("result");
+
+                return;
+
+            }
+
+            if (result.data.alreadyPlayed) {
+                clearInterval(timerId);
+                loadHome();
+                return;
+            }
+
+            if (result.data.needLevel) {
+                openLevelPicker(false);
+                return;
+            }
+
+            if (result.data.stale) {
+
+                stale = true;
+
+                $("playMsg").textContent = "A new day has started, so this challenge has expired. Reload to open today's challenge.";
+
+                return;
+
+            }
+
+            throw new Error(result.data.message || "Submit failed");
+
+        } catch (error) {
+
+            console.error("Submit error:", error);
+
+            $("playMsg").textContent = "Could not submit. Check your connection and try again. Your answers are saved on this device.";
+
+        } finally {
+
+            submitting = false;
+
+            updateNav();
+
+        }
+
+    }
+
+
+    // ---------- result ----------
+
+    function describeAnswer(item) {
+
+        const q = questions.find(function (x) {
+            return String(x._id) === String(item.questionId);
+        });
+
+        const given = String(item.yourAnswer || "").trim();
+
+        if (!given) {
+            return "No answer";
+        }
+
+        if (q && q.type === "objective" && q.options && q.options[given.toUpperCase()]) {
+            return given.toUpperCase() + ". " + q.options[given.toUpperCase()];
+        }
+
+        return given;
+
+    }
+
+    function renderResult(r) {
+
+        $("scoreBig").innerHTML = r.score + "<span>/" + r.total + "</span>";
+
+        const ratio = r.total ? r.score / r.total : 0;
+
+        $("scoreSub").textContent =
+            ratio >= 0.9 ? "Outstanding!" :
+            ratio >= 0.7 ? "Great job!" :
+            ratio >= 0.5 ? "Good effort!" :
+            "Keep practising, you will get there!";
+
+        $("resultStats").innerHTML =
+            '<span class="pill">⏱ ' + fmtTime(r.timeMs) + "</span>" +
+            '<span class="pill">🔥 ' + r.streak + (r.streak === 1 ? " day" : " days") + " streak</span>";
+
+        $("reviewList").innerHTML = r.results.map(function (item, i) {
+
+            return '<div class="review-item ' + (item.correct ? "ok" : "bad") + '">' +
+                "<h4>" + (item.correct ? "✅" : "❌") + " " + (i + 1) + ". " + escapeHtml(item.question) + "</h4>" +
+                "<p>Your answer: <b>" + escapeHtml(describeAnswer(item)) + "</b></p>" +
+                (item.correct ? "" : "<p>Correct answer: <b>" + escapeHtml(item.correctAnswer) + "</b></p>") +
+                (item.explanation ? '<p class="expl">' + escapeHtml(item.explanation) + "</p>" : "") +
+                "</div>";
+
+        }).join("");
+
+    }
+
+
+    // ---------- wire everything up (once) ----------
+
+    document.querySelectorAll(".level-pick button").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            saveLevel(btn.dataset.level);
+        });
+    });
+
+    $("levelCancel").addEventListener("click", function () {
+        show("home");
+    });
+
+    document.querySelectorAll(".level-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            loadBoard(tab.dataset.level);
+        });
+    });
+
+    $("qCard").addEventListener("click", function (e) {
+
+        const option = e.target.closest(".option");
+
+        if (!option) {
+            return;
+        }
+
+        const q = questions[index];
+
+        answers[q._id] = option.dataset.letter;
+
+        saveAnswers();
+
+        warned = false;
+
+        $("playMsg").textContent = "";
+
+        document.querySelectorAll("#qCard .option").forEach(function (o) {
+            o.classList.toggle("selected", o === option);
+        });
+
+        updateNav();
+
+    });
+
+    $("qCard").addEventListener("input", function (e) {
+
+        if (!e.target.classList.contains("fill-input")) {
+            return;
+        }
+
+        answers[questions[index]._id] = e.target.value;
+
+        saveAnswers();
+
+        warned = false;
+
+    });
+
+    $("qCard").addEventListener("keydown", function (e) {
+
+        if (e.key === "Enter" && e.target.classList.contains("fill-input")) {
+            e.preventDefault();
+            goNext();
+        }
+
+    });
+
+    $("prevBtn").addEventListener("click", goPrev);
+    $("nextBtn").addEventListener("click", goNext);
+
+    $("backHomeBtn").addEventListener("click", loadHome);
+
+    loadHome();
+
+})();
+
+</script>
+
+<%- include('partials/serviceworker') %>
+
+</body>
+</html>

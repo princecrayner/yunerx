@@ -202,38 +202,46 @@ router.post(
             }
 
 
+           
+
             // =================================================
-            // 7. REQUIRED HEADERS
+            // 7. HEADERS
             // =================================================
-
-            const requiredHeaders = [
-
-                'subject',
-                'question',
-                'optionA',
-                'optionB',
-                'optionC',
-                'optionD',
-                'answer',
-                'explanation'
-
-            ];
-
 
             const actualHeaders =
                 Object.keys(rows[0]);
 
-
             console.log('CSV HEADERS:');
             console.log(actualHeaders);
 
+            // "type" is optional. A missing or blank type means "objective".
+            const rowType = (row) =>
+                String(row.type || 'objective')
+                    .trim()
+                    .toLowerCase();
+
+            const hasObjective =
+                rows.some((row) => rowType(row) === 'objective');
+
+            const hasFill =
+                rows.some((row) => rowType(row) === 'fill');
+
+            const requiredHeaders = ['subject', 'question'];
+
+            if (hasObjective) {
+                requiredHeaders.push(
+                    'optionA', 'optionB', 'optionC', 'optionD', 'answer'
+                );
+            }
+
+            if (hasFill) {
+                requiredHeaders.push('acceptedAnswers');
+            }
 
             const missingHeaders =
                 requiredHeaders.filter(
-                    header =>
-                        !actualHeaders.includes(header)
+                    header => !actualHeaders.includes(header)
                 );
-
 
             if (missingHeaders.length) {
 
@@ -264,151 +272,112 @@ router.post(
 
             const errors = [];
 
+            // The quiz name comes from the upload form, so check it once
+            const quiz =
+                String(req.body.quiz || '').trim();
+
+            if (!quiz) {
+                errors.push('Quiz name is required.');
+            }
 
             rows.forEach((row, index) => {
 
                 const rowNumber = index + 2;
 
+                const type = rowType(row);
 
                 const subject =
-                    String(
-                        row.subject || ''
-                    ).trim();
-
-                    
-                    const quiz =
-                    String(
-                        req.body.quiz || ''
-                    ).trim();
-
+                    String(row.subject || '').trim();
 
                 const question =
-                    String(
-                        row.question || ''
-                    ).trim();
-
-
-                const optionA =
-                    String(
-                        row.optionA || ''
-                    ).trim();
-
-
-                const optionB =
-                    String(
-                        row.optionB || ''
-                    ).trim();
-
-
-                const optionC =
-                    String(
-                        row.optionC || ''
-                    ).trim();
-
-
-                const optionD =
-                    String(
-                        row.optionD || ''
-                    ).trim();
-
-
-                const answer =
-                    String(
-                        row.answer || ''
-                    )
-                    .trim()
-                    .toUpperCase();
-
+                    String(row.question || '').trim();
 
                 const explanation =
-                    String(
-                        row.explanation || ''
-                    ).trim();
+                    String(row.explanation || '').trim();
 
+                if (!['objective', 'fill'].includes(type)) {
 
+                    errors.push(
+                        `Row ${rowNumber}: type must be objective or fill (or left blank).`
+                    );
 
-                // -----------------------------------------
-                // REQUIRED TEXT
-                // -----------------------------------------
+                    return;
 
+                }
 
                 if (!subject) {
-
-                    errors.push(
-                        `Row ${rowNumber}: subject is required.`
-                    );
-
+                    errors.push(`Row ${rowNumber}: subject is required.`);
                 }
-
-
-             
-                
-                if (!quiz) {
-
-                    errors.push(
-                        `Quiz name is required.`
-                    );
-
-                }
-
 
                 if (!question) {
+                    errors.push(`Row ${rowNumber}: question is required.`);
+                }
 
-                    errors.push(
-                        `Row ${rowNumber}: question is required.`
-                    );
+
+                // ---------- FILL-IN ----------
+
+                if (type === 'fill') {
+
+                    // Several accepted answers are separated with |   (for example: 15|fifteen)
+                    const acceptedAnswers =
+                        String(row.acceptedAnswers || '')
+                            .split('|')
+                            .map((a) => a.trim())
+                            .filter(Boolean);
+
+                    if (!acceptedAnswers.length) {
+
+                        errors.push(
+                            `Row ${rowNumber}: acceptedAnswers is required for fill-in questions (separate several with |).`
+                        );
+
+                    }
+
+                    if (subject && question && acceptedAnswers.length) {
+
+                        questions.push({
+                            type: 'fill',
+                            subject,
+                            quiz,
+                            question,
+                            acceptedAnswers,
+                            explanation
+                        });
+
+                    }
+
+                    return;
 
                 }
 
 
-                // -----------------------------------------
-                // OPTIONS
-                // -----------------------------------------
+                // ---------- OBJECTIVE ----------
 
-                if (!optionA) {
+                const options = {
+                    A: String(row.optionA || '').trim(),
+                    B: String(row.optionB || '').trim(),
+                    C: String(row.optionC || '').trim(),
+                    D: String(row.optionD || '').trim()
+                };
 
-                    errors.push(
-                        `Row ${rowNumber}: optionA is required.`
-                    );
+                const answer =
+                    String(row.answer || '')
+                        .trim()
+                        .toUpperCase();
 
-                }
+                ['A', 'B', 'C', 'D'].forEach((letter) => {
 
+                    if (!options[letter]) {
 
-                if (!optionB) {
+                        errors.push(
+                            `Row ${rowNumber}: option${letter} is required.`
+                        );
 
-                    errors.push(
-                        `Row ${rowNumber}: optionB is required.`
-                    );
+                    }
 
-                }
+                });
 
-
-                if (!optionC) {
-
-                    errors.push(
-                        `Row ${rowNumber}: optionC is required.`
-                    );
-
-                }
-
-
-                if (!optionD) {
-
-                    errors.push(
-                        `Row ${rowNumber}: optionD is required.`
-                    );
-
-                }
-
-
-                // -----------------------------------------
-                // ANSWER
-                // -----------------------------------------
-
-                if (
-                    !['A', 'B', 'C', 'D']
-                        .includes(answer)
-                ) {
+                if (!['A', 'B', 'C', 'D'].includes(answer)) {
 
                     errors.push(
                         `Row ${rowNumber}: answer must be A, B, C or D.`
@@ -416,55 +385,29 @@ router.post(
 
                 }
 
-
-                // -----------------------------------------
-                // ONLY ADD VALID QUESTIONS
-                // -----------------------------------------
-
                 if (
-
-                    subject
-
-                    && question
-
-                    && optionA
-
-                    && optionB
-
-                    && optionC
-
-                    && optionD
-
-                    && ['A', 'B', 'C', 'D']
-                        .includes(answer)
-
+                    subject &&
+                    question &&
+                    Object.values(options).every(Boolean) &&
+                    ['A', 'B', 'C', 'D'].includes(answer)
                 ) {
 
                     questions.push({
-
-    type: "objective",
-    
-    subject,
-    quiz,
-    question,
-
-    options: {
-        A: optionA,
-        B: optionB,
-        C: optionC,
-        D: optionD
-    },
-
-    answer,
-    explanation
-
-});
+                        type: 'objective',
+                        subject,
+                        quiz,
+                        question,
+                        options,
+                        answer,
+                        explanation
+                    });
 
                 }
 
             });
-
-
+            
+            
+            
             // =================================================
             // 9. STOP IF VALIDATION FAILED
             // =================================================
