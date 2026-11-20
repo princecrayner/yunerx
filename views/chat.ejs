@@ -575,6 +575,7 @@
             placeholder="Type a message..."
             autocomplete="off"
             required
+            value="<%= typeof prefill !== 'undefined' ? prefill : '' %>"
         >
 
 
@@ -684,6 +685,11 @@ function scrollToBottom() {
 }
 
 scrollToBottom();
+
+if (messageInput.value) {
+    messageInput.focus();
+    messageInput.setSelectionRange(messageInput.value.length, messageInput.value.length);
+}
 
 
 /* =========================================

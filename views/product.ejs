@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title><%= product.title %> - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<%- include('partials/market-styles') %>
+
+<style>
+
+.prod-layout { display: grid; gap: 18px; }
+
+/* gallery */
+
+.gallery {
+    align-self: start; background: #fff; border-radius: 18px; padding: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+}
+
+.main-img-wrap {
+    position: relative; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden;
+    background: #e9edf7; color: #9aa4c4; font-size: 60px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.main-img-wrap img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; background: #f0f3fb; cursor: zoom-in;
+}
+
+.thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; }
+.thumbs::-webkit-scrollbar { display: none; }
+
+.thumb {
+    flex: 0 0 64px; height: 64px; padding: 0; overflow: hidden; cursor: pointer;
+    border: 3px solid transparent; border-radius: 10px; background: #e9edf7;
+}
+
+.thumb.active { border-color: #4169e1; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* details */
+
+.info { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 3px 15px rgba(0,0,0,.06); }
+
+.sold-banner { background: #fdecea; color: #c0392b; font-weight: 700; font-size: 14px; padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; }
+
+.price { font-size: 28px; font-weight: 800; color: #3557c7; }
+.neg { margin-left: 8px; font-size: 12px; font-weight: 700; color: #667; background: #eef2fb; padding: 4px 9px; border-radius: 12px; vertical-align: middle; }
+
+.title { font-size: 20px; margin: 6px 0 10px; line-height: 1.3; word-break: break-word; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { background: #eef2fb; color: #3557c7; font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 14px; }
+
+.facts { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0; color: #777; font-size: 13px; }
+.facts i { margin-right: 3px; vertical-align: -2px; }
+
+.info h3 { margin: 16px 0 6px; font-size: 15px; }
+.desc { margin: 0; font-size: 15px; line-height: 1.55; color: #333; white-space: pre-wrap; word-break: break-word; }
+
+.seller {
+    display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 12px;
+    border-radius: 14px; background: #f5f7fb; text-decoration: none; color: inherit;
+}
+
+.seller div { min-width: 0; flex: 1; }
+.seller b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seller small { color: #888; font-size: 12px; }
+.seller .go { color: #aaa; font-size: 22px; flex: none; }
+
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.actions-row { display: flex; gap: 10px; }
+.actions-row > * { flex: 1; }
+
+.owner-note { margin: 0; font-size: 13px; color: #667; line-height: 1.45; }
+.owner-msg { margin: 0; min-height: 16px; font-size: 13px; color: #c0392b; }
+
+.tip { margin-top: 14px; background: #fff8e1; color: #8a6d00; padding: 10px 12px; border-radius: 10px; font-size: 13px; line-height: 1.45; }
+
+.lightbox { display: none; position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.92); align-items: center; justify-content: center; }
+.lightbox.show { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+@media (min-width: 900px) {
+
+    .prod-layout { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 28px; }
+
+}
+
+</style>
+
+</head>
+
+<body class="page-market">
+
+<header class="page-top">
+    <h1>Marketplace</h1>
+</header>
+
+<main class="mk">
+
+    <div class="mk-head">
+        <button type="button" class="mk-back" id="backBtn" aria-label="Go back"><i class='bx bx-arrow-back'></i></button>
+        <h1>Listing</h1>
+    </div>
+
+    <div class="prod-layout">
+
+        <!-- PHOTOS -->
+        <section class="gallery">
+
+            <div class="main-img-wrap">
+
+                <i class='bx bx-image'></i>
+
+                <% if (product.images.length) { %>
+                    <img id="mainImg" src="<%= product.images[0].url %>" alt="<%= product.title %>">
+                <% } %>
+
+            </div>
+
+            <% if (product.images.length > 1) { %>
+
+                <div class="thumbs">
+
+                    <% product.images.forEach(function (image, i) { %>
+                        <button type="button" class="thumb <%= i === 0 ? 'active' : '' %>" aria-label="Photo <%= i + 1 %>">
+                            <img src="<%= thumb(image.url, 160, 160) %>" alt="">
+                        </button>
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+        <!-- DETAILS -->
+        <section class="info">
+
+            <% if (product.status === "sold") { %>
+                <div class="sold-banner">This item has been sold.</div>
+            <% } %>
+
+            <div>
+                <span class="price"><%= formatPrice(product.price) %></span>
+                <% if (product.negotiable) { %><span class="neg">Negotiable</span><% } %>
+            </div>
+
+            <h2 class="title"><%= product.title %></h2>
+
+            <div class="chips">
+                <span class="chip"><%= product.category %></span>
+                <% if (product.condition) { %><span class="chip"><%= product.condition %></span><% } %>
+            </div>
+
+            <div class="facts">
+                <span><i class='bx bx-map'></i><%= product.location || "On campus" %></span>
+                <span><i class='bx bx-time-five'></i>Posted <%= timeAgo(product.createdAt) %></span>
+                <span><i class='bx bx-show'></i><%= product.views %> <%= product.views === 1 ? "view" : "views" %></span>
+            </div>
+
+            <% if (product.description) { %>
+                <h3>Description</h3>
+                <p class="desc"><%= product.description %></p>
+            <% } %>
+
+            <a href="/user/<%= encodeURIComponent(seller.username) %>" class="seller">
+
+                <span class="avatar">
+                    <i class='bx bxs-user-circle'></i>
+                    <% if (seller.profileImage) { %>
+                        <img src="<%= seller.profileImage %>" alt="" onerror="this.remove()">
+                    <% } %>
+                </span>
+
+                <div>
+                    <small>Sold by</small>
+                    <b><%= seller.username %><%= isOwner ? " (you)" : "" %></b>
+                </div>
+
+                <i class='bx bx-chevron-right go'></i>
+
+            </a>
+
+            <div class="actions">
+
+                <% if (isOwner) { %>
+
+                    <p class="owner-note">This is your listing. Buyers will message you in Chats.</p>
+
+                    <div class="actions-row">
+
+                        <button type="button" class="mk-btn mk-btn-light" id="statusBtn"
+                                data-next="<%= product.status === 'sold' ? 'available' : 'sold' %>">
+                            <i class='bx bx-check-circle'></i>
+                            <%= product.status === "sold" ? "Mark as available" : "Mark as sold" %>
+                        </button>
+
+                        <button type="button" class="mk-btn mk-btn-red" id="deleteBtn">
+                            <i class='bx bx-trash'></i> Delete
+                        </button>
+
+                    </div>
+
+                    <p class="owner-msg" id="ownerMsg"></p>
+
+                <% } else if (product.status === "sold") { %>
+
+                    <p class="owner-note">This item is no longer available.</p>
+
+                <% } else { %>
+
+                    <a href="/chat/<%= encodeURIComponent(seller.username) %>?product=<%= product._id %>" class="mk-btn mk-btn-blue mk-btn-block">
+                        <i class='bx bx-message-rounded-dots'></i> Message seller
+                    </a>
+
+                <% } %>
+
+                <button type="button" class="mk-btn mk-btn-light mk-btn-block" id="shareBtn">
+                    <i class='bx bx-share-alt'></i> <span id="shareText">Share</span>
+                </button>
+
+            </div>
+
+            <% if (!isOwner) { %>
+                <div class="tip">Stay safe: meet in a public place on campus, check the item before you pay, and never send money in advance.</div>
+            <% } %>
+
+        </section>
+
+    </div>
+
+    <% if (moreFromSeller.length) { %>
+
+        <h2 class="section-title">More from <%= seller.username %></h2>
+
+        <div class="pgrid">
+            <% moreFromSeller.forEach(function (item) { %>
+                <%- include('partials/product-card', { p: item }) %>
+            <% }) %>
+        </div>
+
+    <% } %>
+
+    <% if (similar.length) { %>
+
+        <h2 class="section-title">Similar items</h2>
+
+        <div class="pgrid">
+            <% similar.forEach(function (item) { %>
+                <%- include('partials/product-card', { p: item }) %>
+            <% }) %>
+        </div>
+
+    <% } %>
+
+</main>
+
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
+
+
+<%- include('partials/footer') %>
+
+<script>
+
+(function () {
+
+    const IMAGES = <%- JSON.stringify(product.images.map(function (i) { return i.url; })).replace(/</g, "\\u003c") %>;
+    const PRODUCT_ID = "<%= product._id %>";
+
+    const $ = (id) => document.getElementById(id);
+
+    const mainImg = $("mainImg");
+    const thumbs = document.querySelectorAll(".thumb");
+    const lightbox = $("lightbox");
+
+    let current = 0;
+    let swiped = false;
+
+
+    // ---------- gallery ----------
+
+    function show(index) {
+
+        if (!mainImg || !IMAGES.length) {
+            return;
+        }
+
+        current = (index + IMAGES.length) % IMAGES.length;
+
+        mainImg.src = IMAGES[current];
+
+        thumbs.forEach((thumbEl, i) => thumbEl.classList.toggle("active", i === current));
+
+    }
+
+    thumbs.forEach((thumbEl, i) => thumbEl.addEventListener("click", () => show(i)));
+
+    if (mainImg) {
+
+        let startX = 0;
+
+        mainImg.addEventListener("touchstart", (event) => {
+            startX = event.changedTouches[0].clientX;
+            swiped = false;
+        }, { passive: true });
+
+        mainImg.addEventListener("touchend", (event) => {
+
+            const distance = event.changedTouches[0].clientX - startX;
+
+            if (Math.abs(distance) > 50) {
+                swiped = true;
+                show(distance < 0 ? current + 1 : current - 1);
+            }
+
+        }, { passive: true });
+
+        mainImg.addEventListener("click", () => {
+
+            if (swiped) {
+                swiped = false;
+                return;
+            }
+
+            $("lightboxImg").src = IMAGES[current];
+            lightbox.classList.add("show");
+
+        });
+
+    }
+
+    lightbox.addEventListener("click", () => lightbox.classList.remove("show"));
+
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key === "Escape") {
+            lightbox.classList.remove("show");
+        }
+
+    });
+
+
+    // ---------- back + share ----------
+
+    $("backBtn").addEventListener("click", () => {
+
+        if (history.length > 1) {
+            history.back();
+        } else {
+            window.location.href = "/";
+        }
+
+    });
+
+    $("shareBtn").addEventListener("click", async () => {
+
+        const url = window.location.href;
+
+        try {
+
+            if (navigator.share) {
+
+                await navigator.share({ title: document.title, url: url });
+
+            } else {
+
+                await navigator.clipboard.writeText(url);
+
+                $("shareText").textContent = "Link copied!";
+
+                setTimeout(() => { $("shareText").textContent = "Share"; }, 2000);
+
+            }
+
+        } catch (e) {}
+
+    });
+
+
+    // ---------- owner buttons ----------
+
+    async function post(url, body) {
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body || {}),
+            credentials: "same-origin"
+        });
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch (e) {}
+
+        if (response.status === 401 || data.loginRequired) {
+            window.location.href = "/login?redirect=/product/" + PRODUCT_ID;
+            return null;
+        }
+
+        return { ok: response.ok, data: data };
+
+    }
+
+    const statusBtn = $("statusBtn");
+    const deleteBtn = $("deleteBtn");
+    const ownerMsg = $("ownerMsg");
+
+    if (statusBtn) {
+
+        statusBtn.addEventListener("click", async () => {
+
+            statusBtn.disabled = true;
+            ownerMsg.textContent = "";
+
+            try {
+
+                const result = await post("/product/" + PRODUCT_ID + "/status", { status: statusBtn.dataset.next });
+
+                if (result && result.ok) {
+                    window.location.reload();
+                    return;
+                }
+
+                if (result) {
+                    ownerMsg.textContent = result.data.error || "Could not update the listing.";
+                }
+
+            } catch (error) {
+
+                ownerMsg.textContent = "Could not reach the server. Check your connection.";
+
+            }
+
+            statusBtn.disabled = false;
+
+        });
+
+    }
+
+    if (deleteBtn) {
+
+        deleteBtn.addEventListener("click", async () => {
+
+            if (!confirm("Delete this listing? The photos will be removed too. This cannot be undone.")) {
+                return;
+            }
+
+            deleteBtn.disabled = true;
+            ownerMsg.textContent = "";
+
+            try {
+
+                const result = await post("/product/" + PRODUCT_ID + "/delete");
+
+                if (result && result.ok) {
+                    window.location.href = "/profile";
+                    return;
+                }
+
+                if (result) {
+                    ownerMsg.textContent = result.data.error || "Could not delete the listing.";
+                }
+
+            } catch (error) {
+
+                ownerMsg.textContent = "Could not reach the server. Check your connection.";
+
+            }
+
+            deleteBtn.disabled = false;
+
+        });
+
+    }
+
+})();
+
+</script>
+
+<%- include('partials/serviceworker') %>
+
+</body>
+</html>

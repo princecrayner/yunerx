@@ -557,6 +557,19 @@ router.post("/delete-account", async (req, res) => {
 
         await ChallengeAttempt.deleteMany({ userId: currentUserId });
         await ChallengeStart.deleteMany({ userId: currentUserId });
+        
+                const Product = require("../models/Product");
+        const cloudinary = require("../config/cloudinary");
+
+        const listings = await Product.find({ sellerId: currentUserId }).select("images").lean();
+
+        for (const listing of listings) {
+            for (const image of listing.images) {
+                await cloudinary.uploader.destroy(image.publicId, { resource_type: "image" }).catch(() => {});
+            }
+        }
+
+        await Product.deleteMany({ sellerId: currentUserId });
 
         // Finally, delete the user account itself
         await User.findByIdAndDelete(currentUserId);

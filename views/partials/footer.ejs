@@ -213,13 +213,14 @@
         <span>Chats</span>
     </a>
 
-    <a href="/uploadvideos" class="yt-upload-btn" id="footerUploadBtn" data-path="/uploadvideos" aria-label="Upload video">
+
+        <a href="/sell" class="yt-upload-btn" id="footerUploadBtn" data-path="/sell" aria-label="Sell an item">
         <i class="bx bx-plus"></i>
     </a>
-
-    <a href="/videos" class="yt-footer-item" data-path="/videos">
-        <i class="bx bx-play-circle"></i>
-        <span>Videos</span>
+    
+    <a href="/market" class="yt-footer-item" data-path="/market">
+        <i class="bx bx-store"></i>
+        <span>Market</span>
     </a>
 
     <a href="/arena" class="yt-footer-item" data-path="/arena">
@@ -253,8 +254,8 @@
             return path === "/";
         }
 
-        if (dataPath === "/videos") {
-            return path.startsWith("/videos") || path.startsWith("/watch") || path.startsWith("/shorts");
+        if (dataPath === "/market") {
+            return path.startsWith("/market") || path.startsWith("/product");
         }
 
         if (dataPath === "/chats") {

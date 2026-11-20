@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sell an item - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<%- include('partials/market-styles') %>
+
+<style>
+
+.sell-card {
+    max-width: 640px; margin: 0 auto;
+    background: #fff; border-radius: 18px; padding: 18px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+}
+
+.field { margin-bottom: 18px; }
+
+.field-label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+.field-label span { font-weight: 400; color: #888; font-size: 12px; }
+
+.sell-card input[type="text"],
+.sell-card select,
+.sell-card textarea {
+    width: 100%; padding: 12px 14px;
+    border: 2px solid #e3e8f5; border-radius: 12px;
+    font-size: 16px; font-family: inherit; background: #fff; outline: none;
+}
+
+.sell-card input[type="text"]:focus,
+.sell-card select:focus,
+.sell-card textarea:focus { border-color: #4169e1; }
+
+.sell-card textarea { min-height: 110px; resize: vertical; }
+
+.count { display: block; text-align: right; color: #888; font-size: 12px; margin-top: 4px; }
+
+/* photos */
+
+.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+.photo-tile, .photo-add { position: relative; aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; }
+
+.photo-tile { background: #e9edf7; }
+.photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.photo-cover {
+    position: absolute; left: 6px; bottom: 6px; background: rgba(0,0,0,.65); color: #fff;
+    font-size: 11px; padding: 3px 8px; border-radius: 10px;
+}
+
+.photo-remove {
+    position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; padding: 0;
+    border: none; border-radius: 50%; background: rgba(0,0,0,.65); color: #fff; font-size: 18px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.photo-add {
+    border: 2px dashed #b9c4e6; background: #f5f7ff; color: #4169e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+
+.photo-add i { font-size: 28px; }
+
+/* price + condition */
+
+.price-row { display: flex; }
+
+.price-row .cur {
+    display: flex; align-items: center; padding: 0 14px; font-weight: 800; color: #3557c7;
+    background: #eef2fb; border: 2px solid #e3e8f5; border-right: none; border-radius: 12px 0 0 12px;
+}
+
+.price-row input[type="text"] { border-radius: 0 12px 12px 0; }
+
+.check { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; cursor: pointer; }
+.check input { width: 18px; height: 18px; }
+
+.chips-pick { display: flex; gap: 8px; }
+.chips-pick label { flex: 1; cursor: pointer; }
+.chips-pick input { display: none; }
+
+.chips-pick span {
+    display: block; text-align: center; padding: 11px 6px;
+    border: 2px solid #e3e8f5; border-radius: 12px; font-weight: 700; font-size: 14px; color: #667;
+}
+
+.chips-pick input:checked + span { border-color: #4169e1; background: #eef2ff; color: #3557c7; }
+
+.tip { background: #fff8e1; color: #8a6d00; padding: 10px 12px; border-radius: 10px; font-size: 13px; line-height: 1.45; margin-bottom: 16px; }
+
+.form-error { color: #c0392b; font-size: 14px; margin: 0 0 12px; min-height: 18px; }
+
+</style>
+
+</head>
+
+<body class="page-market">
+
+<header class="page-top">
+    <h1>Marketplace</h1>
+</header>
+
+<main class="mk">
+
+    <div class="mk-head">
+        <button type="button" class="mk-back" id="backBtn" aria-label="Go back"><i class='bx bx-arrow-back'></i></button>
+        <h1>Sell an item</h1>
+    </div>
+
+    <form class="sell-card" id="sellForm" novalidate>
+
+        <div class="field">
+            <span class="field-label">Photos <span>(up to <%= maxImages %> · the first one is the cover)</span></span>
+            <div class="photo-grid" id="photoGrid"></div>
+            <input type="file" id="photoInput" accept="image/*" multiple hidden>
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="title">Title</label>
+            <input type="text" id="title" maxlength="80" placeholder="e.g. iPhone 11, 64GB" autocomplete="off">
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="price">Price</label>
+            <div class="price-row">
+                <span class="cur"><%= currency %></span>
+                <input type="text" id="price" inputmode="decimal" placeholder="0.00" autocomplete="off">
+            </div>
+            <label class="check"><input type="checkbox" id="negotiable"> Price is negotiable</label>
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="category">Category</label>
+            <select id="category">
+                <option value="">Choose a category</option>
+                <% categories.forEach(function (c) { %>
+                    <option value="<%= c %>"><%= c %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="field" id="conditionField">
+            <span class="field-label">Condition</span>
+            <div class="chips-pick">
+                <% conditions.forEach(function (c) { %>
+                    <label><input type="radio" name="condition" value="<%= c %>"><span><%= c %></span></label>
+                <% }) %>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="description">Description <span>(optional)</span></label>
+            <textarea id="description" maxlength="1500" placeholder="Size, colour, why you are selling, any faults..."></textarea>
+            <small class="count" id="descCount">0 / 1500</small>
+        </div>
+
+        <div class="field">
+            <label class="field-label" for="location">Where can the buyer meet you? <span>(optional)</span></label>
+            <input type="text" id="location" maxlength="60" placeholder="e.g. Hall 3 gate" autocomplete="off">
+        </div>
+
+        <div class="tip">Tip: take clear photos in good light. Meet buyers in a public place on campus, and never share your PIN.</div>
+
+        <p class="form-error" id="formError"></p>
+
+        <button type="submit" class="mk-btn mk-btn-blue mk-btn-block" id="submitBtn">Post item</button>
+
+    </form>
+
+</main>
+
+
+<%- include('partials/footer') %>
+
+<script>
+
+(function () {
+
+    const MAX = <%- maxImages %>;
+
+    const $ = (id) => document.getElementById(id);
+
+    const form = $("sellForm");
+    const grid = $("photoGrid");
+    const input = $("photoInput");
+    const errorBox = $("formError");
+    const submitBtn = $("submitBtn");
+    const category = $("category");
+    const conditionField = $("conditionField");
+    const description = $("description");
+
+    let photos = [];          // { blob, url }
+    let busy = false;
+
+
+    function showError(message) {
+
+        errorBox.textContent = message || "";
+
+        if (message) {
+            errorBox.scrollIntoView({ block: "center", behavior: "smooth" });
+        }
+
+    }
+
+
+    // ---------- photos ----------
+
+    // Shrinks a phone photo to 1400px JPEG before uploading (saves data and time)
+    function compress(file) {
+
+        return new Promise((resolve) => {
+
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+
+            img.onload = () => {
+
+                const scale = Math.min(1, 1400 / Math.max(img.width, img.height));
+                const width = Math.round(img.width * scale);
+                const height = Math.round(img.height * scale);
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+
+                canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob((blob) => {
+                    URL.revokeObjectURL(url);
+                    resolve(blob || null);
+                }, "image/jpeg", 0.85);
+
+            };
+
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                resolve(null);
+            };
+
+            img.src = url;
+
+        });
+
+    }
+
+    function renderPhotos() {
+
+        grid.innerHTML = "";
+
+        photos.forEach((photo, index) => {
+
+            const tile = document.createElement("div");
+            tile.className = "photo-tile";
+
+            const img = document.createElement("img");
+            img.src = photo.url;
+            img.alt = "";
+            tile.appendChild(img);
+
+            if (index === 0) {
+
+                const badge = document.createElement("span");
+                badge.className = "photo-cover";
+                badge.textContent = "Cover";
+                tile.appendChild(badge);
+
+            }
+
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "photo-remove";
+            remove.setAttribute("aria-label", "Remove photo");
+            remove.innerHTML = "<i class='bx bx-x'></i>";
+
+            remove.addEventListener("click", () => {
+                URL.revokeObjectURL(photo.url);
+                photos.splice(photos.indexOf(photo), 1);
+                renderPhotos();
+            });
+
+            tile.appendChild(remove);
+            grid.appendChild(tile);
+
+        });
+
+        if (photos.length < MAX) {
+
+            const add = document.createElement("button");
+            add.type = "button";
+            add.className = "photo-add";
+            add.innerHTML = "<i class='bx bx-camera'></i><span>Add photo</span>";
+            add.addEventListener("click", () => input.click());
+
+            grid.appendChild(add);
+
+        }
+
+    }
+
+    input.addEventListener("change", async () => {
+
+        const files = Array.from(input.files || []);
+
+        input.value = "";
+
+        if (!files.length) {
+            return;
+        }
+
+        showError("");
+
+        const room = MAX - photos.length;
+
+        for (const file of files.slice(0, room)) {
+
+            const blob = await compress(file);
+
+            if (!blob) {
+                showError("One photo could not be read. Try a JPG or PNG.");
+                continue;
+            }
+
+            photos.push({ blob: blob, url: URL.createObjectURL(blob) });
+
+            renderPhotos();
+
+        }
+
+        if (files.length > room) {
+            showError("You can add up to " + MAX + " photos. The extra ones were skipped.");
+        }
+
+    });
+
+
+    // ---------- the rest of the form ----------
+
+    category.addEventListener("change", () => {
+        // Services have no "condition"
+        conditionField.hidden = category.value === "Services";
+    });
+
+    $("price").addEventListener("input", (event) => {
+
+        let value = event.target.value.replace(/[^\d.]/g, "");
+
+        const dot = value.indexOf(".");
+
+        if (dot !== -1) {
+            value = value.slice(0, dot + 1) + value.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+        }
+
+        event.target.value = value;
+
+    });
+
+    description.addEventListener("input", () => {
+        $("descCount").textContent = description.value.length + " / 1500";
+    });
+
+    $("backBtn").addEventListener("click", () => {
+
+        if (history.length > 1) {
+            history.back();
+        } else {
+            window.location.href = "/";
+        }
+
+    });
+
+
+    // ---------- post ----------
+
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        if (busy) {
+            return;
+        }
+
+        const title = $("title").value.trim();
+        const price = $("price").value.trim();
+        const isService = category.value === "Services";
+        const condition = form.querySelector('input[name="condition"]:checked');
+
+        if (!photos.length) return showError("Add at least one photo.");
+        if (title.length < 3) return showError("Give your item a title (at least 3 characters).");
+        if (price === "" || isNaN(Number(price))) return showError("Enter a price. Use 0 if it is free.");
+        if (!category.value) return showError("Choose a category.");
+        if (!isService && !condition) return showError("Choose the condition of the item.");
+
+        busy = true;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Posting…";
+
+        showError("");
+
+        const data = new FormData();
+
+        data.append("title", title);
+        data.append("price", price);
+        data.append("category", category.value);
+        data.append("condition", isService || !condition ? "" : condition.value);
+        data.append("negotiable", $("negotiable").checked ? "true" : "false");
+        data.append("description", description.value.trim());
+        data.append("location", $("location").value.trim());
+
+        photos.forEach((photo, index) => {
+            data.append("photos", photo.blob, "photo" + (index + 1) + ".jpg");
+        });
+
+        try {
+
+            const response = await fetch("/sell", {
+                method: "POST",
+                body: data,
+                credentials: "same-origin"
+            });
+
+            let result = {};
+
+            try {
+                result = await response.json();
+            } catch (e) {}
+
+            if (response.status === 401 || result.loginRequired) {
+                window.location.href = "/login?redirect=/sell";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(result.error || "Could not post your item.");
+            }
+
+            photos.forEach((photo) => URL.revokeObjectURL(photo.url));
+
+            window.location.href = "/product/" + result.id;
+
+        } catch (error) {
+
+            showError(error instanceof TypeError
+                ? "Could not reach the server. Check your connection and try again."
+                : error.message);
+
+            busy = false;
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Post item";
+
+        }
+
+    });
+
+    renderPhotos();
+
+})();
+
+</script>
+
+<%- include('partials/serviceworker') %>
+
+</body>
+</html>

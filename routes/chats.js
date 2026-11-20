@@ -1,3 +1,7 @@
+const mongoose = require("mongoose");
+const Product = require("../models/Product");
+const { formatPrice } = require("../utils/marketHelpers");
+
 const Group = require("../models/Group");
 
 const GroupMessage = require("../models/GroupMessage");
@@ -174,22 +178,36 @@ router.get("/chat/:username", async (req, res) => {
         // Get messages between these two users
         const messages = await Message.find({
             $or: [
-                {
-                    sender: currentUser,
-                    receiver: otherUser
-                },
-                {
-                    sender: otherUser,
-                    receiver: currentUser
-                }
+                { sender: currentUser, receiver: otherUser },
+                { sender: otherUser, receiver: currentUser }
             ]
         }).sort({ _id: 1 });
+
+        // Coming from "Message seller": start the chat with a ready-made question.
+        // Only used when the item really belongs to the person being messaged.
+        let prefill = "";
+
+        if (req.query.product && mongoose.isValidObjectId(req.query.product)) {
+
+            const product = await Product.findById(req.query.product)
+                .select("title price sellerId")
+                .lean();
+
+            if (product && String(product.sellerId) === String(user._id)) {
+
+                prefill = 'Hi! Is "' + product.title + '" (' + formatPrice(product.price) + ") still available? " +
+                    req.protocol + "://" + req.get("host") + "/product/" + product._id;
+
+            }
+
+        }
 
         res.render("chat", {
             messages,
             currentUser,
             otherUser,
-            user
+            user,
+            prefill
         });
 
     } catch (error) {
@@ -206,6 +224,7 @@ router.get("/chat/:username", async (req, res) => {
     }
 
 });
+
 
 
 // MARK PRIVATE MESSAGES AS SEEN

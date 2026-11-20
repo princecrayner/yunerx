@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Market - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<%- include('partials/market-styles') %>
+
+<style>
+
+.mk-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mk-bar h1 { margin: 0; font-size: 24px; }
+.sell-btn { padding: 10px 16px; }
+
+/* search + categories stay on screen while you scroll */
+
+.sticky-tools { position: sticky; top: 0; z-index: 20; background: #f5f7fb; padding: 10px 0 6px; }
+
+.search-row { display: flex; gap: 10px; }
+
+.search-box {
+    flex: 1; display: flex; align-items: center; background: #fff;
+    border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.search-box > i { padding-left: 14px; font-size: 20px; color: #889; }
+
+.search-box input {
+    flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+    padding: 13px 12px; font-size: 16px; font-family: inherit;
+}
+
+.search-box input::-webkit-search-cancel-button { display: none; }
+
+.search-box button { border: none; background: none; padding: 0 12px; font-size: 20px; color: #889; cursor: pointer; }
+
+.filter-btn {
+    position: relative; width: 48px; border: none; border-radius: 14px;
+    background: #fff; color: #3557c7; font-size: 22px; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.filter-btn span {
+    position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px;
+    border-radius: 9px; background: #4169e1; color: #fff; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.cat-row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 10px 0 4px; }
+.cat-row::-webkit-scrollbar { display: none; }
+
+.cat {
+    flex: none; border: none; background: #fff; color: #556; padding: 9px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+.cat.active { background: #4169e1; color: #fff; }
+
+.result-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 12px 0; font-size: 13px; color: #667; }
+
+.result-bar select {
+    border: none; background: #fff; padding: 8px 10px; border-radius: 10px;
+    font-size: 13px; font-family: inherit; color: #334; box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+/* empty, loading, error */
+
+.empty { text-align: center; padding: 50px 20px; color: #778; }
+.empty i { font-size: 56px; color: #9aa4c4; display: block; margin-bottom: 10px; }
+.empty h3 { margin: 0 0 6px; color: #1a1a1a; }
+.empty p { margin: 0 0 16px; font-size: 14px; }
+.empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.loader { display: flex; justify-content: center; padding: 24px; }
+.spinner { width: 30px; height: 30px; border: 3px solid #dfe4f2; border-top-color: #4169e1; border-radius: 50%; animation: mk-spin .8s linear infinite; }
+@keyframes mk-spin { to { transform: rotate(360deg); } }
+
+.load-error { text-align: center; padding: 16px; color: #c0392b; font-size: 14px; }
+.load-error button { margin-left: 8px; padding: 8px 14px; }
+
+/* filter sheet */
+
+.sheet-overlay {
+    position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,.5);
+    display: flex; align-items: flex-end; justify-content: center;
+}
+
+.sheet-overlay[hidden] { display: none; }
+
+.sheet {
+    background: #fff; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto;
+    border-radius: 20px 20px 0 0; padding: 18px; font-family: Arial, Helvetica, sans-serif;
+}
+
+.sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sheet-head h3 { margin: 0; font-size: 18px; }
+
+.sheet-close {
+    width: 34px; height: 34px; border: none; border-radius: 50%; background: #f1f3f5;
+    font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.sheet-label { display: block; font-weight: 700; font-size: 14px; margin: 16px 0 8px; }
+
+.cond-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.cond-chips label { cursor: pointer; }
+.cond-chips input { display: none; }
+
+.cond-chips span {
+    display: block; padding: 9px 14px; border: 2px solid #e3e8f5; border-radius: 20px;
+    font-size: 13px; font-weight: 700; color: #667;
+}
+
+.cond-chips input:checked + span { border-color: #4169e1; background: #eef2ff; color: #3557c7; }
+
+.price-inputs { display: flex; align-items: center; gap: 10px; color: #889; }
+
+.price-inputs input {
+    flex: 1; min-width: 0; padding: 12px; border: 2px solid #e3e8f5; border-radius: 12px;
+    font-size: 16px; font-family: inherit; outline: none;
+}
+
+.price-inputs input:focus { border-color: #4169e1; }
+
+.sheet-actions { display: flex; gap: 10px; margin-top: 22px; }
+.sheet-actions .mk-btn { flex: 1; }
+
+@media (min-width: 768px) {
+
+    .mk-bar h1 { display: none; }
+    .mk-bar { justify-content: flex-end; }
+
+    .sticky-tools { top: 65px; }
+
+    .sheet-overlay { align-items: center; }
+    .sheet { border-radius: 20px; }
+
+}
+
+</style>
+
+</head>
+
+<body class="page-market">
+
+<header class="page-top">
+    <h1>Marketplace</h1>
+</header>
+
+<main class="mk">
+
+    <div class="mk-bar">
+        <h1>Campus Market</h1>
+        <a href="/sell" class="mk-btn mk-btn-blue sell-btn"><i class='bx bx-plus'></i> Sell</a>
+    </div>
+
+    <div class="sticky-tools">
+
+        <div class="search-row">
+
+            <div class="search-box">
+                <i class='bx bx-search'></i>
+                <input type="search" id="searchInput" placeholder="Search items, e.g. iPhone, textbook"
+                       value="<%= filters.q %>" autocomplete="off" enterkeyhint="search">
+                <button type="button" id="clearSearch" aria-label="Clear search" <%= filters.q ? "" : "hidden" %>><i class='bx bx-x'></i></button>
+            </div>
+
+            <button type="button" class="filter-btn" id="filterBtn" aria-label="Filters">
+                <i class='bx bx-slider-alt'></i>
+                <span id="filterBadge" hidden>0</span>
+            </button>
+
+        </div>
+
+        <div class="cat-row" id="catRow">
+
+            <button type="button" class="cat <%= filters.category ? '' : 'active' %>" data-cat="">All</button>
+
+            <% categories.forEach(function (c) { %>
+                <button type="button" class="cat <%= filters.category === c ? 'active' : '' %>" data-cat="<%= c %>"><%= c %></button>
+            <% }) %>
+
+        </div>
+
+    </div>
+
+    <div class="result-bar">
+
+        <span id="resultCount"><%= total %> <%= total === 1 ? "item" : "items" %></span>
+
+        <select id="sortSelect" aria-label="Sort">
+            <option value="new" <%= filters.sort === "new" ? "selected" : "" %>>Newest</option>
+            <option value="low" <%= filters.sort === "low" ? "selected" : "" %>>Price: low to high</option>
+            <option value="high" <%= filters.sort === "high" ? "selected" : "" %>>Price: high to low</option>
+        </select>
+
+    </div>
+
+    <div class="pgrid" id="grid"><%- include('partials/product-cards', { products: products }) %></div>
+
+    <div class="empty" id="empty" <%= products.length ? "hidden" : "" %>>
+
+        <i class='bx bx-search-alt'></i>
+
+        <h3>No items found</h3>
+
+        <p>Try different words, or clear the filters.</p>
+
+        <div class="empty-actions">
+            <button type="button" class="mk-btn mk-btn-light" id="clearAll">Clear filters</button>
+            <a href="/sell" class="mk-btn mk-btn-blue">Sell an item</a>
+        </div>
+
+    </div>
+
+    <div class="load-error" id="loadError" hidden>
+        Could not load items.
+        <button type="button" class="mk-btn mk-btn-light" id="retryBtn">Try again</button>
+    </div>
+
+    <div class="loader" id="loader" hidden><div class="spinner"></div></div>
+
+    <div id="sentinel"></div>
+
+</main>
+
+
+<!-- FILTERS -->
+
+<div class="sheet-overlay" id="sheetOverlay" hidden>
+
+    <div class="sheet" role="dialog" aria-label="Filters">
+
+        <div class="sheet-head">
+            <h3>Filters</h3>
+            <button type="button" class="sheet-close" id="sheetClose" aria-label="Close"><i class='bx bx-x'></i></button>
+        </div>
+
+        <span class="sheet-label">Condition</span>
+
+        <div class="cond-chips">
+
+            <label><input type="radio" name="cond" value="" <%= filters.condition ? "" : "checked" %>><span>Any</span></label>
+
+            <% conditions.forEach(function (c) { %>
+                <label><input type="radio" name="cond" value="<%= c %>" <%= filters.condition === c ? "checked" : "" %>><span><%= c %></span></label>
+            <% }) %>
+
+        </div>
+
+        <span class="sheet-label">Price (<%= currency %>)</span>
+
+        <div class="price-inputs">
+            <input type="text" id="minPrice" inputmode="decimal" placeholder="Min" value="<%= filters.min %>">
+            <span>to</span>
+            <input type="text" id="maxPrice" inputmode="decimal" placeholder="Max" value="<%= filters.max %>">
+        </div>
+
+        <div class="sheet-actions">
+            <button type="button" class="mk-btn mk-btn-light" id="sheetReset">Reset</button>
+            <button type="button" class="mk-btn mk-btn-blue" id="sheetApply">Show results</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<%- include('partials/footer') %>
+
+<script>
+
+(function () {
+
+    const INITIAL = <%- JSON.stringify(filters).replace(/</g, "\\u003c") %>;
+
+    const state = {
+        q: INITIAL.q,
+        category: INITIAL.category,
+        condition: INITIAL.condition,
+        sort: INITIAL.sort,
+        min: INITIAL.min,
+        max: INITIAL.max,
+        page: 1,
+        hasMore: <%- hasMore %>,
+        loading: false
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    const grid = $("grid");
+    const empty = $("empty");
+    const loader = $("loader");
+    const loadError = $("loadError");
+    const resultCount = $("resultCount");
+    const searchInput = $("searchInput");
+    const clearSearch = $("clearSearch");
+    const catRow = $("catRow");
+    const sortSelect = $("sortSelect");
+    const badge = $("filterBadge");
+    const sheet = $("sheetOverlay");
+    const minPrice = $("minPrice");
+    const maxPrice = $("maxPrice");
+
+    let ticket = 0;            // only the newest request may change the page
+    let needReset = false;     // the last "new search" failed and must be retried
+    let debounceId = null;
+
+
+    // ---------- helpers ----------
+
+    function queryString(page) {
+
+        const p = new URLSearchParams();
+
+        if (state.q) p.set("q", state.q);
+        if (state.category) p.set("category", state.category);
+        if (state.condition) p.set("condition", state.condition);
+        if (state.min !== "") p.set("min", state.min);
+        if (state.max !== "") p.set("max", state.max);
+        if (state.sort !== "new") p.set("sort", state.sort);
+        if (page) p.set("page", page);
+
+        return p.toString();
+
+    }
+
+    function updateUrl() {
+
+        const qs = queryString(0);
+
+        history.replaceState(null, "", "/market" + (qs ? "?" + qs : ""));
+
+    }
+
+    function updateBadge() {
+
+        const count = (state.condition ? 1 : 0) + ((state.min !== "" || state.max !== "") ? 1 : 0);
+
+        badge.textContent = count;
+        badge.hidden = count === 0;
+
+    }
+
+    function setCount(total) {
+        resultCount.textContent = total + (total === 1 ? " item" : " items");
+    }
+
+    // Puts every control back in line with the state
+    function syncUi() {
+
+        searchInput.value = state.q;
+        clearSearch.hidden = state.q === "";
+        sortSelect.value = state.sort;
+
+        catRow.querySelectorAll(".cat").forEach((chip) => {
+            chip.classList.toggle("active", chip.dataset.cat === state.category);
+        });
+
+        document.querySelectorAll('input[name="cond"]').forEach((radio) => {
+            radio.checked = radio.value === state.condition;
+        });
+
+        minPrice.value = state.min;
+        maxPrice.value = state.max;
+
+    }
+
+
+    // ---------- loading ----------
+
+    async function load(reset) {
+
+        if (!reset && (state.loading || !state.hasMore)) {
+            return;
+        }
+
+        const mine = ++ticket;
+
+        state.loading = true;
+        loader.hidden = false;
+        loadError.hidden = true;
+
+        const page = reset ? 1 : state.page + 1;
+
+        try {
+
+            const response = await fetch("/market/feed?" + queryString(page), { credentials: "same-origin" });
+
+            if (response.status === 401) {
+                window.location.href = "/login?redirect=" + encodeURIComponent("/market");
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Bad response");
+            }
+
+            const data = await response.json();
+
+            if (mine !== ticket) {
+                return;                 // a newer search has started, ignore this answer
+            }
+
+            if (reset) {
+                grid.innerHTML = "";
+            }
+
+            const temp = document.createElement("div");
+
+            temp.innerHTML = data.html;
+
+            // never show the same item twice (new items can shift the pages)
+            temp.querySelectorAll(".pcard").forEach((card) => {
+
+                if (!grid.querySelector('[data-id="' + card.dataset.id + '"]')) {
+                    grid.appendChild(card);
+                }
+
+            });
+
+            state.page = page;
+            state.hasMore = !!data.hasMore;
+            needReset = false;
+
+            if (typeof data.total === "number") {
+                setCount(data.total);
+            }
+
+            empty.hidden = grid.children.length > 0;
+
+        } catch (error) {
+
+            if (mine !== ticket) {
+                return;
+            }
+
+            console.error("Market load error:", error);
+
+            // do not leave results from a different search on screen
+            if (reset) {
+                grid.innerHTML = "";
+                needReset = true;
+            }
+
+            loadError.hidden = false;
+
+        } finally {
+
+            if (mine === ticket) {
+                state.loading = false;
+                loader.hidden = true;
+            }
+
+        }
+
+    }
+
+    function applyFilters() {
+
+        updateUrl();
+        updateBadge();
+
+        needReset = false;
+
+        load(true);
+
+    }
+
+    $("retryBtn").addEventListener("click", () => load(needReset));
+
+    new IntersectionObserver((entries) => {
+
+        if (entries[0].isIntersecting && !needReset) {
+            load(false);
+        }
+
+    }, { rootMargin: "600px" }).observe($("sentinel"));
+
+
+    // ---------- search ----------
+
+    searchInput.addEventListener("input", () => {
+
+        clearSearch.hidden = searchInput.value === "";
+
+        clearTimeout(debounceId);
+
+        debounceId = setTimeout(() => {
+
+            const next = searchInput.value.trim();
+
+            if (next !== state.q) {
+                state.q = next;
+                applyFilters();
+            }
+
+        }, 350);
+
+    });
+
+    searchInput.addEventListener("keydown", (event) => {
+
+        if (event.key !== "Enter") {
+            return;
+        }
+
+        event.preventDefault();
+
+        clearTimeout(debounceId);
+
+        state.q = searchInput.value.trim();
+
+        applyFilters();
+
+        searchInput.blur();
+
+    });
+
+    clearSearch.addEventListener("click", () => {
+
+        searchInput.value = "";
+        clearSearch.hidden = true;
+
+        clearTimeout(debounceId);
+
+        if (state.q !== "") {
+            state.q = "";
+            applyFilters();
+        }
+
+        searchInput.focus();
+
+    });
+
+
+    // ---------- categories + sort ----------
+
+    catRow.addEventListener("click", (event) => {
+
+        const chip = event.target.closest(".cat");
+
+        if (!chip || chip.dataset.cat === state.category) {
+            return;
+        }
+
+        state.category = chip.dataset.cat;
+
+        syncUi();
+
+        chip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+
+        applyFilters();
+
+    });
+
+    sortSelect.addEventListener("change", () => {
+
+        state.sort = sortSelect.value;
+
+        applyFilters();
+
+    });
+
+
+    // ---------- filter sheet ----------
+
+    function openSheet() {
+
+        syncUi();
+
+        sheet.hidden = false;
+        document.body.style.overflow = "hidden";
+
+    }
+
+    function closeSheet() {
+
+        sheet.hidden = true;
+        document.body.style.overflow = "";
+
+    }
+
+    function cleanPrice(input) {
+
+        let value = input.value.replace(/[^\d.]/g, "");
+
+        const dot = value.indexOf(".");
+
+        if (dot !== -1) {
+            value = value.slice(0, dot + 1) + value.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+        }
+
+        input.value = value;
+
+    }
+
+    minPrice.addEventListener("input", () => cleanPrice(minPrice));
+    maxPrice.addEventListener("input", () => cleanPrice(maxPrice));
+
+    $("filterBtn").addEventListener("click", openSheet);
+    $("sheetClose").addEventListener("click", closeSheet);
+
+    sheet.addEventListener("click", (event) => {
+
+        if (event.target === sheet) {
+            closeSheet();
+        }
+
+    });
+
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key === "Escape" && !sheet.hidden) {
+            closeSheet();
+        }
+
+    });
+
+    $("sheetApply").addEventListener("click", () => {
+
+        const picked = document.querySelector('input[name="cond"]:checked');
+
+        let min = minPrice.value.trim();
+        let max = maxPrice.value.trim();
+
+        // "from 500 to 100" makes no sense, so swap them
+        if (min !== "" && max !== "" && Number(min) > Number(max)) {
+            [min, max] = [max, min];
+        }
+
+        state.condition = picked ? picked.value : "";
+        state.min = min;
+        state.max = max;
+
+        closeSheet();
+        syncUi();
+        applyFilters();
+
+    });
+
+    $("sheetReset").addEventListener("click", () => {
+
+        state.condition = "";
+        state.min = "";
+        state.max = "";
+
+        closeSheet();
+        syncUi();
+        applyFilters();
+
+    });
+
+    $("clearAll").addEventListener("click", () => {
+
+        state.q = "";
+        state.category = "";
+        state.condition = "";
+        state.min = "";
+        state.max = "";
+        state.sort = "new";
+
+        syncUi();
+        applyFilters();
+
+    });
+
+    updateBadge();
+
+})();
+
+</script>
+
+<%- include('partials/serviceworker') %>
+
+</body>
+</html>
