@@ -1,338 +1,177 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title><%= profileUser.username %> - Yunerx</title>
+<title><%= seller.username %> - Yunerx</title>
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
+<%- include('partials/market-styles') %>
+
 <style>
 
-body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    margin: 0;
-    padding: 0;
+.prof-card {
+    max-width: 640px; margin: 0 auto; background: #fff; border-radius: 18px;
+    padding: 20px 16px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,.06);
 }
 
-.back-btn {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 20px;
-    z-index: 10;
+.prof-avatar { width: 96px; height: 96px; font-size: 84px; margin: 0 auto 10px; border: 3px solid #4169e1; }
+
+.prof-card h2 { margin: 0; font-size: 22px; word-break: break-word; }
+.prof-card .since { margin: 4px 0 0; color: #778; font-size: 13px; }
+
+.stats { display: flex; justify-content: center; margin: 16px 0; }
+.stat { flex: 1; max-width: 120px; }
+.stat b { display: block; font-size: 20px; color: #3557c7; }
+.stat span { font-size: 12px; color: #778; }
+
+.ptabs {
+    display: flex; gap: 8px; max-width: 640px; margin: 18px auto 14px;
+    background: #e4e9f5; padding: 5px; border-radius: 14px;
 }
 
-.profile-header{
-    text-align:center;
-    padding:20px;
-    margin: 60px 0 0 0;
+.ptab {
+    flex: 1; border: none; background: transparent; padding: 11px 8px; border-radius: 10px;
+    font-size: 14px; font-weight: 700; color: #667; cursor: pointer; font-family: inherit;
 }
 
-.profile-image{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
-    border:4px solid royalblue;
-}
+.ptab.active { background: #fff; color: #3557c7; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 
-.default-user-icon {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 4px solid royalblue;
-    background: #222;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
+.panel { display: none; }
+.panel.active { display: block; }
 
-.default-user-icon i {
-    font-size: 146px;
-    color: #888;
-    line-height: 1;
-}
-
-.profile-info{
-    text-align:center;
-    margin-top:10px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 15px;
-}
-
-.profile-tabs {
-    display: flex;
-    border-bottom: 1px solid #333;
-    margin: 10px 0;
-}
-
-.tab-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    color: #888;
-    padding: 14px;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-}
-
-.tab-btn.active {
-    color: white;
-    border-bottom-color: royalblue;
-}
-
-.tab-panel {
-    display: none;
-}
-
-.tab-panel.active {
-    display: block;
-}
-
-.empty-tab-message {
-    padding: 20px;
-    color: #888;
-    text-align: center;
-}
-
-.video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    padding: 16px 20px;
-}
-
-.video-card {
-    text-decoration: none;
-    color: white;
-    display: block;
-    background: #222;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.video-card video {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    display: block;
-}
-
-.video-card p {
-    padding: 10px;
-    margin: 0;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.shorts-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding: 16px 20px;
-}
-
-.short-grid-card {
-    text-decoration: none;
-    color: white;
-    display: block;
-    background: #222;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-}
-
-.short-grid-card video {
-    width: 100%;
-    aspect-ratio: 9/16;
-    object-fit: cover;
-    display: block;
-}
-
-.short-grid-card p {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 6px 8px;
-    margin: 0;
-    font-size: 11px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-width: 500px) {
-
-    .shorts-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        padding: 12px;
-    }
-
-    .video-grid {
-        grid-template-columns: 1fr;
-        padding: 12px;
-    }
-
-}
+.p-empty { text-align: center; padding: 40px 20px; color: #778; }
+.p-empty i { font-size: 52px; color: #9aa4c4; display: block; margin-bottom: 8px; }
+.p-empty h3 { margin: 0 0 6px; color: #1a1a1a; }
+.p-empty p { margin: 0; font-size: 14px; }
 
 </style>
 
 </head>
 
-<body>
+<body class="page-market">
 
-<a href="javascript:history.back()" class="back-btn">
-    <i class='bx bx-arrow-back'></i>
-</a>
+<header class="page-top">
+    <h1>Marketplace</h1>
+</header>
 
-<div class="profile-header">
+<main class="mk">
 
-    <% if (profileUser.profileImage) { %>
+    <div class="mk-head">
+        <button type="button" class="mk-back" id="backBtn" aria-label="Go back"><i class='bx bx-arrow-back'></i></button>
+        <h1>Seller</h1>
+    </div>
 
-        <img
-            src="<%= profileUser.profileImage %>"
-            class="profile-image"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        >
+    <section class="prof-card">
 
-        <div class="default-user-icon" style="display:none;">
+        <div class="avatar prof-avatar">
             <i class='bx bxs-user-circle'></i>
+            <% if (seller.profileImage) { %>
+                <img src="<%= seller.profileImage %>" alt="" onerror="this.remove()">
+            <% } %>
         </div>
 
-    <% } else { %>
+        <h2><%= seller.username %></h2>
 
-        <div class="default-user-icon">
-            <i class='bx bxs-user-circle'></i>
+        <p class="since">Member since <%= memberSince.toLocaleDateString("en-US", { month: "long", year: "numeric" }) %></p>
+
+        <div class="stats">
+            <div class="stat"><b><%= forSale.length %></b><span>For sale</span></div>
+            <div class="stat"><b><%= soldCount %></b><span>Sold</span></div>
         </div>
 
-    <% } %>
+        <a href="/chat/<%= encodeURIComponent(seller.username) %>" class="mk-btn mk-btn-blue">
+            <i class='bx bx-message-rounded-dots'></i> Message <%= seller.username %>
+        </a>
 
-</div>
+    </section>
 
-<div class="profile-info">
-    <h1><%= profileUser.username %></h1>
-</div>
+    <div class="ptabs">
+        <button type="button" class="ptab active" data-tab="forsale">For sale (<%= forSale.length %>)</button>
+        <button type="button" class="ptab" data-tab="sold">Sold (<%= soldCount %>)</button>
+    </div>
 
+    <section class="panel active" id="panel-forsale">
 
-<div class="profile-tabs">
+        <% if (forSale.length === 0) { %>
 
-    <button type="button" class="tab-btn active" id="videosTab">
-        <i class='bx bx-play-circle'></i>
-        Videos
-    </button>
+            <div class="p-empty">
+                <i class='bx bx-store'></i>
+                <h3>Nothing for sale right now</h3>
+                <p>Check back soon.</p>
+            </div>
 
-    <button type="button" class="tab-btn" id="shortsTab">
-        <i class='bx bx-video'></i>
-        Shorts
-    </button>
+        <% } else { %>
 
-</div>
-
-
-<div class="tab-panel active" id="videosPanel">
-
-    <div class="video-grid">
-
-        <% if (longVideos.length === 0) { %>
-
-            <p class="empty-tab-message">No videos uploaded yet.</p>
+            <div class="pgrid">
+                <% forSale.forEach(function (p) { %>
+                    <%- include('partials/product-card', { p: p }) %>
+                <% }) %>
+            </div>
 
         <% } %>
 
-        <% longVideos.forEach(video => { %>
+    </section>
 
-            <a href="/watch/<%= video._id %>" class="video-card">
+    <section class="panel" id="panel-sold">
 
-                <video muted>
-                    <source src="<%= video.videoUrl %>">
-                </video>
+        <% if (sold.length === 0) { %>
 
-                <p><%= video.title %></p>
+            <div class="p-empty">
+                <i class='bx bx-check-circle'></i>
+                <h3>Nothing sold yet</h3>
+                <p>Sold items show up here.</p>
+            </div>
 
-            </a>
+        <% } else { %>
 
-        <% }) %>
-
-    </div>
-
-</div>
-
-
-<div class="tab-panel" id="shortsPanel">
-
-    <div class="shorts-grid">
-
-        <% if (shorts.length === 0) { %>
-
-            <p class="empty-tab-message">No shorts uploaded yet.</p>
+            <div class="pgrid">
+                <% sold.forEach(function (p) { %>
+                    <%- include('partials/product-card', { p: p }) %>
+                <% }) %>
+            </div>
 
         <% } %>
 
-        <% shorts.forEach(video => { %>
+    </section>
 
-            <a href="/shorts/<%= video._id %>" class="short-grid-card">
+</main>
 
-                <video muted>
-                    <source src="<%= video.videoUrl %>">
-                </video>
 
-                <p><%= video.title %></p>
-
-            </a>
-
-        <% }) %>
-
-    </div>
-
-</div>
-
+<%- include('partials/footer') %>
 
 <script>
 
-const videosTab = document.getElementById("videosTab");
-const shortsTab = document.getElementById("shortsTab");
-const videosPanel = document.getElementById("videosPanel");
-const shortsPanel = document.getElementById("shortsPanel");
+(function () {
 
-videosTab.addEventListener("click", () => {
-    videosTab.classList.add("active");
-    shortsTab.classList.remove("active");
-    videosPanel.classList.add("active");
-    shortsPanel.classList.remove("active");
-});
+    const $ = (id) => document.getElementById(id);
 
-shortsTab.addEventListener("click", () => {
-    shortsTab.classList.add("active");
-    videosTab.classList.remove("active");
-    shortsPanel.classList.add("active");
-    videosPanel.classList.remove("active");
-});
+    const tabs = document.querySelectorAll(".ptab");
+
+    function showTab(name) {
+
+        tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === name));
+
+        $("panel-forsale").classList.toggle("active", name === "forsale");
+        $("panel-sold").classList.toggle("active", name === "sold");
+
+    }
+
+    tabs.forEach((tab) => tab.addEventListener("click", () => showTab(tab.dataset.tab)));
+
+    $("backBtn").addEventListener("click", () => {
+
+        if (history.length > 1) {
+            history.back();
+        } else {
+            window.location.href = "/market";
+        }
+
+    });
+
+})();
 
 </script>
 

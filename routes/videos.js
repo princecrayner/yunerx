@@ -566,48 +566,6 @@ router.get("/video/:id/comments", async (req, res) => {
 
 
 // PUBLIC PROFILE — restricted view of another user's videos/shorts
-router.get("/user/:username", async (req, res) => {
-
-    try {
-
-        if (!req.session.user) {
-            return res.redirect("/login?redirect=/user/" + req.params.username);
-        }
-
-        const User = require("../models/User");
-
-        const profileUser = await User.findOne({ username: req.params.username });
-
-        if (!profileUser) {
-            return res.status(404).send("User not found.");
-        }
-
-        const longVideos = await Video.find({
-            userId: profileUser._id,
-            type: "long"
-        }).sort({ createdAt: -1 });
-
-        const shorts = await Video.find({
-            userId: profileUser._id,
-            type: "short"
-        }).sort({ createdAt: -1 });
-
-        res.render("publicprofile", {
-            profileUser,
-            longVideos,
-            shorts
-        });
-
-    } catch (error) {
-
-        console.error("Public profile error:", error);
-
-        res.status(500).send("Unable to load profile.");
-
-    }
-
-});
-
 
 
 module.exports = router;

@@ -1,361 +1,115 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Profile</title>
-
-<link rel="stylesheet" href="/css/profile.css">
+<title>Profile - Yunerx</title>
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
+<%- include('partials/market-styles') %>
+
 <style>
 
-body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    margin: 0;
-    padding: 0;
+/* ---------- side menu (opened by the button at the top right) ---------- */
+
+.menu-fab {
+    position: fixed; top: 12px; right: 14px; z-index: 1001;
+    width: 42px; height: 42px; border: none; border-radius: 50%;
+    background: #fff; color: #1a1a1a; font-size: 26px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.15);
 }
 
-.profile-header{
-    text-align:center;
-    padding:20px;
-    margin: 25px 0 0 0;
+.sidebar {
+    position: fixed; top: 0; left: -300px; width: 300px; max-width: 85vw; height: 100%;
+    background: #333; color: #fff; padding-top: 60px; transition: 0.3s; z-index: 3000;
 }
 
+.sidebar.active { left: 0; }
 
-/* REAL IMAGE */
+.sidebar a { display: block; padding: 15px; color: #fff; text-decoration: none; text-align: center; }
+.sidebar a:hover { background: #575757; }
 
-.profile-image{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
-    border:4px solid royalblue;
+.sidebar-copy { position: absolute; bottom: 20px; width: 100%; text-align: center; font-size: 14px; font-style: italic; color: #bbb; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; z-index: 2000; }
+.overlay.active { display: block; }
+
+/* ---------- profile card ---------- */
+
+.page-profile .mk-head { padding-right: 56px; }
+
+.prof-card {
+    max-width: 640px; margin: 0 auto; background: #fff; border-radius: 18px;
+    padding: 20px 16px; text-align: center; box-shadow: 0 3px 15px rgba(0,0,0,.06);
 }
 
-.profile-header img{
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    object-fit:cover;
+.prof-avatar { width: 96px; height: 96px; font-size: 84px; margin: 0 auto 10px; border: 3px solid #4169e1; }
+
+.prof-card h2 { margin: 0; font-size: 22px; word-break: break-word; }
+.prof-card .private { margin: 4px 0 0; color: #778; font-size: 13px; word-break: break-word; }
+
+.stats { display: flex; justify-content: center; margin: 16px 0; }
+.stat { flex: 1; max-width: 120px; }
+.stat b { display: block; font-size: 20px; color: #3557c7; }
+.stat span { font-size: 12px; color: #778; }
+
+.prof-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- tabs ---------- */
+
+.ptabs {
+    display: flex; gap: 8px; max-width: 640px; margin: 18px auto 14px;
+    background: #e4e9f5; padding: 5px; border-radius: 14px;
 }
 
-.default-user-icon {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 4px solid royalblue;
-    background: #222;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+.ptab {
+    flex: 1; border: none; background: transparent; padding: 11px 8px; border-radius: 10px;
+    font-size: 14px; font-weight: 700; color: #667; cursor: pointer; font-family: inherit;
 }
 
-.default-user-icon i {
-    font-size: 146px;
-    color: #888;
-    line-height: 1;
-}
+.ptab.active { background: #fff; color: #3557c7; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 
+.panel { display: none; }
+.panel.active { display: block; }
 
-/* NAV ITEMS */
-.nav-item {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 70px;
-  height: 20px;
-}
+/* ---------- your items ---------- */
 
-.nav-item i {
-  color: white;
-  font-size: 30px;
-}
+.own-item { display: flex; flex-direction: column; gap: 8px; }
+.own-actions { display: flex; gap: 8px; }
+.own-actions .mk-btn { padding: 10px 12px; font-size: 13px; }
+.own-actions .own-status { flex: 1; }
+.own-actions .own-del { width: 46px; flex: none; font-size: 18px; }
 
-/* SIDEBAR */
-.sidebar{
-    position: fixed;
-    top: 0;
-    left: -300px;
-    width: 300px;
-    height: 100%;
-    background: #333;
-    color: white;
-    padding-top: 60px;
-    transition: 0.3s;
-    z-index: 3000;
-}
+.own-msg { max-width: 640px; margin: 10px auto 0; text-align: center; color: #c0392b; font-size: 13px; min-height: 16px; }
 
-.sidebar a{
-    display: block;
-    padding: 15px;
-    color: white;
-    text-decoration: none;
-    text-align: center;
-}
+.p-empty { text-align: center; padding: 40px 20px; color: #778; }
+.p-empty i { font-size: 52px; color: #9aa4c4; display: block; margin-bottom: 8px; }
+.p-empty h3 { margin: 0 0 6px; color: #1a1a1a; }
+.p-empty p { margin: 0 0 16px; font-size: 14px; }
 
-.sidebar p{
-    color: white;
-    position: fixed;
-    bottom: 20px;
-    text-align: center;
-    font-size: 14px;
-    font-style: italic;
-    margin-left: 85px;
-}
+@media (min-width: 768px) {
 
+    .page-profile .mk-head { display: none; }      /* the top bar already says "Profile" */
 
-.sidebar a:hover{
-    background: #575757;
-}
-
-.sidebar.active{
-    left: 0;
-}
-
-
-/* OVERLAY */
-.overlay{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    z-index: 2000;
-}
-
-.overlay.active{
-    display: block;
-}
-
-
-.video-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:20px;
-    padding:20px;
-}
-
-.video-card{
-    background:#222;
-    padding:10px;
-    border-radius:10px;
-}
-
-video{
-    width:100%;
-    aspect-ratio:16/9;
-    border-radius:10px;
-}
-
-.profile-info{
-    text-align:center;
-    margin-top:10px;
-    border-bottom: 1px solid white;
-}
-
-
-
-.profile-tabs {
-    display: flex;
-    border-bottom: 1px solid #333;
-    margin: 10px 0;
-}
-
-.tab-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    color: #888;
-    padding: 14px;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    border-bottom: 3px solid transparent;
-}
-
-.tab-btn.active {
-    color: white;
-    border-bottom-color: royalblue;
-}
-
-.tab-panel {
-    display: none;
-}
-
-.tab-panel.active {
-    display: block;
-}
-
-.empty-tab-message {
-    padding: 20px;
-    color: #888;
-    text-align: center;
-    position: fixed;
-}
-
-/* LONG VIDEOS — YouTube-style: wide 16:9 thumbnails, single/two column */
-.video-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    padding: 16px 20px;
-}
-
-.video-card {
-    text-decoration: none;
-    color: white;
-    display: block;
-    background: #222;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.video-card video {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    display: block;
-}
-
-.video-card p {
-    padding: 10px;
-    margin: 0;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* SHORTS — TikTok-style: tall 9:16 grid, 3 columns like a real shorts shelf */
-.shorts-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    padding: 16px 20px;
-}
-
-.short-grid-card {
-    text-decoration: none;
-    color: white;
-    display: block;
-    background: #222;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-}
-
-.short-grid-card video {
-    width: 100%;
-    aspect-ratio: 9/16;
-    object-fit: cover;
-    display: block;
-}
-
-.short-grid-card p {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 6px 8px;
-    margin: 0;
-    font-size: 11px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-width: 500px) {
-
-    .shorts-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        padding: 12px;
-    }
-
-    .video-grid {
-        grid-template-columns: 1fr;
-        padding: 12px;
-    }
+    .menu-fab { top: 11px; }
 
 }
-
-
-
-.video-card-wrapper,
-.short-card-wrapper {
-    position: relative;
-}
-
-.delete-video-form {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 5;
-}
-
-.short-delete-form {
-    top: 6px;
-    right: 6px;
-}
-
-.delete-video-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 15px;
-}
-
-.delete-video-btn:hover {
-    background: #dc2626;
-}
-
 
 </style>
 
-
 </head>
 
-<body>
-  
-<div class="nav-item">
-     
-    <!-- HOME -->
-    <a href="/">
-        <i class='bx bx-home-alt'></i>
-    </a>
+<body class="page-market page-profile">
 
-    <!-- MENU -->
-    <div class="menu-icon" id="menuBtn"> 
-       <i class='bx bx-menu'></i>
-    </div>
-</div>
+<header class="page-top">
+    <h1>Profile</h1>
+</header>
 
+<button type="button" class="menu-fab" id="menuBtn" aria-label="Menu"><i class='bx bx-menu'></i></button>
 
-<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
 
     <a href="/settings">Settings</a>
@@ -363,202 +117,263 @@ video{
     <a href="/contact">Contact</a>
     <a href="/logout">Logout</a>
 
-    <div class="copyrighttext">
-
-        <p>© 2026 Yunerx</p>
-
-    </div>
+    <div class="sidebar-copy">© 2026 Yunerx</div>
 
 </div>
 
-<!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
 
+<main class="mk">
 
-
-
-        <!-- DEFAULT ICON -->
-<div class="profile-header">
-
-    <% if(user && user.profileImage){ %>
-
-        <img
-            src="<%= user.profileImage %>"
-            class="profile-image"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        >
-        
-        <div class="default-user-icon" style="display:none;">
-            <i class='bx bxs-user-circle'></i>
-        </div>
-
-    <% } else { %>
-
-        <div class="default-user-icon">
-
-            <i class='bx bxs-user-circle'></i>
-
-        </div>
-
-    <% } %>
-
-</div>
-
-
-    <!-- USER INFO -->
-    <div class="profile-info">
-
-        <h1><%= user.username %></h1>
-
-        <p><%= user.email %></p>
-
-        <p><%= user.phone %></p>
-
+    <div class="mk-head">
+        <h1>Profile</h1>
     </div>
 
-</div>
+    <section class="prof-card">
+
+        <div class="avatar prof-avatar">
+            <i class='bx bxs-user-circle'></i>
+            <% if (user.profileImage) { %>
+                <img src="<%= user.profileImage %>" alt="" onerror="this.remove()">
+            <% } %>
+        </div>
+
+        <h2><%= user.username %></h2>
+
+        <p class="private"><%= user.email %></p>
+        <p class="private"><%= user.phone %></p>
+
+        <div class="stats">
+            <div class="stat"><b><%= forSale.length %></b><span>For sale</span></div>
+            <div class="stat"><b><%= soldCount %></b><span>Sold</span></div>
+            <div class="stat"><b><%= totalViews %></b><span>Views</span></div>
+        </div>
+
+        <div class="prof-actions">
+            <a href="/sell" class="mk-btn mk-btn-blue"><i class='bx bx-plus'></i> Sell an item</a>
+            <a href="/settings" class="mk-btn mk-btn-light"><i class='bx bx-cog'></i> Settings</a>
+        </div>
+
+    </section>
+
+    <p class="own-msg" id="ownMsg"></p>
+
+    <div class="ptabs">
+        <button type="button" class="ptab active" data-tab="forsale">For sale (<%= forSale.length %>)</button>
+        <button type="button" class="ptab" data-tab="sold">Sold (<%= soldCount %>)</button>
+    </div>
 
 
+    <!-- FOR SALE -->
+    <section class="panel active" id="panel-forsale">
 
+        <% if (forSale.length === 0) { %>
 
-<!-- =========================
-     TAB SWITCHER
-========================= -->
+            <div class="p-empty">
+                <i class='bx bx-store'></i>
+                <h3>Nothing for sale yet</h3>
+                <p>Post your first item. It only takes a minute.</p>
+                <a href="/sell" class="mk-btn mk-btn-blue"><i class='bx bx-plus'></i> Sell an item</a>
+            </div>
 
-<div class="profile-tabs">
+        <% } else { %>
 
-    <button type="button" class="tab-btn active" id="videosTab">
-        <i class='bx bx-play-circle'></i>
-        Videos
-    </button>
+            <div class="pgrid">
 
-    <button type="button" class="tab-btn" id="shortsTab">
-        <i class='bx bx-video'></i>
-        Shorts
-    </button>
+                <% forSale.forEach(function (p) { %>
 
-</div>
+                    <div class="own-item">
 
+                        <%- include('partials/product-card', { p: p }) %>
 
-<!-- =========================
-     LONG VIDEOS GRID
-========================= -->
+                        <div class="own-actions">
 
-<div class="tab-panel active" id="videosPanel">
+                            <button type="button" class="mk-btn mk-btn-light own-status" data-id="<%= p._id %>" data-next="sold">
+                                <i class='bx bx-check-circle'></i> Mark sold
+                            </button>
 
-    <div class="video-grid">
+                            <button type="button" class="mk-btn mk-btn-red own-del" data-id="<%= p._id %>" aria-label="Delete listing">
+                                <i class='bx bx-trash'></i>
+                            </button>
 
-        <% if (longVideos.length === 0) { %>
+                        </div>
 
-            <p class="empty-tab-message">No videos uploaded yet.</p>
+                    </div>
+
+                <% }) %>
+
+            </div>
 
         <% } %>
 
-        <% longVideos.forEach(video => { %>
-
-<div class="video-card-wrapper">
-
-    <a href="/watch/<%= video._id %>" class="video-card">
-
-        <video muted>
-            <source src="<%= video.videoUrl %>">
-        </video>
-
-        <p><%= video.title %></p>
-
-    </a>
-
-    <form action="/video/<%= video._id %>/delete" method="POST" class="delete-video-form" onsubmit="return confirm('Delete this video? This cannot be undone.');">
-        <button type="submit" class="delete-video-btn">
-            <i class='bx bx-trash'></i>
-        </button>
-    </form>
-
-</div>
-
-<% }) %>
-
-    </div>
-
-</div>
+    </section>
 
 
-<!-- =========================
-     SHORTS GRID
-========================= -->
+    <!-- SOLD -->
+    <section class="panel" id="panel-sold">
 
-<div class="tab-panel" id="shortsPanel">
+        <% if (sold.length === 0) { %>
 
-    <div class="shorts-grid">
+            <div class="p-empty">
+                <i class='bx bx-check-circle'></i>
+                <h3>Nothing sold yet</h3>
+                <p>Items you mark as sold show up here.</p>
+            </div>
 
-        <% if (shorts.length === 0) { %>
+        <% } else { %>
 
-            <p class="empty-tab-message">No shorts uploaded yet.</p>
+            <div class="pgrid">
+
+                <% sold.forEach(function (p) { %>
+
+                    <div class="own-item">
+
+                        <%- include('partials/product-card', { p: p }) %>
+
+                        <div class="own-actions">
+
+                            <button type="button" class="mk-btn mk-btn-light own-status" data-id="<%= p._id %>" data-next="available">
+                                <i class='bx bx-undo'></i> Mark available
+                            </button>
+
+                            <button type="button" class="mk-btn mk-btn-red own-del" data-id="<%= p._id %>" aria-label="Delete listing">
+                                <i class='bx bx-trash'></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                <% }) %>
+
+            </div>
 
         <% } %>
 
-        <% shorts.forEach(video => { %>
+    </section>
 
-    <div class="short-card-wrapper">
-
-        <a href="/shorts/<%= video._id %>" class="short-grid-card">
-
-            <video muted>
-                <source src="<%= video.videoUrl %>">
-            </video>
-
-            <p><%= video.title %></p>
-
-        </a>
-
-        <form action="/video/<%= video._id %>/delete" method="POST" class="delete-video-form short-delete-form" onsubmit="return confirm('Delete this short? This cannot be undone.');">
-            <button type="submit" class="delete-video-btn">
-                <i class='bx bx-trash'></i>
-            </button>
-        </form>
-
-    </div>
-
-<% }) %>
-
-    </div>
-
-</div>
+</main>
 
 
+<%- include('partials/footer') %>
+
+<script src="/script.js"></script>
 
 <script>
 
-const videosTab = document.getElementById("videosTab");
-const shortsTab = document.getElementById("shortsTab");
-const videosPanel = document.getElementById("videosPanel");
-const shortsPanel = document.getElementById("shortsPanel");
+(function () {
 
-videosTab.addEventListener("click", () => {
+    const $ = (id) => document.getElementById(id);
 
-    videosTab.classList.add("active");
-    shortsTab.classList.remove("active");
+    const tabs = document.querySelectorAll(".ptab");
+    const ownMsg = $("ownMsg");
 
-    videosPanel.classList.add("active");
-    shortsPanel.classList.remove("active");
 
-});
+    // ---------- tabs (the address remembers which one you were on) ----------
 
-shortsTab.addEventListener("click", () => {
+    function showTab(name) {
 
-    shortsTab.classList.add("active");
-    videosTab.classList.remove("active");
+        tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === name));
 
-    shortsPanel.classList.add("active");
-    videosPanel.classList.remove("active");
+        $("panel-forsale").classList.toggle("active", name === "forsale");
+        $("panel-sold").classList.toggle("active", name === "sold");
 
-});
+    }
+
+    tabs.forEach((tab) => {
+
+        tab.addEventListener("click", () => {
+
+            showTab(tab.dataset.tab);
+
+            history.replaceState(null, "", "#" + tab.dataset.tab);
+
+        });
+
+    });
+
+    if (window.location.hash === "#sold") {
+        showTab("sold");
+    }
+
+
+    // ---------- mark sold / available, delete ----------
+
+    async function post(url, body) {
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body || {}),
+            credentials: "same-origin"
+        });
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch (e) {}
+
+        if (response.status === 401 || data.loginRequired) {
+            window.location.href = "/login?redirect=/profile";
+            return null;
+        }
+
+        return { ok: response.ok, data: data };
+
+    }
+
+    document.addEventListener("click", async (event) => {
+
+        const statusBtn = event.target.closest(".own-status");
+        const deleteBtn = event.target.closest(".own-del");
+
+        const button = statusBtn || deleteBtn;
+
+        if (!button) {
+            return;
+        }
+
+        if (deleteBtn && !confirm("Delete this listing? The photos will be removed too. This cannot be undone.")) {
+            return;
+        }
+
+        button.disabled = true;
+        ownMsg.textContent = "";
+
+        try {
+
+            const result = statusBtn
+                ? await post("/product/" + button.dataset.id + "/status", { status: button.dataset.next })
+                : await post("/product/" + button.dataset.id + "/delete");
+
+            if (result && result.ok) {
+
+                // reload so the lists and counts are always correct (the address keeps your tab)
+                window.location.reload();
+
+                return;
+
+            }
+
+            if (result) {
+                ownMsg.textContent = result.data.error || "Something went wrong. Please try again.";
+            }
+
+        } catch (error) {
+
+            ownMsg.textContent = "Could not reach the server. Check your connection and try again.";
+
+        }
+
+        button.disabled = false;
+
+    });
+
+})();
 
 </script>
-
-
-<script src="/script.js"></script>
 
 <%- include('partials/serviceworker') %>
 

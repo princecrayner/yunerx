@@ -171,9 +171,13 @@ router.get("/profile", async (req, res) => {
 
     try {
 
-        const Video = require("../models/Video");
+        const Product = require("../models/Product");
+        const helpers = require("../utils/marketHelpers");
 
-        const user = await User.findById(req.session.user._id);
+        // only what the page needs (never the password hash)
+        const user = await User.findById(req.session.user._id)
+            .select("username email phone profileImage")
+            .lean();
 
         if (!user) {
 
@@ -186,20 +190,34 @@ router.get("/profile", async (req, res) => {
 
         }
 
-        const longVideos = await Video.find({
-            userId: req.session.user._id,
-            type: "long"
-        }).sort({ createdAt: -1 });
+        const [forSale, sold, soldCount, viewStats] = await Promise.all([
 
-        const shorts = await Video.find({
-            userId: req.session.user._id,
-            type: "short"
-        }).sort({ createdAt: -1 });
+            Product.find({ sellerId: user._id, status: "available" })
+                .sort({ createdAt: -1 })
+                .lean(),
+
+            // the 60 most recently sold
+            Product.find({ sellerId: user._id, status: "sold" })
+                .sort({ updatedAt: -1 })
+                .limit(60)
+                .lean(),
+
+            Product.countDocuments({ sellerId: user._id, status: "sold" }),
+
+            Product.aggregate([
+                { $match: { sellerId: user._id } },
+                { $group: { _id: null, views: { $sum: "$views" } } }
+            ])
+
+        ]);
 
         res.render("profile", {
             user,
-            longVideos,
-            shorts
+            forSale,
+            sold,
+            soldCount,
+            totalViews: viewStats.length ? viewStats[0].views : 0,
+            ...helpers
         });
 
     } catch (error) {
@@ -211,7 +229,6 @@ router.get("/profile", async (req, res) => {
     }
 
 });
-
 
 
 // =====================================================

@@ -8,6 +8,7 @@ const cloudinary = require("../config/cloudinary");
 const Product = require("../models/Product");
 const market = require("../config/market");
 const helpers = require("../utils/marketHelpers");
+const User = require("../models/User");
 
 const {
     CATEGORIES,
@@ -610,6 +611,67 @@ router.get("/market/feed", async (req, res) => {
         console.error("Market feed error:", error);
 
         res.status(500).json({ error: "Unable to load items." });
+
+    }
+
+});
+
+
+// =====================================================
+// PUBLIC SELLER PAGE
+// =====================================================
+
+router.get("/user/:username", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/login?redirect=" + encodeURIComponent(req.originalUrl));
+    }
+
+    try {
+
+        // only the public fields: never the email, phone or password
+        const seller = await User.findOne({ username: req.params.username })
+            .select("username profileImage")
+            .lean();
+
+        if (!seller) {
+            return res.status(404).send("User not found.");
+        }
+
+        // your own page has the management buttons
+        if (String(seller._id) === String(req.session.user._id)) {
+            return res.redirect("/profile");
+        }
+
+        const [forSale, sold, soldCount] = await Promise.all([
+
+            Product.find({ sellerId: seller._id, status: "available" })
+                .sort({ createdAt: -1 })
+                .lean(),
+
+            Product.find({ sellerId: seller._id, status: "sold" })
+                .sort({ updatedAt: -1 })
+                .limit(24)
+                .lean(),
+
+            Product.countDocuments({ sellerId: seller._id, status: "sold" })
+
+        ]);
+
+        res.render("publicprofile", {
+            seller,
+            memberSince: seller._id.getTimestamp(),
+            forSale,
+            sold,
+            soldCount,
+            ...helpers
+        });
+
+    } catch (error) {
+
+        console.error("Seller page error:", error);
+
+        res.status(500).send("Unable to load this seller.");
 
     }
 
