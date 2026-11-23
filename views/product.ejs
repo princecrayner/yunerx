@@ -92,6 +92,32 @@
 
 }
 
+.report-link { margin: 4px auto 0; border: none; background: none; color: #889; font-size: 13px; cursor: pointer; font-family: inherit; display: block; }
+.report-link i { vertical-align: -2px; margin-right: 3px; }
+
+.heart-btn.on { color: #e0245e; }
+
+.sheet-overlay { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,.5); display: flex; align-items: flex-end; justify-content: center; }
+.sheet-overlay[hidden] { display: none; }
+.sheet { background: #fff; width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; border-radius: 20px 20px 0 0; padding: 18px; }
+.sheet h3 { margin: 0 0 4px; font-size: 18px; }
+.sheet > p { margin: 0 0 12px; color: #778; font-size: 13px; }
+.reason { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border: 2px solid #e3e8f5; border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-size: 15px; }
+.reason input { width: 18px; height: 18px; }
+.reason:has(input:checked) { border-color: #4169e1; background: #eef2ff; }
+.sheet textarea { width: 100%; min-height: 80px; padding: 12px; border: 2px solid #e3e8f5; border-radius: 12px; font-size: 16px; font-family: inherit; resize: vertical; outline: none; margin-top: 4px; }
+.sheet textarea:focus { border-color: #4169e1; }
+.sheet-msg { min-height: 18px; margin: 8px 0 0; font-size: 13px; color: #c0392b; }
+.sheet-actions { display: flex; gap: 10px; margin-top: 12px; }
+.sheet-actions .mk-btn { flex: 1; }
+.sheet-done { text-align: center; padding: 20px 0 6px; }
+.sheet-done i { font-size: 52px; color: #2ecc71; }
+
+@media (min-width: 768px) {
+    .sheet-overlay { align-items: center; }
+    .sheet { border-radius: 20px; }
+}
+
 </style>
 
 </head>
@@ -194,6 +220,10 @@
 
                     <p class="owner-note">This is your listing. Buyers will message you in Chats.</p>
 
+                    <a href="/product/<%= product._id %>/edit" class="mk-btn mk-btn-blue mk-btn-block">
+                        <i class='bx bx-edit'></i> Edit listing
+                    </a>
+
                     <div class="actions-row">
 
                         <button type="button" class="mk-btn mk-btn-light" id="statusBtn"
@@ -222,9 +252,23 @@
 
                 <% } %>
 
-                <button type="button" class="mk-btn mk-btn-light mk-btn-block" id="shareBtn">
-                    <i class='bx bx-share-alt'></i> <span id="shareText">Share</span>
-                </button>
+                <div class="actions-row">
+
+                    <% if (!isOwner) { %>
+                        <button type="button" class="mk-btn mk-btn-light heart-btn <%= isSaved ? 'on' : '' %>" id="saveBtn">
+                            <i class='bx <%= isSaved ? "bxs-heart" : "bx-heart" %>'></i> <span id="saveText"><%= isSaved ? "Saved" : "Save" %></span>
+                        </button>
+                    <% } %>
+
+                    <button type="button" class="mk-btn mk-btn-light" id="shareBtn">
+                        <i class='bx bx-share-alt'></i> <span id="shareText">Share</span>
+                    </button>
+
+                </div>
+
+                <% if (!isOwner) { %>
+                    <button type="button" class="report-link" id="reportBtn"><i class='bx bx-flag'></i> Report this listing</button>
+                <% } %>
 
             </div>
 
@@ -262,10 +306,51 @@
 
 </main>
 
+<% if (!isOwner) { %>
+
+<div class="sheet-overlay" id="reportSheet" hidden>
+
+    <div class="sheet" role="dialog" aria-label="Report this listing">
+
+        <div id="reportForm">
+
+            <h3>Report this listing</h3>
+            <p>What is wrong with it? Your report is private.</p>
+
+            <% reportReasons.forEach(function (reason) { %>
+                <label class="reason"><input type="radio" name="reason" value="<%= reason %>"> <%= reason %></label>
+            <% }) %>
+
+            <textarea id="reportDetails" maxlength="300" placeholder="Anything else we should know? (optional)"></textarea>
+
+            <p class="sheet-msg" id="reportMsg"></p>
+
+            <div class="sheet-actions">
+                <button type="button" class="mk-btn mk-btn-light" id="reportCancel">Cancel</button>
+                <button type="button" class="mk-btn mk-btn-blue" id="reportSend">Send report</button>
+            </div>
+
+        </div>
+
+        <div class="sheet-done" id="reportDone" hidden>
+            <i class='bx bx-check-circle'></i>
+            <h3>Thank you</h3>
+            <p>We will look into this listing.</p>
+            <button type="button" class="mk-btn mk-btn-blue" id="reportClose">Close</button>
+        </div>
+
+    </div>
+
+</div>
+
+<% } %>
+
 <div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
 
 
 <%- include('partials/footer') %>
+
+<%- include('partials/hearts') %>
 
 <script>
 
@@ -477,6 +562,128 @@
             }
 
             deleteBtn.disabled = false;
+
+        });
+
+    }
+    
+        // ---------- save ----------
+
+    const saveBtn = $("saveBtn");
+
+    if (saveBtn) {
+
+        let savedNow = <%- isSaved ? "true" : "false" %>;
+
+        function paintSave() {
+
+            saveBtn.classList.toggle("on", savedNow);
+            $("saveText").textContent = savedNow ? "Saved" : "Save";
+
+            const icon = saveBtn.querySelector("i");
+
+            icon.classList.toggle("bxs-heart", savedNow);
+            icon.classList.toggle("bx-heart", !savedNow);
+
+        }
+
+        saveBtn.addEventListener("click", async () => {
+
+            const wanted = !savedNow;
+
+            savedNow = wanted;
+            paintSave();
+
+            const ok = await window.setSaved(PRODUCT_ID, wanted);
+
+            if (!ok) {
+                savedNow = !wanted;
+                paintSave();
+            }
+
+        });
+
+    }
+
+
+    // ---------- report ----------
+
+    const reportBtn = $("reportBtn");
+
+    if (reportBtn) {
+
+        const sheet = $("reportSheet");
+        const reportMsg = $("reportMsg");
+        const sendBtn = $("reportSend");
+
+        function openReport() {
+
+            $("reportForm").hidden = false;
+            $("reportDone").hidden = true;
+
+            reportMsg.textContent = "";
+
+            sheet.hidden = false;
+            document.body.style.overflow = "hidden";
+
+        }
+
+        function closeReport() {
+
+            sheet.hidden = true;
+            document.body.style.overflow = "";
+
+        }
+
+        reportBtn.addEventListener("click", openReport);
+        $("reportCancel").addEventListener("click", closeReport);
+        $("reportClose").addEventListener("click", closeReport);
+
+        sheet.addEventListener("click", (event) => {
+
+            if (event.target === sheet) {
+                closeReport();
+            }
+
+        });
+
+        sendBtn.addEventListener("click", async () => {
+
+            const picked = document.querySelector('input[name="reason"]:checked');
+
+            if (!picked) {
+                reportMsg.textContent = "Choose a reason first.";
+                return;
+            }
+
+            sendBtn.disabled = true;
+            reportMsg.textContent = "";
+
+            try {
+
+                const result = await post("/product/" + PRODUCT_ID + "/report", {
+                    reason: picked.value,
+                    details: $("reportDetails").value.trim()
+                });
+
+                if (result && result.ok) {
+
+                    $("reportForm").hidden = true;
+                    $("reportDone").hidden = false;
+
+                } else if (result) {
+
+                    reportMsg.textContent = result.data.error || "Could not send your report.";
+
+                }
+
+            } catch (error) {
+
+                reportMsg.textContent = "Could not reach the server. Check your connection.";
+
+            }
+
+            sendBtn.disabled = false;
 
         });
 

@@ -142,6 +142,8 @@
 
 }
 
+.bar-actions { display: flex; gap: 8px; }
+
 </style>
 
 </head>
@@ -155,8 +157,11 @@
 <main class="mk">
 
     <div class="mk-bar">
-        <h1>Campus Market</h1>
-        <a href="/sell" class="mk-btn mk-btn-blue sell-btn"><i class='bx bx-plus'></i> Sell</a>
+        <h1>Market</h1>
+        <div class="bar-actions">
+            <a href="/saved" class="mk-btn mk-btn-light sell-btn" aria-label="Saved items"><i class='bx bx-heart'></i> Saved</a>
+            <a href="/sell" class="mk-btn mk-btn-blue sell-btn"><i class='bx bx-plus'></i> Sell</a>
+        </div>
     </div>
 
     <div class="sticky-tools">
@@ -272,6 +277,8 @@
 
 
 <%- include('partials/footer') %>
+
+<%- include('partials/hearts') %>
 
 <script>
 
@@ -426,6 +433,7 @@
 
             state.page = page;
             state.hasMore = !!data.hasMore;
+            if (window.paintHearts) window.paintHearts();
             needReset = false;
 
             if (typeof data.total === "number") {

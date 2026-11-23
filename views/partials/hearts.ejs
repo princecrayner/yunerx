@@ -1,0 +1,149 @@
+<style>
+
+.mk-toast {
+    position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%);
+    z-index: 4000; max-width: 90%; text-align: center;
+    background: #222; color: #fff; padding: 10px 16px; border-radius: 20px; font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+
+.mk-toast.show { opacity: 1; }
+
+</style>
+
+<div class="mk-toast" id="mkToast" role="status"></div>
+
+<script>
+
+(function () {
+
+    let saved = new Set();
+    let toastTimer = null;
+
+    window.mkToast = function (message) {
+
+        const box = document.getElementById("mkToast");
+
+        box.textContent = message;
+        box.classList.add("show");
+
+        clearTimeout(toastTimer);
+
+        toastTimer = setTimeout(function () { box.classList.remove("show"); }, 2500);
+
+    };
+
+    function paint() {
+
+        document.querySelectorAll(".heart").forEach(function (heart) {
+
+            const on = saved.has(heart.dataset.id);
+
+            heart.classList.toggle("on", on);
+            heart.setAttribute("aria-pressed", on ? "true" : "false");
+
+            const icon = heart.querySelector("i");
+
+            if (icon) {
+                icon.classList.toggle("bxs-heart", on);
+                icon.classList.toggle("bx-heart", !on);
+            }
+
+        });
+
+    }
+
+    // the market page calls this after it adds more cards
+    window.paintHearts = paint;
+
+    // Save or un-save. Resolves true when the server accepted it.
+    window.setSaved = async function (id, wanted) {
+
+        // the heart changes at once, and changes back if the server says no
+        if (wanted) { saved.add(id); } else { saved.delete(id); }
+
+        paint();
+
+        try {
+
+            const response = await fetch("/product/" + id + "/save", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ saved: wanted }),
+                credentials: "same-origin"
+            });
+
+            if (response.status === 401) {
+                window.location.href = "/login?redirect=" + encodeURIComponent(window.location.pathname + window.location.search);
+                return false;
+            }
+
+            if (!response.ok) {
+
+                let data = {};
+
+                try { data = await response.json(); } catch (e) {}
+
+                throw new Error(data.error || "Could not save this item.");
+
+            }
+
+            document.dispatchEvent(new CustomEvent("heart:change", { detail: { id: id, saved: wanted } }));
+
+            return true;
+
+        } catch (error) {
+
+            if (wanted) { saved.delete(id); } else { saved.add(id); }
+
+            paint();
+
+            window.mkToast(error instanceof TypeError ? "No connection. Please try again." : error.message);
+
+            return false;
+
+        }
+
+    };
+
+    // which items are already saved
+    const ready = fetch("/saved/ids", { credentials: "same-origin" })
+        .then(function (response) { return response.ok ? response.json() : { ids: [] }; })
+        .then(function (data) { saved = new Set(data.ids || []); })
+        .catch(function () {})
+        .then(paint);
+
+    document.addEventListener("click", function (event) {
+
+        const heart = event.target.closest(".heart");
+
+        if (!heart) {
+            return;
+        }
+
+        // the heart sits inside the card's link, so do not open the item
+        event.preventDefault();
+        event.stopPropagation();
+
+        ready.then(function () {
+            window.setSaved(heart.dataset.id, !saved.has(heart.dataset.id));
+        });
+
+    });
+
+    document.addEventListener("keydown", function (event) {
+
+        if ((event.key === "Enter" || event.key === " ") &&
+            event.target.classList && event.target.classList.contains("heart")) {
+
+            event.preventDefault();
+            event.target.click();
+
+        }
+
+    });
+
+})();
+
+</script>

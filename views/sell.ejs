@@ -1,10 +1,11 @@
+<% const editing = typeof product !== "undefined" && product; -%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sell an item - Yunerx</title>
+<title><%= editing ? "Edit item" : "Sell an item" %> - Yunerx</title>
 
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
@@ -39,8 +40,6 @@
 
 .count { display: block; text-align: right; color: #888; font-size: 12px; margin-top: 4px; }
 
-/* photos */
-
 .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
 .photo-tile, .photo-add { position: relative; aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; }
@@ -66,8 +65,6 @@
 }
 
 .photo-add i { font-size: 28px; }
-
-/* price + condition */
 
 .price-row { display: flex; }
 
@@ -110,7 +107,7 @@
 
     <div class="mk-head">
         <button type="button" class="mk-back" id="backBtn" aria-label="Go back"><i class='bx bx-arrow-back'></i></button>
-        <h1>Sell an item</h1>
+        <h1><%= editing ? "Edit item" : "Sell an item" %></h1>
     </div>
 
     <form class="sell-card" id="sellForm" novalidate>
@@ -123,16 +120,16 @@
 
         <div class="field">
             <label class="field-label" for="title">Title</label>
-            <input type="text" id="title" maxlength="80" placeholder="e.g. iPhone 11, 64GB" autocomplete="off">
+            <input type="text" id="title" maxlength="80" placeholder="e.g. iPhone 11, 64GB" autocomplete="off" value="<%= editing ? product.title : '' %>">
         </div>
 
         <div class="field">
             <label class="field-label" for="price">Price</label>
             <div class="price-row">
                 <span class="cur"><%= currency %></span>
-                <input type="text" id="price" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                <input type="text" id="price" inputmode="decimal" placeholder="0.00" autocomplete="off" value="<%= editing ? product.price : '' %>">
             </div>
-            <label class="check"><input type="checkbox" id="negotiable"> Price is negotiable</label>
+            <label class="check"><input type="checkbox" id="negotiable" <%= editing && product.negotiable ? "checked" : "" %>> Price is negotiable</label>
         </div>
 
         <div class="field">
@@ -140,48 +137,56 @@
             <select id="category">
                 <option value="">Choose a category</option>
                 <% categories.forEach(function (c) { %>
-                    <option value="<%= c %>"><%= c %></option>
+                    <option value="<%= c %>" <%= editing && product.category === c ? "selected" : "" %>><%= c %></option>
                 <% }) %>
             </select>
         </div>
 
-        <div class="field" id="conditionField">
+        <div class="field" id="conditionField" <%= editing && product.category === "Services" ? "hidden" : "" %>>
             <span class="field-label">Condition</span>
             <div class="chips-pick">
                 <% conditions.forEach(function (c) { %>
-                    <label><input type="radio" name="condition" value="<%= c %>"><span><%= c %></span></label>
+                    <label><input type="radio" name="condition" value="<%= c %>" <%= editing && product.condition === c ? "checked" : "" %>><span><%= c %></span></label>
                 <% }) %>
             </div>
         </div>
 
         <div class="field">
             <label class="field-label" for="description">Description <span>(optional)</span></label>
-            <textarea id="description" maxlength="1500" placeholder="Size, colour, why you are selling, any faults..."></textarea>
-            <small class="count" id="descCount">0 / 1500</small>
+            <textarea id="description" maxlength="1500" placeholder="Size, colour, why you are selling, any faults..."><%= editing ? product.description : "" %></textarea>
+            <small class="count" id="descCount"><%= editing ? product.description.length : 0 %> / 1500</small>
         </div>
 
         <div class="field">
             <label class="field-label" for="location">Where can the buyer meet you? <span>(optional)</span></label>
-            <input type="text" id="location" maxlength="60" placeholder="e.g. Hall 3 gate" autocomplete="off">
+            <input type="text" id="location" maxlength="60" placeholder="e.g. Hall 3 gate" autocomplete="off" value="<%= editing ? product.location : '' %>">
         </div>
 
-        <div class="tip">Tip: take clear photos in good light. Meet buyers in a public place on campus, and never share your PIN.</div>
+        <% if (!editing) { %>
+            <div class="tip">Tip: take clear photos in good light. Meet buyers in a public place on campus, and never share your PIN.</div>
+        <% } %>
 
         <p class="form-error" id="formError"></p>
 
-        <button type="submit" class="mk-btn mk-btn-blue mk-btn-block" id="submitBtn">Post item</button>
+        <button type="submit" class="mk-btn mk-btn-blue mk-btn-block" id="submitBtn"><%= editing ? "Save changes" : "Post item" %></button>
 
     </form>
 
 </main>
 
 
+<%- include('partials/footer') %>
 
 <script>
 
 (function () {
 
     const MAX = <%- maxImages %>;
+    const PRODUCT_ID = "<%= editing ? product._id : '' %>";
+    const IDLE_TEXT = PRODUCT_ID ? "Save changes" : "Post item";
+
+    // the photos this listing already has (empty when posting a new item)
+    const EXISTING = <%- JSON.stringify(editing ? product.images.map(function (i) { return { publicId: i.publicId, url: thumb(i.url, 300, 300) }; }) : []).replace(/</g, "\\u003c") %>;
 
     const $ = (id) => document.getElementById(id);
 
@@ -194,7 +199,11 @@
     const conditionField = $("conditionField");
     const description = $("description");
 
-    let photos = [];          // { blob, url }
+    // existing photo: { existing: true, publicId, url }     new photo: { blob, url }
+    let photos = EXISTING.map(function (e) {
+        return { existing: true, publicId: e.publicId, url: e.url };
+    });
+
     let busy = false;
 
 
@@ -279,9 +288,15 @@
             remove.innerHTML = "<i class='bx bx-x'></i>";
 
             remove.addEventListener("click", () => {
-                URL.revokeObjectURL(photo.url);
+
+                if (photo.blob) {
+                    URL.revokeObjectURL(photo.url);
+                }
+
                 photos.splice(photos.indexOf(photo), 1);
+
                 renderPhotos();
+
             });
 
             tile.appendChild(remove);
@@ -333,7 +348,7 @@
         }
 
         if (files.length > room) {
-            showError("You can add up to " + MAX + " photos. The extra ones were skipped.");
+            showError("You can have up to " + MAX + " photos. The extra ones were skipped.");
         }
 
     });
@@ -369,13 +384,13 @@
         if (history.length > 1) {
             history.back();
         } else {
-            window.location.href = "/";
+            window.location.href = PRODUCT_ID ? "/product/" + PRODUCT_ID : "/";
         }
 
     });
 
 
-    // ---------- post ----------
+    // ---------- post / save ----------
 
     form.addEventListener("submit", async (event) => {
 
@@ -398,7 +413,7 @@
 
         busy = true;
         submitBtn.disabled = true;
-        submitBtn.textContent = "Posting…";
+        submitBtn.textContent = PRODUCT_ID ? "Saving…" : "Posting…";
 
         showError("");
 
@@ -412,13 +427,18 @@
         data.append("description", description.value.trim());
         data.append("location", $("location").value.trim());
 
-        photos.forEach((photo, index) => {
+        // the photos already on the listing that are kept, then the new ones
+        data.append("keep", JSON.stringify(photos.filter((p) => p.existing).map((p) => p.publicId)));
+
+        photos.filter((p) => !p.existing).forEach((photo, index) => {
             data.append("photos", photo.blob, "photo" + (index + 1) + ".jpg");
         });
 
+        const target = PRODUCT_ID ? "/product/" + PRODUCT_ID + "/edit" : "/sell";
+
         try {
 
-            const response = await fetch("/sell", {
+            const response = await fetch(target, {
                 method: "POST",
                 body: data,
                 credentials: "same-origin"
@@ -431,17 +451,21 @@
             } catch (e) {}
 
             if (response.status === 401 || result.loginRequired) {
-                window.location.href = "/login?redirect=/sell";
+                window.location.href = "/login?redirect=" + encodeURIComponent(window.location.pathname);
                 return;
             }
 
             if (!response.ok) {
-                throw new Error(result.error || "Could not post your item.");
+                throw new Error(result.error || "Could not save your item.");
             }
 
-            photos.forEach((photo) => URL.revokeObjectURL(photo.url));
+            photos.forEach((photo) => {
+                if (photo.blob) {
+                    URL.revokeObjectURL(photo.url);
+                }
+            });
 
-            window.location.href = "/product/" + result.id;
+            window.location.href = "/product/" + (PRODUCT_ID || result.id);
 
         } catch (error) {
 
@@ -451,7 +475,7 @@
 
             busy = false;
             submitBtn.disabled = false;
-            submitBtn.textContent = "Post item";
+            submitBtn.textContent = IDLE_TEXT;
 
         }
 

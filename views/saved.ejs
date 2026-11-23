@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Saved items - Yunerx</title>
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<%- include('partials/market-styles') %>
+
+<style>
+
+.saved-count { margin: 0 0 12px; color: #667; font-size: 13px; }
+
+.p-empty { text-align: center; padding: 50px 20px; color: #778; }
+.p-empty i { font-size: 56px; color: #9aa4c4; display: block; margin-bottom: 8px; }
+.p-empty h3 { margin: 0 0 6px; color: #1a1a1a; }
+.p-empty p { margin: 0 0 16px; font-size: 14px; }
+
+</style>
+
+</head>
+
+<body class="page-market">
+
+<header class="page-top">
+    <h1>Saved items</h1>
+</header>
+
+<main class="mk">
+
+    <div class="mk-head">
+        <button type="button" class="mk-back" id="backBtn" aria-label="Go back"><i class='bx bx-arrow-back'></i></button>
+        <h1>Saved items</h1>
+    </div>
+
+    <p class="saved-count" id="savedCount" <%= items.length ? "" : "hidden" %>>
+        <%= items.length %> <%= items.length === 1 ? "item" : "items" %>
+    </p>
+
+    <div class="pgrid" id="grid">
+        <% items.forEach(function (p) { %>
+            <%- include('partials/product-card', { p: p }) %>
+        <% }) %>
+    </div>
+
+    <div class="p-empty" id="empty" <%= items.length ? "hidden" : "" %>>
+        <i class='bx bx-heart'></i>
+        <h3>No saved items yet</h3>
+        <p>Tap the heart on any item to keep it here.</p>
+        <a href="/market" class="mk-btn mk-btn-blue">Browse the market</a>
+    </div>
+
+</main>
+
+
+<%- include('partials/footer') %>
+<%- include('partials/hearts') %>
+
+<script>
+
+(function () {
+
+    const $ = (id) => document.getElementById(id);
+
+    $("backBtn").addEventListener("click", function () {
+
+        if (history.length > 1) {
+            history.back();
+        } else {
+            window.location.href = "/market";
+        }
+
+    });
+
+    // when you un-save an item here, it leaves the list
+    document.addEventListener("heart:change", function (event) {
+
+        if (event.detail.saved) {
+            return;
+        }
+
+        const card = $("grid").querySelector('.pcard[data-id="' + event.detail.id + '"]');
+
+        if (card) {
+            card.remove();
+        }
+
+        const left = $("grid").children.length;
+
+        $("savedCount").textContent = left + (left === 1 ? " item" : " items");
+        $("savedCount").hidden = left === 0;
+        $("empty").hidden = left > 0;
+
+    });
+
+})();
+
+</script>
+
+<%- include('partials/serviceworker') %>
+
+</body>
+</html>

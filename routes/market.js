@@ -10,15 +10,19 @@ const market = require("../config/market");
 const helpers = require("../utils/marketHelpers");
 const User = require("../models/User");
 
+const Favorite = require("../models/Favorite");
+const Report = require("../models/Report");
+
 const {
     CATEGORIES,
     CONDITIONS,
     MAX_IMAGES,
     MAX_IMAGE_MB,
     MAX_PRICE,
-    MAX_ACTIVE_LISTINGS
+    MAX_ACTIVE_LISTINGS,
+    REPORT_REASONS,
+    MAX_REPORTS_PER_DAY
 } = market;
-
 
 // =====================================================
 // PHOTO UPLOAD
@@ -103,6 +107,68 @@ async function destroyImages(images) {
 
 }
 
+// Uploads every photo, or none: if one fails, the ones that went through are removed
+async function uploadAll(files) {
+
+    const settled = await Promise.allSettled(files.map(uploadImage));
+
+    const uploaded = settled
+        .filter((result) => result.status === "fulfilled")
+        .map((result) => result.value);
+
+    if (uploaded.length !== files.length) {
+        await destroyImages(uploaded);
+        return null;
+    }
+
+    return uploaded;
+
+}
+
+// Reads and checks the listing fields shared by "post" and "edit"
+function readListing(body) {
+
+    const title = String(body.title || "").trim();
+    const description = String(body.description || "").trim();
+    const category = String(body.category || "");
+    const location = String(body.location || "").trim();
+    const negotiable = body.negotiable === "true" || body.negotiable === "on";
+
+    const priceText = String(body.price || "").replace(/,/g, "").trim();
+    const price = Math.round(Number(priceText) * 100) / 100;
+
+    let condition = String(body.condition || "");
+
+    if (title.length < 3 || title.length > 80) {
+        return { error: "The title must be 3 to 80 characters." };
+    }
+
+    if (priceText === "" || !isFinite(price) || price < 0 || price > MAX_PRICE) {
+        return { error: "Enter a valid price (use 0 if it is free)." };
+    }
+
+    if (!CATEGORIES.includes(category)) {
+        return { error: "Choose a category." };
+    }
+
+    if (category === "Services") {
+        condition = "";
+    } else if (!CONDITIONS.includes(condition)) {
+        return { error: "Choose the condition of the item." };
+    }
+
+    if (description.length > 1500) {
+        return { error: "The description can be up to 1500 characters." };
+    }
+
+    if (location.length > 60) {
+        return { error: "The meeting place can be up to 60 characters." };
+    }
+
+    return { data: { title, description, price, negotiable, category, condition, location } };
+
+}
+
 
 // =====================================================
 // SELL: the form
@@ -115,18 +181,16 @@ router.get("/sell", (req, res) => {
     }
 
     res.render("sell", {
+        product: null,
         categories: CATEGORIES,
         conditions: CONDITIONS,
         maxImages: MAX_IMAGES,
-        currency: market.CURRENCY
+        currency: market.CURRENCY,
+        ...helpers
     });
 
 });
 
-
-// =====================================================
-// SELL: save the listing
-// =====================================================
 
 router.post("/sell", uploadPhotos, async (req, res) => {
 
@@ -138,46 +202,13 @@ router.post("/sell", uploadPhotos, async (req, res) => {
 
         const userId = req.session.user._id;
 
-        const title = String(req.body.title || "").trim();
-        const description = String(req.body.description || "").trim();
-        const category = String(req.body.category || "");
-        const location = String(req.body.location || "").trim();
-        const negotiable = req.body.negotiable === "true" || req.body.negotiable === "on";
+        const { error, data } = readListing(req.body);
 
-        const priceText = String(req.body.price || "").replace(/,/g, "").trim();
-        const price = Math.round(Number(priceText) * 100) / 100;
-
-        let condition = String(req.body.condition || "");
+        if (error) {
+            return res.status(400).json({ error });
+        }
 
         const files = req.files || [];
-
-        // ----- checks (each one returns a message the form shows) -----
-
-        if (title.length < 3 || title.length > 80) {
-            return res.status(400).json({ error: "The title must be 3 to 80 characters." });
-        }
-
-        if (priceText === "" || !isFinite(price) || price < 0 || price > MAX_PRICE) {
-            return res.status(400).json({ error: "Enter a valid price (use 0 if it is free)." });
-        }
-
-        if (!CATEGORIES.includes(category)) {
-            return res.status(400).json({ error: "Choose a category." });
-        }
-
-        if (category === "Services") {
-            condition = "";
-        } else if (!CONDITIONS.includes(condition)) {
-            return res.status(400).json({ error: "Choose the condition of the item." });
-        }
-
-        if (description.length > 1500) {
-            return res.status(400).json({ error: "The description can be up to 1500 characters." });
-        }
-
-        if (location.length > 60) {
-            return res.status(400).json({ error: "The meeting place can be up to 60 characters." });
-        }
 
         if (files.length < 1) {
             return res.status(400).json({ error: "Add at least one photo." });
@@ -191,55 +222,178 @@ router.post("/sell", uploadPhotos, async (req, res) => {
             });
         }
 
-        // ----- upload the photos; if any fail, remove the ones that went through -----
+        const uploaded = await uploadAll(files);
 
-        const settled = await Promise.allSettled(files.map(uploadImage));
-
-        const uploaded = settled
-            .filter((result) => result.status === "fulfilled")
-            .map((result) => result.value);
-
-        if (uploaded.length !== files.length) {
-
-            await destroyImages(uploaded);
-
+        if (!uploaded) {
             return res.status(502).json({ error: "Could not upload your photos. Please try again." });
-
         }
-
-        // ----- save -----
 
         try {
 
-            const product = await Product.create({
-                sellerId: userId,
-                title,
-                description,
-                price,
-                negotiable,
-                category,
-                condition,
-                location,
-                images: uploaded
-            });
+            const product = await Product.create({ sellerId: userId, ...data, images: uploaded });
 
             return res.json({ success: true, id: product._id });
 
-        } catch (error) {
+        } catch (saveError) {
 
             await destroyImages(uploaded);
 
-            if (error.name === "ValidationError") {
-                return res.status(400).json({ error: Object.values(error.errors)[0].message });
+            if (saveError.name === "ValidationError") {
+                return res.status(400).json({ error: Object.values(saveError.errors)[0].message });
             }
 
-            throw error;
+            throw saveError;
 
         }
 
     } catch (error) {
 
         console.error("Sell error:", error);
+
+        res.status(500).json({ error: "Something went wrong. Please try again." });
+
+    }
+
+});
+
+
+// The edit form is the Sell form, filled in with the listing
+router.get("/product/:id/edit", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/login?redirect=" + encodeURIComponent(req.originalUrl));
+    }
+
+    try {
+
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(404).send("Listing not found.");
+        }
+
+        // only the seller's own listing can match
+        const product = await Product.findOne({
+            _id: req.params.id,
+            sellerId: req.session.user._id
+        }).lean();
+
+        if (!product) {
+            return res.status(404).send("Listing not found.");
+        }
+
+        res.render("sell", {
+            product,
+            categories: CATEGORIES,
+            conditions: CONDITIONS,
+            maxImages: MAX_IMAGES,
+            currency: market.CURRENCY,
+            ...helpers
+        });
+
+    } catch (error) {
+
+        console.error("Edit page error:", error);
+
+        res.status(500).send("Unable to load this listing.");
+
+    }
+
+});
+
+
+router.post("/product/:id/edit", uploadPhotos, async (req, res) => {
+
+    if (!req.session.user) {
+        return res.status(401).json({ loginRequired: true });
+    }
+
+    try {
+
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ error: "Invalid request." });
+        }
+
+        const product = await Product.findOne({
+            _id: req.params.id,
+            sellerId: req.session.user._id
+        });
+
+        if (!product) {
+            return res.status(404).json({ error: "Listing not found." });
+        }
+
+        const { error, data } = readListing(req.body);
+
+        if (error) {
+            return res.status(400).json({ error });
+        }
+
+        // which of the existing photos the seller kept, in the order shown on screen
+        let keepIds = [];
+
+        try {
+            keepIds = JSON.parse(req.body.keep || "[]");
+        } catch (e) {}
+
+        if (!Array.isArray(keepIds)) {
+            keepIds = [];
+        }
+
+        const kept = keepIds
+            .map((publicId) => product.images.find((image) => image.publicId === publicId))
+            .filter(Boolean);
+
+        const files = req.files || [];
+
+        if (kept.length + files.length < 1) {
+            return res.status(400).json({ error: "Add at least one photo." });
+        }
+
+        if (kept.length + files.length > MAX_IMAGES) {
+            return res.status(400).json({ error: "You can have up to " + MAX_IMAGES + " photos." });
+        }
+
+        const uploaded = files.length ? await uploadAll(files) : [];
+
+        if (!uploaded) {
+            return res.status(502).json({ error: "Could not upload your photos. Please try again." });
+        }
+
+        const removed = product.images.filter(
+            (image) => !kept.some((keptImage) => keptImage.publicId === image.publicId)
+        );
+
+        product.set({
+            ...data,
+            images: [
+                ...kept.map((image) => ({ url: image.url, publicId: image.publicId })),
+                ...uploaded
+            ]
+        });
+
+        try {
+
+            await product.save();
+
+        } catch (saveError) {
+
+            await destroyImages(uploaded);
+
+            if (saveError.name === "ValidationError") {
+                return res.status(400).json({ error: Object.values(saveError.errors)[0].message });
+            }
+
+            throw saveError;
+
+        }
+
+        // the old photos are removed only now that the changes are saved
+        await destroyImages(removed);
+
+        res.json({ success: true, id: product._id });
+
+    } catch (error) {
+
+        console.error("Edit error:", error);
 
         res.status(500).json({ error: "Something went wrong. Please try again." });
 
@@ -298,12 +452,18 @@ router.get("/product/:id", async (req, res) => {
 
         ]);
 
+                const isSaved = isOwner
+            ? false
+            : !!(await Favorite.exists({ userId: req.session.user._id, productId: product._id }));
+
         res.render("product", {
             product,
             seller,
             isOwner,
+            isSaved,
             moreFromSeller,
             similar,
+            reportReasons: REPORT_REASONS,
             ...helpers
         });
 
@@ -402,6 +562,8 @@ router.post("/product/:id/delete", async (req, res) => {
         await destroyImages(product.images);
 
         await product.deleteOne();
+        
+        await Favorite.deleteMany({ productId: product._id });
 
         res.json({ success: true });
 
@@ -672,6 +834,219 @@ router.get("/user/:username", async (req, res) => {
         console.error("Seller page error:", error);
 
         res.status(500).send("Unable to load this seller.");
+
+    }
+
+});
+
+
+// =====================================================
+// SAVED ITEMS
+// =====================================================
+
+// The ids of everything you saved (the hearts on every page use this)
+router.get("/saved/ids", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.status(401).json({ loginRequired: true });
+    }
+
+    try {
+
+        const rows = await Favorite.find({ userId: req.session.user._id })
+            .select("productId")
+            .limit(1000)
+            .lean();
+
+        res.set("Cache-Control", "no-store");
+
+        res.json({ ids: rows.map((row) => String(row.productId)) });
+
+    } catch (error) {
+
+        console.error("Saved ids error:", error);
+
+        res.status(500).json({ error: "Something went wrong." });
+
+    }
+
+});
+
+// Save or un-save one item. The request says which state is wanted, so a repeat tap can't flip it back.
+router.post("/product/:id/save", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.status(401).json({ loginRequired: true });
+    }
+
+    try {
+
+        const id = req.params.id;
+        const userId = req.session.user._id;
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({ error: "Invalid request." });
+        }
+
+        const wanted = req.body.saved === true || req.body.saved === "true";
+
+        if (wanted) {
+
+            const product = await Product.findById(id).select("sellerId").lean();
+
+            if (!product) {
+                return res.status(404).json({ error: "This item no longer exists." });
+            }
+
+            if (String(product.sellerId) === String(userId)) {
+                return res.status(400).json({ error: "This is your own item." });
+            }
+
+            try {
+
+                await Favorite.updateOne(
+                    { userId, productId: id },
+                    { $setOnInsert: { createdAt: new Date() } },
+                    { upsert: true }
+                );
+
+            } catch (error) {
+
+                // two taps at the same moment: it is already saved
+                if (error.code !== 11000) {
+                    throw error;
+                }
+
+            }
+
+        } else {
+
+            await Favorite.deleteOne({ userId, productId: id });
+
+        }
+
+        res.json({ success: true, saved: wanted });
+
+    } catch (error) {
+
+        console.error("Save error:", error);
+
+        res.status(500).json({ error: "Could not save this item." });
+
+    }
+
+});
+
+router.get("/saved", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.redirect("/login?redirect=/saved");
+    }
+
+    try {
+
+        const favorites = await Favorite.find({ userId: req.session.user._id })
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .lean();
+
+        const rows = await Product.find({ _id: { $in: favorites.map((f) => f.productId) } }).lean();
+
+        const byId = new Map(rows.map((product) => [String(product._id), product]));
+
+        // newest saved first; items that were deleted are skipped
+        const items = favorites
+            .map((favorite) => byId.get(String(favorite.productId)))
+            .filter(Boolean);
+
+        res.render("saved", { items, ...helpers });
+
+    } catch (error) {
+
+        console.error("Saved page error:", error);
+
+        res.status(500).send("Unable to load your saved items.");
+
+    }
+
+});
+
+
+// =====================================================
+// REPORT A LISTING
+// =====================================================
+
+router.post("/product/:id/report", async (req, res) => {
+
+    if (!req.session.user) {
+        return res.status(401).json({ loginRequired: true });
+    }
+
+    try {
+
+        const id = req.params.id;
+        const userId = req.session.user._id;
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({ error: "Invalid request." });
+        }
+
+        const reason = String(req.body.reason || "");
+        const details = String(req.body.details || "").trim().slice(0, 300);
+
+        if (!REPORT_REASONS.includes(reason)) {
+            return res.status(400).json({ error: "Choose a reason." });
+        }
+
+        const product = await Product.findById(id).select("sellerId").lean();
+
+        if (!product) {
+            return res.status(404).json({ error: "This listing no longer exists." });
+        }
+
+        if (String(product.sellerId) === String(userId)) {
+            return res.status(400).json({ error: "You cannot report your own listing." });
+        }
+
+        // the same person reporting the same listing twice is simply accepted again
+        if (await Report.exists({ productId: id, reporterId: userId })) {
+            return res.json({ success: true, already: true });
+        }
+
+        const today = await Report.countDocuments({
+            reporterId: userId,
+            createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+        });
+
+        if (today >= MAX_REPORTS_PER_DAY) {
+            return res.status(429).json({ error: "You have sent a lot of reports today. Please try again tomorrow." });
+        }
+
+        try {
+
+            await Report.create({
+                productId: id,
+                reporterId: userId,
+                sellerId: product.sellerId,
+                reason,
+                details
+            });
+
+        } catch (error) {
+
+            if (error.code !== 11000) {
+                throw error;
+            }
+
+        }
+
+        res.json({ success: true });
+
+    } catch (error) {
+
+        console.error("Report error:", error);
+
+        res.status(500).json({ error: "Could not send your report." });
 
     }
 

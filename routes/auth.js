@@ -587,6 +587,11 @@ router.post("/delete-account", async (req, res) => {
         }
 
         await Product.deleteMany({ sellerId: currentUserId });
+        
+        const Favorite = require("../models/Favorite");
+
+        await Favorite.deleteMany({ userId: currentUserId });
+        await Favorite.deleteMany({ productId: { $in: listings.map((listing) => listing._id) } });
 
         // Finally, delete the user account itself
         await User.findByIdAndDelete(currentUserId);
