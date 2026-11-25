@@ -1,6 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
+const mongoose = require("mongoose");
+const User = require("../models/User");
+const Product = require("../models/Product");
+const Favorite = require("../models/Favorite");
+const Report = require("../models/Report");
+const helpers = require("../utils/marketHelpers");
+
 
 const Question = require("../models/Question");
 const Document = require("../models/Document");
@@ -77,12 +84,15 @@ router.get("/", async (req, res) => {
 ]);
 
 
+        const openReports = await Report.countDocuments({ status: "open" });
+
         res.render("admin", {
 
             pdfs,
             docs,
             objectivePDFs,
-            quizzes
+            quizzes,
+            openReports
 
         });
 
@@ -139,7 +149,7 @@ router.post(
 
             console.error(
                 "Objective PDF upload error:",
-                error
+                err
             );
 
             res.status(500).send(
@@ -637,5 +647,153 @@ router.get(
 
     }
 );
+
+
+// =====================================================
+// REPORTED LISTINGS
+// =====================================================
+
+router.get("/reports", async (req, res) => {
+
+    try {
+
+        // one entry per reported listing, most reported first
+        const groups = await Report.aggregate([
+            { $match: { status: "open" } },
+            { $group: {
+                _id: "$productId",
+                sellerId: { $first: "$sellerId" },
+                count: { $sum: 1 },
+                latest: { $max: "$createdAt" },
+                items: { $push: { reason: "$reason", details: "$details", at: "$createdAt" } }
+            } },
+            { $sort: { count: -1, latest: -1 } },
+            { $limit: 100 }
+        ]);
+
+        const sellerIds = groups.map((g) => g.sellerId);
+
+        const [products, sellers, sellerTotals] = await Promise.all([
+
+            Product.find({ _id: { $in: groups.map((g) => g._id) } }).lean(),
+
+            User.find({ _id: { $in: sellerIds } }).select("username").lean(),
+
+            // how many open reports each of these sellers has across all their listings
+            Report.aggregate([
+                { $match: { status: "open", sellerId: { $in: sellerIds } } },
+                { $group: { _id: "$sellerId", total: { $sum: 1 } } }
+            ])
+
+        ]);
+
+        const productById = new Map(products.map((p) => [String(p._id), p]));
+        const sellerById = new Map(sellers.map((u) => [String(u._id), u.username]));
+        const totalBySeller = new Map(sellerTotals.map((t) => [String(t._id), t.total]));
+
+        const reports = groups.map((g) => {
+
+            const tally = {};
+
+            g.items.forEach((item) => {
+                tally[item.reason] = (tally[item.reason] || 0) + 1;
+            });
+
+            return {
+                productId: String(g._id),
+                product: productById.get(String(g._id)) || null,
+                sellerName: sellerById.get(String(g.sellerId)) || "Deleted user",
+                sellerTotal: totalBySeller.get(String(g.sellerId)) || 0,
+                count: g.count,
+                latest: g.latest,
+                reasons: Object.entries(tally).sort((a, b) => b[1] - a[1]),
+                notes: g.items
+                    .filter((item) => item.details)
+                    .sort((a, b) => new Date(b.at) - new Date(a.at))
+                    .slice(0, 5)
+            };
+
+        });
+
+        res.render("adminreports", { reports, ...helpers });
+
+    } catch (error) {
+
+        console.error("Admin reports error:", error);
+
+        res.status(500).send("Unable to load reports.");
+
+    }
+
+});
+
+
+// Keep the listing up and close its reports
+router.post("/reports/:productId/dismiss", async (req, res) => {
+
+    try {
+
+        if (!mongoose.isValidObjectId(req.params.productId)) {
+            return res.status(400).json({ message: "Invalid request." });
+        }
+
+        await Report.updateMany(
+            { productId: req.params.productId, status: "open" },
+            { status: "reviewed" }
+        );
+
+        res.json({ success: true });
+
+    } catch (error) {
+
+        console.error("Dismiss report error:", error);
+
+        res.status(500).json({ message: "Something went wrong." });
+
+    }
+
+});
+
+
+// Delete the listing (and its photos) and close its reports
+router.post("/reports/:productId/remove", async (req, res) => {
+
+    try {
+
+        const id = req.params.productId;
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({ message: "Invalid request." });
+        }
+
+        const product = await Product.findById(id);
+
+        if (product) {
+
+            await Promise.all((product.images || []).map((image) =>
+                cloudinary.uploader
+                    .destroy(image.publicId, { resource_type: "image" })
+                    .catch((error) => console.error("Image delete error:", error.message))
+            ));
+
+            await Favorite.deleteMany({ productId: product._id });
+
+            await product.deleteOne();
+
+        }
+
+        await Report.updateMany({ productId: id, status: "open" }, { status: "reviewed" });
+
+        res.json({ success: true });
+
+    } catch (error) {
+
+        console.error("Remove reported listing error:", error);
+
+        res.status(500).json({ message: "Something went wrong." });
+
+    }
+
+});
 
 module.exports = router;

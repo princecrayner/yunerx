@@ -4,6 +4,7 @@ const router = express.Router();
 const Document = require("../models/Document");
 const upload = require("../middleware/upload");
 const cloudinary = require("../config/cloudinary");
+const requireAdmin = require("../middleware/requireAdmin");
 
 
 // =====================================================
@@ -11,10 +12,7 @@ const cloudinary = require("../config/cloudinary");
 // POST /docs/upload
 // =====================================================
 
-router.post(
-    "/upload",
-    upload.single("pdf"),
-    async (req, res) => {
+router.post("/upload", requireAdmin, upload.single("pdf"), async (req, res) => {
 
         try {
 
@@ -91,9 +89,7 @@ router.get("/", async (req, res) => {
 // GET /docs/edit/:id
 // =====================================================
 
-router.get(
-    "/edit/:id",
-    async (req, res) => {
+router.get("/edit/:id", requireAdmin, async (req, res) => {
 
         try {
 
@@ -141,9 +137,7 @@ router.get(
 // POST /docs/edit/:id
 // =====================================================
 
-router.post(
-    "/edit/:id",
-    async (req, res) => {
+router.post("/edit/:id", requireAdmin, async (req, res) => {
 
         try {
 
@@ -196,14 +190,14 @@ router.post(
 // POST /docs/:id/delete
 // =====================================================
 
-router.post("/:id/delete", async (req, res) => {
+router.post("/:id/delete", requireAdmin, async (req, res) => {
 
     try {
 
         const doc = await Document.findById(req.params.id);
 
         if (!doc) {
-            return res.status(404).send("Study material not found.");
+            return res.status(404).json({ message: "Study material not found." });
         }
 
         if (doc.cloudinaryId) {
@@ -216,17 +210,18 @@ router.post("/:id/delete", async (req, res) => {
 
         await Document.findByIdAndDelete(req.params.id);
 
-        res.redirect("/docs");
+        res.json({ message: "Study material deleted successfully." });
 
     } catch (error) {
 
         console.error("Delete study material error:", error);
 
-        res.status(500).send("Unable to delete study material.");
+        res.status(500).json({ message: "Unable to delete study material." });
 
     }
 
 });
+
 
 
 // =====================================================

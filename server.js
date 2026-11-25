@@ -31,6 +31,7 @@ const { MongoStore } = require("connect-mongo");
 const mongoose = require("mongoose");
 const Question = require("./models/Question");
 const adminRoutes = require("./routes/admin");
+const requireAdmin = require("./middleware/requireAdmin");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -76,6 +77,7 @@ app.use(sessionMiddleware);
 io.engine.use(sessionMiddleware);
 
 
+app.use("/admin", requireAdmin);
 app.use("/admin", adminRoutes);
 app.use("/docs", docsRoutes);
 app.use("/", pdfRoutes);

@@ -70,6 +70,11 @@ const UserSchema = new mongoose.Schema({
         type: [Date],
         default: []
     },
+    
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
 
     videos: [
         {

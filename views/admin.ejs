@@ -208,6 +208,10 @@ input, textarea {
          Admin Dashboard
     </h1>
 
+    <a href="/admin/reports" style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#fff3cd; color:#664d03; padding:14px 16px; border-radius:10px; text-decoration:none; font-weight:bold; margin:10px 0 24px;">
+        <span>🚩 Reported listings</span>
+        <span><%= openReports %> open</span>
+    </a>
 
 
 
@@ -1079,10 +1083,10 @@ deleteStudyButtons.forEach(
                 try {
 
                     const response =
-                        await fetch(
-                            `/docs/${id}`,
+                       await fetch(
+                            `/docs/${id}/delete`,
                             {
-                                method: "DELETE"
+                                method: "POST"
                             }
                         );
 

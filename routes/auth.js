@@ -23,9 +23,15 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
-       if (req.query.redirect) {
-           req.session.redirectTo = req.query.redirect;
-           }
+    if (req.query.redirect) {
+
+        const target = String(req.query.redirect);
+
+        if (target.startsWith("/") && !target.startsWith("//") && !target.startsWith("/\\")) {
+            req.session.redirectTo = target;
+        }
+
+    }
     res.render("login");
 });
 
@@ -176,8 +182,8 @@ router.get("/profile", async (req, res) => {
 
         // only what the page needs (never the password hash)
         const user = await User.findById(req.session.user._id)
-            .select("username email phone profileImage")
-            .lean();
+          .select("username email phone profileImage isAdmin")
+          .lean();
 
         if (!user) {
 
