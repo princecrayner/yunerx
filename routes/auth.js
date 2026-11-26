@@ -292,7 +292,6 @@ router.post("/change-username", async (req, res) => {
 
         const Group = require("../models/Group");
         const GroupMessage = require("../models/GroupMessage");
-        const Video = require("../models/Video");
         const { Message, Story } = require("../models/Message");
 
         // Private messages
@@ -333,24 +332,7 @@ router.post("/change-username", async (req, res) => {
             { arrayFilters: [{ elem: oldUsername }] }
         );
 
-        // Video likes, views, comments
-        await Video.updateMany(
-            { likes: oldUsername },
-            { $set: { "likes.$[elem]": newUsername } },
-            { arrayFilters: [{ elem: oldUsername }] }
-        );
-
-        await Video.updateMany(
-            { views: oldUsername },
-            { $set: { "views.$[elem]": newUsername } },
-            { arrayFilters: [{ elem: oldUsername }] }
-        );
-
-        await Video.updateMany(
-            { "comments.username": oldUsername },
-            { $set: { "comments.$[elem].username": newUsername } },
-            { arrayFilters: [{ "elem.username": oldUsername }] }
-        );
+     
 
         // Keep session in sync
         req.session.user.username = newUsername;
@@ -570,12 +552,9 @@ router.post("/delete-account", async (req, res) => {
         }
 
         // Clean up content owned by this user
-        const Video = require("../models/Video");
         const { Story } = require("../models/Message");
-
-        await Video.deleteMany({ userId: currentUserId });
         await Story.deleteMany({ username: currentUsername });
-
+        
         const { ChallengeAttempt, ChallengeStart } = require("../models/Challenge");
 
         await ChallengeAttempt.deleteMany({ userId: currentUserId });

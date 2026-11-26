@@ -20,7 +20,6 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const authRoutes = require("./routes/auth");
-const videoRoutes = require("./routes/videos");
 const chatRoutes = require("./routes/chats");
 const marketRoutes = require("./routes/market");
 const challengeRoutes = require("./routes/challenge");
@@ -82,8 +81,9 @@ app.use("/admin", adminRoutes);
 app.use("/docs", docsRoutes);
 app.use("/", pdfRoutes);
 app.use("/", authRoutes);
-app.get("/videos", (req, res) => res.redirect("/market"));
-app.use("/", videoRoutes);
+// Old video links now lead to the market
+app.get(["/videos", "/uploadvideos", "/uploadvideo"], (req, res) => res.redirect("/market"));
+app.get(["/watch/:id", "/shorts/:id"], (req, res) => res.redirect("/market"));
 app.use("/", challengeRoutes);
 app.use("/", chatRoutes);
 app.use("/", marketRoutes);
@@ -108,16 +108,6 @@ app.get("/", (req, res) => {
     res.render("index", {
         user: req.session.user,
     });
-
-});
-
-app.get("/uploadvideos", (req, res) => {
-
-    if (!req.session.user) {
-        return res.redirect("/login?redirect=/uploadvideos");
-    }
-
-    res.render("uploadvideos");
 
 });
 

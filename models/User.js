@@ -74,16 +74,8 @@ const UserSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    },
-
-    videos: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Video"
-        }
-    ]
+    }
 
 });
-
 
 module.exports = mongoose.model("User", UserSchema);
