@@ -77,8 +77,45 @@
 
 /* ---------- your items ---------- */
 
-.own-item { display: flex; flex-direction: column; gap: 8px; }
-.own-actions { display: flex; gap: 8px; }
+.own-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+.own-item > .pcard {
+    width: 100%;
+    min-width: 0;
+}
+
+.own-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+}
+
+.own-actions .own-status {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 4px;
+    font-size: 11px;
+    white-space: normal;
+}
+
+.own-actions .own-edit,
+.own-actions .own-del {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0;
+    flex: 0 0 38px;
+    font-size: 17px;
+}
+
 .own-actions .mk-btn { padding: 10px 12px; font-size: 13px; }
 .own-actions .own-status { flex: 1; }
 .own-actions .own-del { width: 46px; flex: none; font-size: 18px; }
